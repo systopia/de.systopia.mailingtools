@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<extension key="de.systopia.mailingtools" type="module">
+  <file>mailingtools</file>
+  <name>SYSTOPIA Mailingtools</name>
+  <description>Tools supporting mass mailing</description>
+  <license>AGPL-3.0</license>
+  <maintainer>
+    <author>SYSTOPIA</author>
+    <email>batroff@systopia.de</email>
+  </maintainer>
+  <urls>
+    <url desc="Main Extension Page">https://github.com/systopia/de.systopia.mailingtools</url>
+    <url desc="Documentation">https://github.com/systopia/de.systopia.mailingtools</url>
+    <url desc="Support">https://github.com/systopia/de.systopia.mailingtools/issues</url>
+    <url desc="Licensing">http://www.gnu.org/licenses/agpl-3.0.html</url>
+  </urls>
+  <releaseDate></releaseDate>
+  <version>0.1</version>
+  <develStage>dev</develStage>
+  <compatibility>
+    <ver>4.7</ver>
+    <ver>4.6</ver>
+  </compatibility>
+  <comments></comments>
+  <civix>
+    <namespace>CRM/Mailingtools</namespace>
+  </civix>
+</extension>
