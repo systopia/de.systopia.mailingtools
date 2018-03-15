@@ -130,8 +130,20 @@ function mailingtools_civicrm_alterSettingsFolders(&$metaDataFolders = NULL) {
  *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_entityTypes
  */
-function mailingtools_civicrm_entityTypes(&$entityTypes) {
-  _mailingtools_civix_civicrm_entityTypes($entityTypes);
+//function mailingtools_civicrm_entityTypes(&$entityTypes) {
+//  _mailingtools_civix_civicrm_entityTypes($entityTypes);
+//}
+
+/**
+ * Implementes hook_civicrm_alterMailParams
+ *
+ * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_alterMailParams/
+ *
+ * @param $params
+ * @param $context
+ */
+function mailingtools_civicrm_alterMailParams(&$params, $context) {
+  CRM_Mailingtools_InjectHeader::inject_header($params, $context);
 }
 
 // --- Functions below this ship commented out. Uncomment as required. ---

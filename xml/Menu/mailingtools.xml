@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<menu>
+  <item>
+    <path>civicrm/admin/setting/customMailHeader</path>
+    <page_callback>CRM_Mailingtools_Form_Settings</page_callback>
+    <title>Custom Mail Header Settings</title>
+    <access_arguments>access CiviCRM</access_arguments>
+    <adminGroup>CiviMail</adminGroup>
+    <icon>admin/import_export_map.png</icon>
+  </item>
+</menu>
