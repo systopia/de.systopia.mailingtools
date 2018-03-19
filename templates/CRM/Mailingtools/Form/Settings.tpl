@@ -26,14 +26,31 @@
     <div class="clear"></div>
   </div>
 
+  <h3>{ts domain='de.systopia.mailingtools'}Bounce Mailbox Retention{/ts}</h3>
+  <div class="crm-section">
+    <div class="label">CiviMail Ignored Retention</div>
+    <div class="content">NULL</div>
+    <div class="clear"></div>
+  </div>
+  <div class="crm-section">
+    <div class="label">CiviMail processed retention</div>
+    <div class="content">NULL</div>
+    <div class="clear"></div>
+  </div>
+
+
 </div>
 
 <div class="crm-submit-buttons">
     {include file="CRM/common/formButtons.tpl" location="bottom"}
 </div>
 
-<hr>
+{*===============================================================================================================*}
+{*Bounce Pattern*}
 
+<p> </p>
+
+<h3>{ts domain='de.systopia.mailingtools'}Additional Bounce Patterns{/ts}</h3>
 <p> </p>
 
 <div class="crm-section mailingtools mailingtools-custommailheader">
