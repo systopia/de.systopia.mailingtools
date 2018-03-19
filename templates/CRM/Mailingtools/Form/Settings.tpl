@@ -27,14 +27,19 @@
   </div>
 
   <h3>{ts domain='de.systopia.mailingtools'}Bounce Mailbox Retention{/ts}</h3>
+
+  <p>
+    Retention Time is interpreted as days. If no value is configured, no mails will be deleted.
+  </p>
+
   <div class="crm-section">
-    <div class="label">CiviMail Ignored Retention</div>
-    <div class="content">NULL</div>
+    <div class="label">{$form.processed_retention_value.label}</div>
+    <div class="content">{$form.processed_retention_value.html}</div>
     <div class="clear"></div>
   </div>
   <div class="crm-section">
-    <div class="label">CiviMail processed retention</div>
-    <div class="content">NULL</div>
+    <div class="label">{$form.ignored_retention_value.label}</div>
+    <div class="content">{$form.ignored_retention_value.html}</div>
     <div class="clear"></div>
   </div>
 

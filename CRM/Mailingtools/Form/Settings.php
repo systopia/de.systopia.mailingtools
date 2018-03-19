@@ -35,7 +35,23 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
     $this->add(
       'text',
       'extra_mail_header_value',
-      E::ts('Extra Mail Header Eintrag'),
+      E::ts('Extra Mail Header Entry'),
+      array("class" => "huge"),
+      FALSE
+    );
+
+    $this->add(
+      'text',
+      'processed_retention_value',
+      E::ts('CiviMail Processed Retention'),
+      array("class" => "huge"),
+      FALSE
+    );
+
+    $this->add(
+      'text',
+      'ignored_retention_value',
+      E::ts('CiviMail Ignored Retention'),
       array("class" => "huge"),
       FALSE
     );
@@ -62,6 +78,8 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
     return array(
       'extra_mail_header_key',
       'extra_mail_header_value',
+      'processed_retention_value',
+      'ignored_retention_value',
     );
   }
 
