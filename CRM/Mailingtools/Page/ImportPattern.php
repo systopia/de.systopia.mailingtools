@@ -22,41 +22,48 @@ class CRM_Mailingtools_Page_ImportPattern extends CRM_Core_Page {
    * @throws CRM_Extension_Exception
    */
   public function run() {
-    $param = CRM_Utils_Request::retrieve("name");
+    $param = CRM_Utils_Request::retrieve("name", "String");
     if (empty($param)) {
       throw new CRM_Extension_Exception("Please Provide a filename in the name parameter of the URL");
     }
-
-    $files = glob(__DIR__ . "/resources/*{$param}*.json");
+    $path = __DIR__ . "../../../resources/*{$param}*.json";
+    $files = glob(__DIR__ . "/../../../resources/*{$param}*.json");
 
     if (empty($files)) {
       throw new CRM_Extension_Exception("Couldn't find file {$param}. Files must be placed in the resource directory.");
     }
 
+    $counter = array();
     foreach ($files as $f) {
-      $counter = array();
-      $pattern = json_decode($f);
-      $counter[$f] = array();
-      $this->parsePattern($pattern, $counter[$f]);
+      $pattern = json_decode(file_get_contents($f));
+      $filename = preg_split("/.+\//", $f)[1];
+      $counter[$filename] = array(
+        'ignored'   => 0,
+        'inserted'  => 0,
+      );
+      $this->parsePattern($pattern, $counter[$filename]);
     }
 
-
+    $this->assign("name", $param);
+    $this->assign("result_counter", $counter);
 
     parent::run();
   }
 
   /**
-   * @param $pattern
-   *
+   * @param $patterns
+   * @param $counter
    */
   private function parsePattern($patterns, &$counter) {
     foreach ($patterns as $bounce_value => $pattern) {
-      if ($this->isInDB($pattern)) {
+      if ($this->isInDB($pattern[1])) {
         $counter['ignored'] += 1;
+        continue;
       }
-      CRM_Core_DAO::executeQuery("INSERT INTO civicrm_mailing_bounce_pattern (`bounce_type_id`, `pattern`) VALUES(%1, '%2');",
-        array(1 => array($bounce_value, "Integer"),
-              2 => array($pattern, "String"),
+
+      CRM_Core_DAO::executeQuery("INSERT INTO `civicrm_mailing_bounce_pattern` (`bounce_type_id`, `pattern`) VALUES(%1, %2);",
+        array(1 => array($pattern[0], "Integer"),
+              2 => array($pattern[1], "String"),
           )
         );
       $counter['inserted'] += 1;
@@ -70,10 +77,13 @@ class CRM_Mailingtools_Page_ImportPattern extends CRM_Core_Page {
    */
   private function isInDB($pattern) {
 
-    return CRM_Core_DAO::singleValueQuery(
-      "SELECT COUNT(*) FROM `civicrm_mailing_bounce_pattern` WHERE `pattern`='%1'",
+    error_log("Pattern> " . $pattern);
+    $counter = CRM_Core_DAO::singleValueQuery(
+      "SELECT COUNT(*) FROM `civicrm_mailing_bounce_pattern` WHERE `pattern`=%1;",
       array(1 => array($pattern, "String"))
     );
+    error_log("DEBUG: COUNTER {$counter}");
+    return $counter;
   }
 
 }

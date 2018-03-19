@@ -47,11 +47,6 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
         'name' => E::ts('Submit'),
         'isDefault' => TRUE,
       ),
-      array(
-        'type' => 'submit',
-        'name' => ts('Parse additional Patterns from file', array('domain' => 'de.systopia.mailingtools')),
-        'isDefault' => FALSE,
-      ),
     ));
 
     // export form elements
@@ -93,7 +88,7 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
     }
     $config->setSettings($settings);
 
-    
+
 
     parent::postProcess();
   }

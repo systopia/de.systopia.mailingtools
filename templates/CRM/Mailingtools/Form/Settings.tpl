@@ -31,3 +31,29 @@
 <div class="crm-submit-buttons">
     {include file="CRM/common/formButtons.tpl" location="bottom"}
 </div>
+
+<hr>
+
+<p> </p>
+
+<div class="crm-section mailingtools mailingtools-custommailheader">
+  <a class="button" href="{crmURL p="civicrm/admin/setting/ImportBouncePattern" q="name=smtp_code_pattern_simple"}">
+    SMTP Pattern Simple
+  </a>
+</div>
+</br>
+<p> </p>
+
+<div class="crm-section mailingtools mailingtools-custommailheader">
+  <a class="button" href="{crmURL p="civicrm/admin/setting/ImportBouncePattern" q="name=smtp_code_pattern_enhanced"}">
+      SMTP Pattern Enhanced
+  </a>
+</div>
+</br>
+<p> </p>
+
+<div class="crm-section mailingtools mailingtools-custommailheader">
+  <a class="button" href="{crmURL p="civicrm/admin/setting/ImportBouncePattern" q="name=update_away_bounce_pattern_german"}">
+    German Away Pattern
+  </a>
+</div>

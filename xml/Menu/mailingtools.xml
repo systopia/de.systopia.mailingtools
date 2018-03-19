@@ -13,7 +13,5 @@
     <page_callback>CRM_Mailingtools_Page_ImportPattern</page_callback>
     <title>Import Additional Bounce Pattern</title>
     <access_arguments>access CiviCRM</access_arguments>
-    <adminGroup>CiviMail</adminGroup>
-    <icon>admin/import_export_map.png</icon>
   </item>
 </menu>
