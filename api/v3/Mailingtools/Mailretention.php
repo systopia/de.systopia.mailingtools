@@ -39,5 +39,6 @@ function _civicrm_api3_mailingtools_Mailretention_spec(&$spec) {
 function civicrm_api3_mailingtools_Mailretention($params) {
 
   $mailstore = new CRM_Mailingtools_CheckMailstore();
-  $mailstore->check_mailstore();
+  $result = $mailstore->check_mailstore();
+  return civicrm_api3_create_success($result);
 }

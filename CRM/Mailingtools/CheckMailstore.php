@@ -25,6 +25,8 @@ class CRM_Mailingtools_CheckMailstore {
   private $retention_configured = FALSE;
   private $imap_login = array();
   private $mail_folders = array('CiviMail.ignored', 'CiviMail.processed');
+  private $errors = array();
+  private $results = array();
 
 
   public function __construct() {
@@ -60,15 +62,14 @@ class CRM_Mailingtools_CheckMailstore {
       // set default port here
       $port = "143";
     }
-
-    // TODO: Apparently the port is empty - either learn how to configure port in mail account, or put it in statically
-    if ($dao->is_ssl) {
-      $host = "{" . $dao->server . ":" . $port . "/imap/ssl}";
+    if($dao->is_ssl) {
+      // if SSL is configured
+      $suffix = "/imap/ssl";
     } else {
-      // FIXME: is novalidate-cert necessary? Might be good to have with lower PHP Versions and/or self signed certs
-      $host = "{" . $dao->server . ":" . $port . "/imap/novalidate-cert}";
+      $suffix = "/imap/novalidate-cert";
     }
-    $this->imap_login['hostname'] = $host;
+
+    $this->imap_login['hostname'] = "{" . $dao->server . ":" . $port . $suffix . "}";
     $this->imap_login['username'] = $dao->username;
     $this->imap_login['password'] = $dao->password;
   }
@@ -85,24 +86,31 @@ class CRM_Mailingtools_CheckMailstore {
     }
 
     foreach ($this->mail_folders as $folder) {
-      // IGNORED Folder
-      try {
-        $inbox = imap_open($this->imap_login['hostname'] . $folder, $this->imap_login['username'], $this->imap_login['password']);
-        $time = strtotime("now - {$this->mailStore_retention['ignored_retention']} days");
-        $date = date("j-F-Y", $time);
-        $emails_delete_ignored = imap_search($inbox, 'BEFORE "' . $date . '"');
-        // TODO: for debug reasons:
-        foreach ($emails_delete_ignored as $email_index) {
-          $header = imap_fetchheader($inbox, $email_index);
-          error_log("DEBUG HEADER (IGNORED): " . json_encode($header));
-        }
-      } catch (Exception $e) {
-        // something went wrong
-        throw new API_Exception("Exception: " . $e->getMessage() . "; Couldn't connect to IMAP Mailbox. Error: " . imap_last_error());
+      $this->results[$folder] = 0;
+      $imap = imap_open($this->imap_login['hostname'] . $folder, $this->imap_login['username'], $this->imap_login['password']);
+      if (!$imap) {
+        error_log("Error Connecting to " . $this->imap_login['hostname'] . $folder);
+        $this->errors[$folder] = imap_last_error();
+        continue;
+      }
+      $time = strtotime("now - {$this->mailStore_retention['ignored_retention']} days");
+      $date = date("j-F-Y", $time);
+      $emails_delete_ignored = imap_search($imap, 'BEFORE "' . $date . '"');
+      // TODO: for debug reasons:
+      foreach ($emails_delete_ignored as $email_index) {
+        $header = imap_fetchheader($imap, $email_index);
+        error_log("DEBUG HEADER ({$folder}): " . json_encode($header));
+        // after debug phase:
+        // imap_delete($imap, $email_index);
+        // imap_expunge($imap);
+        $this->results[$folder] += 1;
       }
     }
 
-    // TODO: Execute for CiviMail/process folder as well!
+    if (empty($this->errors)) {
+      return json_encode($this->results);
+    }
+    return json_encode($this->errors);
   }
 
 
