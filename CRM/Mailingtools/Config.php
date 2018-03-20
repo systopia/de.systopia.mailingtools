@@ -50,4 +50,37 @@ class CRM_Mailingtools_Config {
   public function setSettings($settings) {
     CRM_Core_BAO_Setting::setItem($settings, 'de.systopia.Mailingtools', 'Mailingtools_settings');
   }
+
+  /**
+   * Install a scheduled job if there isn't one already
+   */
+  public static function installScheduledJob() {
+    $config = self::singleton();
+    $jobs = $config->getScheduledJobs();
+    if (empty($jobs)) {
+      // none found? create a new one
+      civicrm_api3('Job', 'create', array(
+        'api_entity'    => 'Mailstore',
+        'api_action'    => 'execute',
+        'run_frequency' => 'Always',
+        'name'          => E::ts('Check Bounce Mailstore'),
+        'description'   => E::ts('Checks the configured Bounce Mailbox, and if a retention is configured deletes older mail'),
+        'is_active'     => '0'));
+    }
+  }
+
+  /**
+   * get all scheduled jobs that trigger the dispatcher
+   */
+  public function getScheduledJobs() {
+    if ($this->jobs === NULL) {
+      // find all scheduled jobs calling Sqltask.execute
+      $query = civicrm_api3('Job', 'get', array(
+        'api_entity'   => 'CheckMailstore',
+        'api_action'   => 'execute',
+        'option.limit' => 0));
+      $this->jobs = $query['values'];
+    }
+    return $this->jobs;
+  }
 }

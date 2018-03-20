@@ -55,6 +55,7 @@ function mailingtools_civicrm_uninstall() {
  */
 function mailingtools_civicrm_enable() {
   _mailingtools_civix_civicrm_enable();
+  CRM_Mailingtools_Config::installScheduledJob();
 }
 
 /**
