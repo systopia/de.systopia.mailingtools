@@ -57,16 +57,14 @@ class CRM_Mailingtools_CheckMailstore {
     $dao->find();
     $dao->fetch();
 
-    $port = $dao->port;
-    if (!$port) {
-      // set default port here
-      $port = "143";
-    }
+    // FIXME: Port is always empty. Statically put in 993 for SSL, and 143 for TLS
     if($dao->is_ssl) {
       // if SSL is configured
       $suffix = "/imap/ssl";
+      $port = "993";
     } else {
       $suffix = "/imap/novalidate-cert";
+      $port = "143";
     }
 
     $this->imap_login['hostname'] = "{" . $dao->server . ":" . $port . $suffix . "}";
