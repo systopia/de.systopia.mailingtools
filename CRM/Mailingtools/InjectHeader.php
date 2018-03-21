@@ -28,7 +28,9 @@ class CRM_Mailingtools_InjectHeader {
   static function inject_header(&$params, $context) {
     $config = CRM_Mailingtools_Config::singleton();
     $settings = $config->getSettings();
-    $params['headers'][$settings['extra_mail_header_key']] = $settings['extra_mail_header_value'];
+    if (!empty($settings['extra_mail_header_key']) && !empty($settings['extra_mail_header_value'])) {
+      $params['headers'][$settings['extra_mail_header_key']] = $settings['extra_mail_header_value'];
+    }
   }
 
 }
