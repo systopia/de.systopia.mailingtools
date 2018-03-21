@@ -65,6 +65,7 @@ function mailingtools_civicrm_enable() {
  */
 function mailingtools_civicrm_disable() {
   _mailingtools_civix_civicrm_disable();
+  // TODO: remove scheduled job!
 }
 
 /**
