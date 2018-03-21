@@ -135,12 +135,8 @@ class CRM_Mailingtools_CheckMailstore {
       $emails_delete_ignored = imap_search($imap, 'BEFORE "' . $date . '"');
       // TODO: for debug reasons:
       foreach ($emails_delete_ignored as $email_index) {
-        $header = imap_fetchheader($imap, $email_index);
-// DEBUG ONLY
-//        error_log("DEBUG HEADER ({$folder}): " . json_encode($header));
-        // after debug phase:
-        // imap_delete($imap, $email_index);
-        // imap_expunge($imap);
+        imap_delete($imap, $email_index);
+        imap_expunge($imap);
         $this->results[$folder] += 1;
       }
     }
@@ -148,7 +144,7 @@ class CRM_Mailingtools_CheckMailstore {
     if (empty($this->errors)) {
       return json_encode($this->results);
     }
-    return json_encode($this->errors);
+    return (json_encode($this->errors) . json_encode($this->results));
   }
 
 
