@@ -56,7 +56,10 @@
 <p> </p>
 
 <h3>{ts domain='de.systopia.mailingtools'}Additional Bounce Patterns{/ts}</h3>
-<p> </p>
+<p>
+  <i>Add additional Bounce pattern to the Database. Checks first if pattern is already available. Outputs the number of
+    pattern added/ignored from the specified file. </i>
+</p>
 
 <div class="crm-section mailingtools mailingtools-custommailheader">
   <a class="button" href="{crmURL p="civicrm/admin/setting/ImportBouncePattern" q="name=smtp_code_pattern_simple"}">
