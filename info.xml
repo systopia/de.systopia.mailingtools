@@ -15,13 +15,13 @@
     <url desc="Licensing">http://www.gnu.org/licenses/agpl-3.0.html</url>
   </urls>
   <releaseDate>2018-03-21</releaseDate>
-  <version>0.2pre_alpha</version>
+  <version>0.3alpha</version>
   <develStage>dev</develStage>
   <compatibility>
     <ver>4.7</ver>
     <ver>4.6</ver>
   </compatibility>
-  <comments>For testing purposes only</comments>
+  <comments>Alpha version. Handle with care. This Extension will delete Emails from the Bounce Mailbox if configured.</comments>
   <civix>
     <namespace>CRM/Mailingtools</namespace>
   </civix>
