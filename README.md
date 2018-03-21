@@ -2,14 +2,18 @@
 
 ![Screenshot](/images/screenshot.png)
 
-(*FIXME: In one or two paragraphs, describe what the extension does and why one would download it. *)
+Provides Tools to support Massmailings in CiviCRM. Options are:
+
+* Add Additional Header to all Mails sent by CiviCRM
+* Introduce a retention Policy (in days) for the Bounce Mailing Mailbox. Can be specified for ignored and processed Folders.
+* Add additional Patterns for Bounce handling. Currently only adds static, pre-configured files (SMTP Error Codes, some German away patterns)
 
 The extension is licensed under [AGPL-3.0](LICENSE.txt).
 
 ## Requirements
 
-* PHP v5.4+
-* CiviCRM (*FIXME: Version number*)
+* PHP v5.5+ (better 5.6+)
+* CiviCRM 4.6/4.7
 
 ## Installation (Web UI)
 
@@ -37,8 +41,18 @@ cv en mailingtools
 
 ## Usage
 
-(* FIXME: Where would a new user navigate to get started? What changes would they see? *)
+After installation a settings page exists in civicrm/admin/setting/mailingtools. civicrm/menu/rebuild should be manually triggered after install, then it 
+is also available in the administrate console (civicrm/admin).
+
+A Cron Job is added (Check Bounce Mailstore) with 'always' frequency, but disabled. If a retention value 
+on the settings page is set, this will trigger the API command and delete all Mails in CiviMail/(ignored|processed) older than 
+the configured value in days. 
+The API Command is Mailingtools.mailretention - no parameters.
 
 ## Known Issues
 
-(* FIXME *)
+* This is an alpha Version, testing is needed!
+* Careful with the pattern, especially in large email environment. Also Emails will be DELETED if 
+a retention is added. 
+* Currently the login for the Bounce Mailbox is taken from settings, but might fail sometimes. I am considering 
+to add an additional setting dialogue to manually specify login parameters.
