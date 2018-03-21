@@ -24,7 +24,7 @@ class CRM_Mailingtools_CheckMailstore {
   private $mailStore_retention = array();
   private $retention_configured = FALSE;
   private $imap_login = array();
-  private $mail_folders = array('CiviMail.ignored', 'CiviMail.processed');
+  private $mail_folders = array('INBOX.CiviMail.ignored', 'INBOX.CiviMail.processed');
   private $errors = array();
   private $results = array();
 
@@ -136,7 +136,8 @@ class CRM_Mailingtools_CheckMailstore {
       // TODO: for debug reasons:
       foreach ($emails_delete_ignored as $email_index) {
         $header = imap_fetchheader($imap, $email_index);
-        error_log("DEBUG HEADER ({$folder}): " . json_encode($header));
+// DEBUG ONLY
+//        error_log("DEBUG HEADER ({$folder}): " . json_encode($header));
         // after debug phase:
         // imap_delete($imap, $email_index);
         // imap_expunge($imap);
