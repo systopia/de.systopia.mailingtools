@@ -29,6 +29,9 @@ class CRM_Mailingtools_CheckMailstore {
   private $results = array();
 
 
+  /**
+   * CRM_Mailingtools_CheckMailstore constructor.
+   */
   public function __construct() {
     // get Mailstore Config
     $this->get_mailstore_retention();
@@ -36,6 +39,10 @@ class CRM_Mailingtools_CheckMailstore {
     $this->get_bounce_mail_config();
   }
 
+  /**
+   * get mailstore retention
+   * can be configured on the settings page
+   */
   private function get_mailstore_retention() {
     $config = CRM_Mailingtools_Config::singleton();
     $settings = $config->getSettings();
@@ -50,6 +57,11 @@ class CRM_Mailingtools_CheckMailstore {
     $this->retention_configured = TRUE;
   }
 
+  /**
+   * get bounce mail config from CiviCRM
+   *
+   * TODO: Maybe add additional config to settings page if this doesn't work properly
+   */
   private function get_bounce_mail_config() {
     $dao = new CRM_Core_DAO_MailSettings();
     $dao->domain_id = CRM_Core_Config::domainID();
@@ -57,21 +69,48 @@ class CRM_Mailingtools_CheckMailstore {
     $dao->find();
     $dao->fetch();
 
-    // FIXME: Port is always empty. Statically put in 993 for SSL, and 143 for TLS
-    if($dao->is_ssl) {
-      // if SSL is configured
-      $suffix = "/imap/ssl";
-      $port = "993";
-    } else {
-      $suffix = "/imap/novalidate-cert";
-      $port = "143";
-    }
-
-    $this->imap_login['hostname'] = "{" . $dao->server . ":" . $port . $suffix . "}";
+    $this->imap_login['hostname'] = $this->create_mailbox_hostname($dao->server, $dao->is_ssl, $dao->port);
     $this->imap_login['username'] = $dao->username;
     $this->imap_login['password'] = $dao->password;
   }
 
+  /**
+   * Gets port either from configured serverURL, from the DAO object or prepares default values
+   * @param $serverUrl
+   * @param $is_ssl
+   * @param $dao_port
+   * @return string
+   */
+  private function create_mailbox_hostname($serverUrl, $is_ssl, $dao_port) {
+
+    // imap connection parameters
+    if ($is_ssl) {
+      $suffix =  "/imap/ssl";
+    } else {
+      $suffix ="/imap/novalidate-cert";
+    }
+
+    $port_from_serverUrl = explode(":", $serverUrl);
+    if (isset($port_from_serverUrl[1])) {
+      return "{" . $serverUrl . $suffix . "}";
+    }
+    // $dao_port seems to be always empty
+    if ($dao_port) {
+      return "{" . $serverUrl . ":" . $dao_port .  $suffix . "}";
+    }
+    // URL with default ports, SSL and TLS
+    if ($is_ssl) {
+      return "{" . $serverUrl . ":" . "993" .  $suffix . "}";
+    }
+    return "{" . $serverUrl . ":" . "143" .  $suffix . "}";
+  }
+
+  /**
+   * Main function. Checks mailstore, deletes mails older than retention in
+   * configured folders (default is CiviMail.(ignored|processed))
+   *
+   * @return string|void
+   */
   public function check_mailstore() {
 
     // TODO:
