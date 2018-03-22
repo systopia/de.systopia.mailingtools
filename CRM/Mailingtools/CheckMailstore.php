@@ -133,6 +133,10 @@ class CRM_Mailingtools_CheckMailstore {
       $time = strtotime("now - {$this->mailStore_retention['ignored_retention']} days");
       $date = date("j-F-Y", $time);
       $emails_delete_ignored = imap_search($imap, 'BEFORE "' . $date . '"');
+      if (empty($emails_delete_ignored)) {
+        // nothing to do here. Otherwise this will just throw an error.
+        continue;
+      }
       // TODO: for debug reasons:
       foreach ($emails_delete_ignored as $email_index) {
         imap_delete($imap, $email_index);
