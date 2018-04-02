@@ -34,22 +34,20 @@ class CRM_Mailingtools_CheckMailstore {
    */
   public function __construct() {
     // get Mailstore Config
-    $this->get_mailstore_retention();
+    $this->read_mailstore_retention();
     // get smtp Config
-    $this->get_bounce_mail_config();
+    $this->read_bounce_mail_config();
   }
 
   /**
    * get mailstore retention
    * can be configured on the settings page
    */
-  private function get_mailstore_retention() {
+  private function read_mailstore_retention() {
     $config = CRM_Mailingtools_Config::singleton();
     $settings = $config->getSettings();
 
-    if (!isset($settings['processed_retention_value']) || $settings['processed_retention_value'] == 0
-      || !isset($settings['ignored_retention_value']) || $settings['ignored_retention_value'] == 0) {
-      // we are done here. Nothing left to do.
+    if ($this->verify_settings($settings)) {
       return;
     }
     $this->mailStore_retention['ignored_retention'] = $settings['ignored_retention_value'];
@@ -62,47 +60,33 @@ class CRM_Mailingtools_CheckMailstore {
    *
    * TODO: Maybe add additional config to settings page if this doesn't work properly
    */
-  private function get_bounce_mail_config() {
+  private function read_bounce_mail_config() {
     $dao = new CRM_Core_DAO_MailSettings();
     $dao->domain_id = CRM_Core_Config::domainID();
     $dao->is_default = TRUE;
     $dao->find();
     $dao->fetch();
 
-    $this->imap_login['hostname'] = $this->create_mailbox_hostname($dao->server, $dao->is_ssl, $dao->port);
+    $this->imap_login['hostname'] = $this->create_mailbox_hostname($dao);
     $this->imap_login['username'] = $dao->username;
     $this->imap_login['password'] = $dao->password;
   }
 
   /**
    * Gets port either from configured serverURL, from the DAO object or prepares default values
-   * @param $serverUrl
-   * @param $is_ssl
-   * @param $dao_port
+   * @param $dao
    * @return string
    */
-  private function create_mailbox_hostname($serverUrl, $is_ssl, $dao_port) {
+  private function create_mailbox_hostname($dao) {
 
-    // imap connection parameters
-    if ($is_ssl) {
-      $suffix =  "/imap/ssl";
-    } else {
-      $suffix ="/imap/novalidate-cert";
-    }
+    $suffix = $this->create_imap_suffix($dao);
 
-    $port_from_serverUrl = explode(":", $serverUrl);
+    $port_from_serverUrl = explode(":", $dao->server);
     if (isset($port_from_serverUrl[1])) {
-      return "{" . $serverUrl . $suffix . "}";
+      return "{" . $dao->server . $suffix . "}";
     }
-    // $dao_port seems to be always empty
-    if ($dao_port) {
-      return "{" . $serverUrl . ":" . $dao_port .  $suffix . "}";
-    }
-    // URL with default ports, SSL and TLS
-    if ($is_ssl) {
-      return "{" . $serverUrl . ":" . "993" .  $suffix . "}";
-    }
-    return "{" . $serverUrl . ":" . "143" .  $suffix . "}";
+    $port = $this->get_server_port($dao);
+    return "{" . $dao->server . ":" . $port .  $suffix . "}";
   }
 
   /**
@@ -125,30 +109,90 @@ class CRM_Mailingtools_CheckMailstore {
     foreach ($this->mail_folders as $folder) {
       $this->results[$folder] = 0;
       $imap = imap_open($this->imap_login['hostname'] . $folder, $this->imap_login['username'], $this->imap_login['password']);
-      if (!$imap) {
+      if ($imap) {
+        $date = $this->create_retention_timestamp();
+        $emails_delete_ignored = imap_search($imap, 'BEFORE "' . $date . '"');
+        if (!empty($emails_delete_ignored)) {
+          $this->delete_imap_emails($emails_delete_ignored, $imap, $folder);
+        }
+      } else {
         error_log("Error Connecting to " . $this->imap_login['hostname'] . $folder);
         $this->errors[$folder] = imap_last_error();
-        continue;
       }
-      $time = strtotime("now - {$this->mailStore_retention['ignored_retention']} days");
-      $date = date("j-F-Y", $time);
-      $emails_delete_ignored = imap_search($imap, 'BEFORE "' . $date . '"');
-      if (empty($emails_delete_ignored)) {
-        // nothing to do here. Otherwise this will just throw an error.
-        continue;
-      }
-      // TODO: for debug reasons:
-      foreach ($emails_delete_ignored as $email_index) {
-        imap_delete($imap, $email_index);
-        imap_expunge($imap);
-        $this->results[$folder] += 1;
-      }
-    }
 
+    }
     if (empty($this->errors)) {
-      return json_encode($this->results);
+        return json_encode($this->results);
     }
     return (json_encode($this->errors) . json_encode($this->results));
+  }
+
+  /**
+   * Check if retentino is configured. If not, we don't delete anything and return false here
+   * @param $settings
+   * @return bool
+   */
+  private function verify_settings($settings)
+  {
+    return !isset($settings['processed_retention_value']) || $settings['processed_retention_value'] == 0
+      || !isset($settings['ignored_retention_value']) || $settings['ignored_retention_value'] == 0;
+  }
+
+  /**
+   * create the IMAP server port, depending on bounce mailbox config
+   * @param $dao
+   * @return int
+   */
+  private function get_server_port($dao)
+  {
+    if ($dao->port) {
+      return $dao->port;
+    }
+    if ($dao->ssl) {
+      $port = 993;
+    } else {
+      $port = 143;
+    }
+    return $port;
+  }
+
+  /**
+   * generates a suffix depending on bounce mailbox config
+   * @param $dao
+   * @return string
+   */
+  private function create_imap_suffix($dao)
+  {
+    if ($dao->is_ssl) {
+      return "/imap/ssl";
+    } else {
+      return "/imap/novalidate-cert";
+    }
+  }
+
+  /**
+   * generated a retention timestamp
+   * @return false|string
+   */
+  private function create_retention_timestamp()
+  {
+    $time = strtotime("now - {$this->mailStore_retention['ignored_retention']} days");
+    return date("j-F-Y", $time);
+  }
+
+  /**
+   * deletes the emails indexed by the search function on the given imap stream
+   * @param $emails_delete_ignored
+   * @param $imap
+   * @param $folder
+   */
+  private function delete_imap_emails($emails_delete_ignored, $imap, $folder)
+  {
+    foreach ($emails_delete_ignored as $email_index) {
+      imap_delete($imap, $email_index);
+      $this->results[$folder] += 1;
+    }
+    imap_expunge($imap);
   }
 
 
