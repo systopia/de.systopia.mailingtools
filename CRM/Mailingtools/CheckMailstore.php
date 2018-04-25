@@ -50,8 +50,8 @@ class CRM_Mailingtools_CheckMailstore {
     if ($this->verify_settings($settings)) {
       return;
     }
-    $this->mailStore_retention['ignored_retention'] = $settings['ignored_retention_value'];
-    $this->mailStore_retention['processed_retention'] = $settings['processed_retention_value'];
+    $this->mailStore_retention['INBOX.CiviMail.ignored'] = $settings['ignored_retention_value'];
+    $this->mailStore_retention['INBOX.CiviMail.processed'] = $settings['processed_retention_value'];
     $this->retention_configured = TRUE;
   }
 
@@ -110,7 +110,7 @@ class CRM_Mailingtools_CheckMailstore {
       $this->results[$folder] = 0;
       $imap = imap_open($this->imap_login['hostname'] . $folder, $this->imap_login['username'], $this->imap_login['password']);
       if ($imap) {
-        $date = $this->create_retention_timestamp();
+        $date = $this->create_retention_timestamp($folder);
         $emails_delete_ignored = imap_search($imap, 'BEFORE "' . $date . '"');
         if (!empty($emails_delete_ignored)) {
           $this->delete_imap_emails($emails_delete_ignored, $imap, $folder);
@@ -171,12 +171,13 @@ class CRM_Mailingtools_CheckMailstore {
   }
 
   /**
-   * generated a retention timestamp
+   * generate a retention timestamp
+   * @param $folder
    * @return false|string
    */
-  private function create_retention_timestamp()
+  private function create_retention_timestamp($folder)
   {
-    $time = strtotime("now - {$this->mailStore_retention['ignored_retention']} days");
+    $time = strtotime("now - {$this->mailStore_retention[$folder]} days");
     return date("j-F-Y", $time);
   }
 
