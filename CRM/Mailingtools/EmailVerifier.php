@@ -60,6 +60,7 @@ class CRM_Mailingtools_EmailVerifier {
       $this->result_stats['processed'] += 1;
     }
     $this->set_address_index($last_email_id);
+    return $this->result_stats;
   }
 
   /**
@@ -118,15 +119,14 @@ class CRM_Mailingtools_EmailVerifier {
 
   /**
    * get saved email index from Database
-   * (last processed email. Will result in that email being processed twice,
-   * but prevent failures by deleted mails or something like that)
    * @return int
    */
   private function get_address_index() {
     $config = CRM_Mailingtools_Config::singleton();
     $settings = $config->getSettings();
     if (isset($settings['email_verifier_index'])) {
-      return $settings['email_verifier_index'];
+      // add one, since the saved value is last processed email
+      return $settings['email_verifier_index'] += 1;
     }
     return 1;
   }

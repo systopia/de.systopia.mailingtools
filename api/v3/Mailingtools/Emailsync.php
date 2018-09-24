@@ -33,8 +33,8 @@ function civicrm_api3_mailingtools_Emailsync($params) {
   }
 
   $runner = new CRM_Mailingtools_EmailVerifier($params['verify_size'], $params['checking_index'], $params['debug']);
-  $runner->process();
-  return civicrm_api3_create_success(array(), $params, 'NewEntity', 'NewAction');
+  $results = $runner->process();
+  return civicrm_api3_create_success("Number of Emails Processed: {$results['processed']}, Number of Emails deactivated: {$results['on_hold']}");
 
 
 }
