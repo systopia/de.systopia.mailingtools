@@ -33,6 +33,12 @@ class CRM_Mailingtools_EmailVerifier {
 
   public function process() {
     // poll email addresses, and verify
-//    require_once (__DIR__ . '')
+    require_once (__DIR__ . '/../../resources/lib/vendor/voku/email-check/src/voku/helper/EmailCheck.php');
+    $result = \voku\helper\EmailCheck::isValid("batroff@t-onliene.de", FALSE, FALSE, FALSE, TRUE);
+    if ($result) {
+      error_log("RIGHT.");
+    } else {
+      error_log("WRONG.");
+    }
   }
 }

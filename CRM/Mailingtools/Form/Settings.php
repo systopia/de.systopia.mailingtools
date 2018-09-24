@@ -87,6 +87,7 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
    * set the default (=current) values in the form
    */
   public function setDefaultValues() {
+    error_log("obadebug here.");
     $config = CRM_Mailingtools_Config::singleton();
     return $config->getSettings();
   }
