@@ -21,7 +21,10 @@
     <ver>4.7</ver>
     <ver>4.6</ver>
   </compatibility>
-  <comments></comments>
+  <comments>For use of Email Domain Verification a couple of dependencies exist:
+            - PHP >= 7.0
+            - php-intl (idn_to_ascii)
+  </comments>
   <civix>
     <namespace>CRM/Mailingtools</namespace>
   </civix>

@@ -7,13 +7,16 @@ Provides Tools to support Massmailings in CiviCRM. Options are:
 * Add Additional Header to all Mails sent by CiviCRM
 * Introduce a retention Policy (in days) for the Bounce Mailing Mailbox. Can be specified for ignored and processed Folders.
 * Add additional Patterns for Bounce handling. Currently only adds static, pre-configured files (SMTP Error Codes, some German away patterns)
+* Periodically verify Emails for a valid MX record via API command (and subsequently Cron job if needed/wanted)
 
 The extension is licensed under [AGPL-3.0](LICENSE.txt).
 
 ## Requirements
 
 * PHP v5.5+ (better 5.6+)
-* CiviCRM 4.6/4.7
+    * PHP 7.0 for Email MX-Verification
+    * composer voku/email-check
+* CiviCRM 4.7
 
 ## Installation (Web UI)
 
@@ -37,6 +40,8 @@ install it with the command-line tool [cv](https://github.com/civicrm/cv).
 ```bash
 git clone https://github.com/FIXME/de.systopia.mailingtools.git
 cv en mailingtools
+cd resources/lib 
+composer install
 ```
 
 ## Usage
@@ -56,3 +61,5 @@ The API Command is Mailingtools.mailretention - no parameters.
 a retention is added. 
 * Currently the login for the Bounce Mailbox is taken from settings, but might fail sometimes. I am considering 
 to add an additional setting dialogue to manually specify login parameters.
+* Important: For the API Command Mailingtools.emailsync PHP7.0 is needed, and I would advise to patch voku/emailChecker 
+(isdnserror) to only check for valid MX record, see issue [here](https://github.com/voku/email-check/issues/8). 
