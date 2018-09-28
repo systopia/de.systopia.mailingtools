@@ -51,6 +51,7 @@ class CRM_Mailingtools_EmailVerifier {
    */
   public function process() {
     $this->get_email_addresses($this->checking_index);
+    $this->sanatize_emails();
     $last_email_id = $this->checking_index;
     foreach ($this->email_lookup_values as $email_val) {
       if (!$this->check_email($email_val['email'])) {
@@ -61,6 +62,15 @@ class CRM_Mailingtools_EmailVerifier {
     }
     $this->set_address_index($last_email_id);
     return $this->result_stats;
+  }
+
+  /**
+   * trim spaces from email addresses to prevent false positives in mx record lookup
+   */
+  private function sanatize_emails() {
+    foreach ($this->email_lookup_values as &$value) {
+      $value['email'] = trim($value['email']);
+    }
   }
 
   /**
