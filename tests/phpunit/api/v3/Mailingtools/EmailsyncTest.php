@@ -42,7 +42,7 @@ class api_v3_Mailingtools_EmailsyncTest extends \PHPUnit_Framework_TestCase impl
     $this->contact_id = $result['id'];
     // create 6 valid emails
     foreach (range(1, 6) as $number) {
-      $email = "example_{$number}@systopia.de";
+      $email = "example_{$number}@systopia.de ";
       $this->create_email($email);
     }
     // create 4 invalid emails (dns lookup fails)
@@ -102,7 +102,7 @@ class api_v3_Mailingtools_EmailsyncTest extends \PHPUnit_Framework_TestCase impl
     }
     $result = civicrm_api3('Email', 'get', [
       'sequential' => 1,
-      'email' => ['LIKE' => "example_%@systop%.de"],
+      'email' => ['LIKE' => "example_%@systop%.de%"],
     ]);
     if ($result['count'] != 10) {
       throw new Exception("Couldn't Find the appropriate amount of Emails matching the creation pattern. Found {$result['count']} instead of 10");
