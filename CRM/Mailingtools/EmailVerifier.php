@@ -33,8 +33,11 @@ class CRM_Mailingtools_EmailVerifier {
    * @param $verify_size
    * @param $checking_index
    * @param $debug
+   *
+   * @throws \API_Exception
    */
   public function __construct($verify_size, $checking_index, $debug) {
+    $this->check_voku_email_checker_include();
     $this->verify_size = $verify_size;
     $this->debug = $debug;
     if (isset($checking_index)) {
@@ -70,6 +73,15 @@ class CRM_Mailingtools_EmailVerifier {
   private function sanatize_emails() {
     foreach ($this->email_lookup_values as &$value) {
       $value['email'] = trim($value['email']);
+    }
+  }
+
+  /**
+   * @throws \API_Exception
+   */
+  private function check_voku_email_checker_include() {
+    if (!file_exists(__DIR__ . '/../../resources/lib/vendor/voku/email-check/src/voku/helper/EmailCheck.php')) {
+      throw new API_Exception("Didn't find resources/lib/vendor/voku/email-check/src/voku/helper/EmailCheck.php. Please install library via composer (see Readme) in the resources folder");
     }
   }
 
