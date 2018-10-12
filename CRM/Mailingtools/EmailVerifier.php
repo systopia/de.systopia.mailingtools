@@ -56,7 +56,8 @@ class CRM_Mailingtools_EmailVerifier {
     $this->get_email_addresses($this->checking_index);
     $last_email_id = $this->checking_index;
     foreach ($this->email_lookup_values as $email_val) {
-      if (!$this->check_email(trim($email_val['email']))) {
+      // clear spaces and non-breaking spaces
+      if (!$this->check_email(trim($email_val['email'],"\xc2\xa0\x20"))) {
         $this->set_email_on_hold($email_val['id'], $email_val['email']);
       }
       $last_email_id = $email_val['id'];
