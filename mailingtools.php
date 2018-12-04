@@ -126,17 +126,6 @@ function mailingtools_civicrm_alterSettingsFolders(&$metaDataFolders = NULL) {
 }
 
 /**
- * Implements hook_civicrm_entityTypes().
- *
- * Declare entity types provided by this module.
- *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_entityTypes
- */
-//function mailingtools_civicrm_entityTypes(&$entityTypes) {
-//  _mailingtools_civix_civicrm_entityTypes($entityTypes);
-//}
-
-/**
  * Implementes hook_civicrm_alterMailParams
  *
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_alterMailParams/
@@ -148,30 +137,13 @@ function mailingtools_civicrm_alterMailParams(&$params, $context) {
   CRM_Mailingtools_InjectHeader::inject_header($params, $context);
 }
 
-// --- Functions below this ship commented out. Uncomment as required. ---
-
 /**
- * Implements hook_civicrm_preProcess().
- *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_preProcess
- *
-function mailingtools_civicrm_preProcess($formName, &$form) {
-
-} // */
-
-/**
- * Implements hook_civicrm_navigationMenu().
- *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_navigationMenu
- *
-function mailingtools_civicrm_navigationMenu(&$menu) {
-  _mailingtools_civix_insert_navigation_menu($menu, 'Mailings', array(
-    'label' => E::ts('New subliminal message'),
-    'name' => 'mailing_subliminal_message',
-    'url' => 'civicrm/mailing/subliminal',
-    'permission' => 'access CiviMail',
-    'operator' => 'OR',
-    'separator' => 0,
-  ));
-  _mailingtools_civix_navigationMenu($menu);
-} // */
+ * We will provide our own Mailer (wrapping the original one).
+ * so we can manipulate the content of outgoing emails
+ */
+function mailingtools_civicrm_alterMailer(&$mailer, $driver, $params) {
+  $needed = CRM_Mailingtools_Mailer::isNeeded();
+  if ($needed) {
+    $mailer = new CRM_Mailingtools_Mailer($mailer);
+  }
+}
