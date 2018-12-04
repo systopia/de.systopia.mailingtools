@@ -70,9 +70,12 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
         'text',
         'anonymous_open_url',
         E::ts('URL Endpoint'),
-        array("class" => "huge"),
+        ['class' => 'huge'],
         FALSE
     );
+    // generate example URL
+    $example_url = CRM_Utils_System::url('sites/all/modules/civicrm/extern/anonopen.php', NULL, TRUE);
+    $this->assign('anonymous_open_url_example', E::ts("e.g.: <code>%1</code>", [1 => $example_url]));
 
     $this->add(
         'select',

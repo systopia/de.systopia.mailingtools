@@ -22,7 +22,8 @@
 {htxt id="id-mailtools-anonymous-url"}
   <p>{ts domain="de.systopia.mailingtools"}Set the URL to be used for the tracking link.{/ts}</p>
   <p>{ts domain="de.systopia.mailingtools"}It will be extended by the parameter <code>mid=XXX</code> to pass the mailing ID.{/ts}</p>
-  <p>{ts domain="de.systopia.mailingtools"}Without this, the anonymous open tracking feature will not work{/ts}</p>
+  <p>{ts domain="de.systopia.mailingtools"}For the example URL to work, you have to manually copy the file <code>de.systopia.mailingtools/extern/anonopen.php</code> to <code>civicrm/extern/anonopen.php</code>.{/ts}</p>
+  <p>{ts domain="de.systopia.mailingtools"}With this setting empty, the anonymous open tracking feature will not work{/ts}</p>
 {/htxt}
 
 {htxt id="id-mailtools-anonymous-permission"}

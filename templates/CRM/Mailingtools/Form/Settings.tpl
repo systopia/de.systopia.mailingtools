@@ -35,7 +35,7 @@
 
   <div class="crm-section">
     <div class="label">{$form.anonymous_open_url.label} <a onclick='CRM.help("{ts domain='de.systopia.mailingtools'}Anonymous Open URL{/ts}", {literal}{"id":"id-mailtools-anonymous-url","file":"CRM\/Mailingtools\/Form\/Settings"}{/literal}); return false;' href="#" title="{ts domain='de.systopia.mailingtools'}Help{/ts}" class="helpicon">&nbsp;</a></div>
-    <div class="content">{$form.anonymous_open_url.html}</div>
+    <div class="content">{$form.anonymous_open_url.html}<br/><span>{$anonymous_open_url_example}</span></div>
     <div class="clear"></div>
   </div>
 
