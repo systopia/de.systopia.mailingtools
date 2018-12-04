@@ -23,6 +23,9 @@ use CRM_Mailingtools_ExtensionUtil as E;
 class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
   public function buildQuickForm() {
 
+    $config = CRM_Mailingtools_Config::singleton();
+    $current_values = $config->getSettings();
+
     // add form elements
     $this->add(
       'text',
@@ -83,10 +86,14 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
         'text',
         'anonymous_open_contact_id',
         E::ts('Anonymous Contact ID'),
+        ["style" => "width: 50px;"],
         FALSE
     );
+    // load contact
+    $this->renderContact($current_values);
 
-
+    // set default values
+    $this->setDefaults($current_values);
 
     // submit
     $this->addButtons(array(
@@ -99,6 +106,31 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
 
     // export form elements
     parent::buildQuickForm();
+  }
+
+  /**
+   * Render the current anonymous_open_contact_id value
+   *
+   * @param $data
+   * @throws CiviCRM_API3_Exception
+   */
+  protected function renderContact($data) {
+    if (!empty($data['anonymous_open_contact_id'])) {
+      $contact_id = (int) $data['anonymous_open_contact_id'];
+      if ($contact_id) {
+        $result = civicrm_api3('Contact', 'get', ['id' => $contact_id, 'return' => 'display_name,contact_type']);
+        if (!empty($result['id'])) {
+          $contact = reset($result['values']);
+          $this->assign('anonymous_open_contact_name', "{$contact['display_name']} ({$contact['contact_type']})");
+        } else {
+          $this->assign('anonymous_open_contact_name', E::ts("Contact [%1] not found!", [1 => $contact_id]));
+        }
+      } else {
+        $this->assign('anonymous_open_contact_name', E::ts("Bad contact ID: '%1'", [1 => $data['anonymous_open_contact_id']]));
+      }
+    } else {
+      $this->assign('anonymous_open_contact_name', E::ts("disabled"));
+    }
   }
 
   /**
@@ -120,14 +152,6 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
   }
 
   /**
-   * set the default (=current) values in the form
-   */
-  public function setDefaultValues() {
-    $config = CRM_Mailingtools_Config::singleton();
-    return $config->getSettings();
-  }
-
-  /**
    * Post process input values and save them to DB
    */
   public function postProcess() {
@@ -140,7 +164,8 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
     }
     $config->setSettings($settings);
 
-
+    // re-render new value
+    $this->renderContact($values);
 
     parent::postProcess();
   }

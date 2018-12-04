@@ -47,7 +47,7 @@
 
   <div class="crm-section">
     <div class="label">{$form.anonymous_open_contact_id.label} <a onclick='CRM.help("{ts domain='de.systopia.mailingtools'}Anonymous Contact ID{/ts}", {literal}{"id":"id-mailtools-anonymous-contact-id","file":"CRM\/Mailingtools\/Form\/Settings"}{/literal}); return false;' href="#" title="{ts domain='de.systopia.mailingtools'}Help{/ts}" class="helpicon">&nbsp;</a></div>
-    <div class="content">{$form.anonymous_open_contact_id.html}</div>
+    <div class="content">{$form.anonymous_open_contact_id.html} <span id="anonymous_open_contact_name">{$anonymous_open_contact_name}</span></div>
     <div class="clear"></div>
   </div>
 
