@@ -1,0 +1,36 @@
+{*-------------------------------------------------------+
+| SYSTOPIA MailingTools Extension                        |
+| Copyright (C) 2018 SYSTOPIA                            |
+| Author: B. Endres (endres@systopia.de)                 |
++--------------------------------------------------------+
+| This program is released as free software under the    |
+| Affero GPL license. You can redistribute it and/or     |
+| modify it under the terms of this license which you    |
+| can read by viewing the included agpl.txt or online    |
+| at www.gnu.org/licenses/agpl.html. Removal of this     |
+| copyright header is strictly prohibited without        |
+| written permission from the original author(s).        |
++-------------------------------------------------------*}
+
+
+{htxt id="id-mailtools-anonymous-enable"}
+  <p>{ts domain="de.systopia.mailingtools"}If your mailing uses open rate tracking, it uses personalised links to an invisible 1-pixel image. Often, this does not comply with your data protection policy.{/ts}</p>
+  <p>{ts domain="de.systopia.mailingtools"}If you enable this feature, the personalised link gets replaced with an anonymous one, allowing you to anonymously track the opening rates, all "open" events will be assigned to the same contact.{/ts}</p>
+  <p>{ts domain="de.systopia.mailingtools"}Obviously then you do not get individual open rates.{/ts}</p>
+{/htxt}
+
+{htxt id="id-mailtools-anonymous-url"}
+  <p>{ts domain="de.systopia.mailingtools"}Set the URL to be used for the tracking link.{/ts}</p>
+  <p>{ts domain="de.systopia.mailingtools"}It will be extended by the parameter <code>mid=XXX</code> to pass the mailing ID.{/ts}</p>
+  <p>{ts domain="de.systopia.mailingtools"}Without this, the anonymous open tracking feature will not work{/ts}</p>
+{/htxt}
+
+{htxt id="id-mailtools-anonymous-permission"}
+  <p>{ts domain="de.systopia.mailingtools"}Define the permission to be used for the <code>Mailingtools.anonopen</code> API command.{/ts}</p>
+  <p>{ts domain="de.systopia.mailingtools"}Remark: Depending on the URL, the API might not be used at all.{/ts}</p>
+{/htxt}
+
+{htxt id="id-mailtools-anonymous-contact-id"}
+  <p>{ts domain="de.systopia.mailingtools"}You can define a contact ID to be used as a <i>the</i> anonymous contact.{/ts}</p>
+  <p>{ts domain="de.systopia.mailingtools"}If you don't do that, the contact with the smallest ID will be used in any tracked mailing.{/ts}</p>
+{/htxt}

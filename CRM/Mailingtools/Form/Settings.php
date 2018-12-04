@@ -56,11 +56,43 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
       FALSE
     );
 
+    // anonymous mailing stuff
+    $this->add(
+        'checkbox',
+        'anonymous_open_enabled',
+        E::ts('Enabled')
+    );
+
+    $this->add(
+        'text',
+        'anonymous_open_url',
+        E::ts('URL Endpoint'),
+        array("class" => "huge"),
+        FALSE
+    );
+
+    $this->add(
+        'select',
+        'anonymous_open_permission',
+        E::ts('API Permission'),
+        CRM_Core_Permission::basicPermissions(TRUE),
+        FALSE
+    );
+
+    $this->add(
+        'text',
+        'anonymous_open_contact_id',
+        E::ts('Anonymous Contact ID'),
+        FALSE
+    );
+
+
+
     // submit
     $this->addButtons(array(
       array(
         'type' => 'submit',
-        'name' => E::ts('Submit'),
+        'name' => E::ts('Save'),
         'isDefault' => TRUE,
       ),
     ));
@@ -80,6 +112,10 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
       'extra_mail_header_value',
       'processed_retention_value',
       'ignored_retention_value',
+      'anonymous_open_enabled',
+      'anonymous_open_url',
+      'anonymous_open_permission',
+      'anonymous_open_contact_id',
     );
   }
 
@@ -100,9 +136,7 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
     $settings = $config->getSettings();
     $settings_in_form = $this->getSettingsInForm();
     foreach ($settings_in_form as $name) {
-      if (isset($values[$name])) {
-        $settings[$name] = $values[$name];
-      }
+      $settings[$name] = CRM_Utils_Array::value($name, $values, NULL);
     }
     $config->setSettings($settings);
 
