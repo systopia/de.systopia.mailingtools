@@ -147,3 +147,18 @@ function mailingtools_civicrm_alterMailer(&$mailer, $driver, $params) {
     $mailer = new CRM_Mailingtools_Mailer($mailer);
   }
 }
+
+/**
+ * Set permissions for API calls
+ */
+function mailingtools_civicrm_alterAPIPermissions($entity, $action, &$params, &$permissions) {
+  if ($entity == 'mailingtools' && $action == 'anonopen') {
+    $config = CRM_Mailingtools_Config::singleton();
+    $anonopen_permission = $config->getSetting('anonymous_open_permission');
+    if ($anonopen_permission) {
+      $permissions['mailingtools']['anonopen'] = array($anonopen_permission);
+    } else {
+      $permissions['mailingtools']['anonopen'] = array('access CiviCRM');
+    }
+  }
+}

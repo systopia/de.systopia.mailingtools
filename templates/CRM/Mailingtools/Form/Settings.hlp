@@ -20,9 +20,12 @@
 {/htxt}
 
 {htxt id="id-mailtools-anonymous-url"}
-  <p>{ts domain="de.systopia.mailingtools"}Set the URL to be used for the tracking link.{/ts}</p>
-  <p>{ts domain="de.systopia.mailingtools"}It will be extended by the parameter <code>mid=XXX</code> to pass the mailing ID.{/ts}</p>
-  <p>{ts domain="de.systopia.mailingtools"}For the example URL to work, you have to manually copy the file <code>de.systopia.mailingtools/extern/anonopen.php</code> to <code>civicrm/extern/anonopen.php</code>.{/ts}</p>
+  <p>{ts domain="de.systopia.mailingtools"}Set the URL to be used for the tracking link. It will automatically be extended by "<code>?mid=XXX</code>" to pass the mailing ID.{/ts}</p>
+  <ul>
+    <li>{ts domain="de.systopia.mailingtools"}If you want to use this locally, you'd want to manually copy the file <code>extern/anonopen.php.civicrm</code> in this extension to <code>civicrm/extern/anonopen.php</code> in the civicrm module. Then you can use the URL <code>[CIVICRM_UF_BASEURL]/sites/all/modules/civicrm/extern/anonopen.php</code> here.{/ts}</li>
+    <li>{ts domain="de.systopia.mailingtools"}If you're using CiviProxy, you'd want to manually copy the file <code>extern/anonopen.php.civiproxy</code> in this extension to <code>anonopen.php</code> in the CiviProxy root folder. Then you can use the URL <code>[PROXY_BASEURL]/anonopen.php</code> here.{/ts}</li>
+    <li>{ts domain="de.systopia.mailingtools"}Obviously, you can link to your own script as well.{/ts}</li>
+  </ul>
   <p>{ts domain="de.systopia.mailingtools"}With this setting empty, the anonymous open tracking feature will not work{/ts}</p>
 {/htxt}
 

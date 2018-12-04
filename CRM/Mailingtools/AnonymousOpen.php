@@ -93,6 +93,8 @@ class CRM_Mailingtools_AnonymousOpen {
         INSERT INTO civicrm_mailing_event_opened (event_queue_id, time_stamp)
         VALUES (%1, NOW())", [
             1 => [$event_queue_id, 'Integer']]);
+
+    return $event_queue_id;
   }
 
   /**
