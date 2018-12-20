@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <extension key="de.systopia.mailingtools" type="module">
   <file>mailingtools</file>
-  <name>SYSTOPIA Mailingtools</name>
+  <name>Mailing Tools</name>
   <description>Tools supporting mass mailing</description>
   <license>AGPL-3.0</license>
   <maintainer>
