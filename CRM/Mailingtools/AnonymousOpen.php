@@ -57,9 +57,14 @@ class CRM_Mailingtools_AnonymousOpen {
           AND job.mailing_id = %2", [
               1 => [$preferred_contact_id, 'Integer'],
               2 => [$mid,                  'Integer']]);
+
+      // check if this worked...
+      if (empty($event_queue_id)) {
+        $event_queue_id = self::injectQueueItem($mid, $preferred_contact_id);
+      }
     }
 
-    // SECOND: take the smallest contact ID
+    // PLAN B: take the smallest contact ID
     if (empty($event_queue_id)) {
       $contact_id = CRM_Core_DAO::singleValueQuery("
         SELECT MIN(contact_id)
@@ -158,5 +163,47 @@ class CRM_Mailingtools_AnonymousOpen {
     }
 
     return $queue_id_to_mailing_id;
+  }
+
+
+  /**
+   * Create a new (fake) queue item for the given contact
+   *
+   * @param $mid         int mailing ID
+   * @param $contact_id  int contact ID
+   *
+   * @return int queue item id
+   */
+  public static function injectQueueItem($mid, $contact_id) {
+    // first: select a job
+    $job_id = CRM_Core_DAO::singleValueQuery("
+          SELECT MIN(job.id)
+          FROM civicrm_mailing_job job
+          WHERE job.mailing_id = %1", [
+        1 => [$mid,                  'Integer']]);
+
+    if (!$job_id) {
+      CRM_Core_Error::debug_log_message("AnonymousOpen: No job found for mailing [{$mid}]");
+      return NULL;
+    }
+
+    // create item for the given job
+    $hash = substr(sha1(random_bytes(16)), 0, 16);
+    CRM_Core_DAO::executeQuery("
+      INSERT IGNORE INTO civicrm_mailing_event_queue (job_id, contact_id, hash)
+      VALUES (%1, %2, %3)", [
+        1 => [$job_id, 'Integer'],
+        2 => [$contact_id, 'Integer'],
+        3 => [$hash, 'String']]);
+
+    // now the following query should return the new ID
+    return CRM_Core_DAO::singleValueQuery("
+        SELECT queue.id
+        FROM civicrm_mailing_event_queue queue
+        LEFT JOIN civicrm_mailing_job    job   ON queue.job_id = job.id
+        WHERE queue.contact_id = %1
+          AND job.mailing_id = %2", [
+        1 => [$contact_id, 'Integer'],
+        2 => [$mid,        'Integer']]);
   }
 }
