@@ -43,11 +43,39 @@ class CRM_Mailingtools_AnonymousOpen {
       throw new Exception("Invalid mailing ID");
     }
 
-    // NOW: find the event queue ID
-    $event_queue_id = NULL;
+    // get a matching event queue ID
+    $event_queue_id = self::getEventQueueID($mid, 'anonymous_open_contact_id');
+
+    // ERROR: if this is not set yet, something is wrong.
+    if (empty($event_queue_id)) {
+      throw new Exception("No found event in queue for mailing [{$mid}]");
+    }
+
+    // all good: add entry
+    CRM_Core_Error::debug_log_message("Tracked anonymous open event for mailing [{$mid}]");
+    CRM_Core_DAO::executeQuery("
+        INSERT INTO civicrm_mailing_event_opened (event_queue_id, time_stamp)
+        VALUES (%1, NOW())", [
+            1 => [$event_queue_id, 'Integer']]);
+
+    return $event_queue_id;
+  }
+
+
+
+  /**
+   * Get (or create) an event queue ID for the given
+   * @param integer $mid                      mailing ID
+   * @param string  $default_contact_setting  setting that yields the default contact ID
+   *
+   * @return integer|null event queue ID
+   * @throws Exception if anything went wrong
+   */
+  public static function getEventQueueID($mid, $default_contact_setting = NULL) {
+    $config = CRM_Mailingtools_Config::singleton();
 
     // FIRST: try by preferred contact
-    $preferred_contact_id = (int) $config->getSetting('anonymous_open_contact_id');
+    $preferred_contact_id = (int) $config->getSetting($default_contact_setting);
     if ($preferred_contact_id) {
       $event_queue_id = CRM_Core_DAO::singleValueQuery("
         SELECT queue.id
@@ -55,8 +83,8 @@ class CRM_Mailingtools_AnonymousOpen {
         LEFT JOIN civicrm_mailing_job    job   ON queue.job_id = job.id
         WHERE queue.contact_id = %1
           AND job.mailing_id = %2", [
-              1 => [$preferred_contact_id, 'Integer'],
-              2 => [$mid,                  'Integer']]);
+          1 => [$preferred_contact_id, 'Integer'],
+          2 => [$mid,                  'Integer']]);
 
       // check if this worked...
       if (empty($event_queue_id)) {
@@ -87,20 +115,9 @@ class CRM_Mailingtools_AnonymousOpen {
       }
     }
 
-    // ERROR: if this is not set yet, something is wrong.
-    if (empty($event_queue_id)) {
-      throw new Exception("No found event in queue for mailing [{$mid}]");
-    }
-
-    // all good: add entry
-    CRM_Core_Error::debug_log_message("Tracked anonymous open event for mailing [{$mid}]");
-    CRM_Core_DAO::executeQuery("
-        INSERT INTO civicrm_mailing_event_opened (event_queue_id, time_stamp)
-        VALUES (%1, NOW())", [
-            1 => [$event_queue_id, 'Integer']]);
-
     return $event_queue_id;
   }
+
 
   /**
    * This function will manipulate open tracker URLs in emails, so they point

@@ -19,7 +19,7 @@
 class CRM_Mailingtools_Mailer {
 
   /**
-   * this is the orginal, wrapped mailer
+   * this is the original, wrapped mailer
    */
   protected $mailer = NULL;
 
@@ -28,8 +28,8 @@ class CRM_Mailingtools_Mailer {
    */
   public static function isNeeded() {
     $config = CRM_Mailingtools_Config::singleton();
-    return   $config->getSetting('anonymous_open_enabled')
-        && $config->getSetting('anonymous_open_url');
+    return  ($config->getSetting('anonymous_open_enabled') && $config->getSetting('anonymous_open_url'))
+         || ($config->getSetting('anonymous_link_enabled') && $config->getSetting('anonymous_link_url'));
   }
 
   /**
@@ -45,6 +45,7 @@ class CRM_Mailingtools_Mailer {
    */
   function send($recipients, $headers, $body) {
     CRM_Mailingtools_AnonymousOpen::modifyEmailBody($body);
+    CRM_Mailingtools_AnonymousURL::modifyEmailBody($body);
     $this->mailer->send($recipients, $headers, $body);
   }
 }

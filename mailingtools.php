@@ -160,5 +160,14 @@ function mailingtools_civicrm_alterAPIPermissions($entity, $action, &$params, &$
     } else {
       $permissions['mailingtools']['anonopen'] = array('access CiviCRM');
     }
+
+  } elseif ($entity == 'mailingtools' && $action == 'anonurl') {
+    $config = CRM_Mailingtools_Config::singleton();
+    $anonurl_permission = $config->getSetting('anonymous_link_permission');
+    if ($anonurl_permission) {
+      $permissions['mailingtools']['anonurl'] = array($anonurl_permission);
+    } else {
+      $permissions['mailingtools']['anonurl'] = array('access CiviCRM');
+    }
   }
 }

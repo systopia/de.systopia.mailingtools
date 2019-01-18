@@ -59,7 +59,7 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
       FALSE
     );
 
-    // anonymous mailing stuff
+    // ANONYMOUS open mailing stuff
     $this->add(
         'checkbox',
         'anonymous_open_enabled',
@@ -89,8 +89,42 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
         ["style" => "width: 50px;"],
         FALSE
     );
-    // load contact
-    $this->renderContact($current_values);
+
+    $this->renderContact($current_values, 'open');
+
+    // ANONYMOUS link tracking stuff
+    $this->add(
+        'checkbox',
+        'anonymous_link_enabled',
+        E::ts('Enabled')
+    );
+
+    $this->add(
+        'text',
+        'anonymous_link_url',
+        E::ts('URL Endpoint'),
+        ['class' => 'huge'],
+        FALSE
+    );
+
+    $this->add(
+        'select',
+        'anonymous_link_permission',
+        E::ts('API Permission'),
+        CRM_Core_Permission::basicPermissions(TRUE),
+        FALSE
+    );
+
+    $this->add(
+        'text',
+        'anonymous_link_contact_id',
+        E::ts('Anonymous Contact ID'),
+        ["style" => "width: 50px;"],
+        FALSE
+    );
+
+    // load contacts
+    $this->renderContact($current_values, 'link');
 
     // set default values
     $this->setDefaults($current_values);
@@ -98,9 +132,9 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
     // submit
     $this->addButtons(array(
       array(
-        'type' => 'submit',
-        'name' => E::ts('Save'),
-        'isDefault' => TRUE,
+          'type'      => 'submit',
+          'name'      => E::ts('Save'),
+          'isDefault' => TRUE,
       ),
     ));
 
@@ -111,25 +145,26 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
   /**
    * Render the current anonymous_open_contact_id value
    *
-   * @param $data
+   * @param $data array  data
+   * @param $key  string key (open|link)
    * @throws CiviCRM_API3_Exception
    */
-  protected function renderContact($data) {
-    if (!empty($data['anonymous_open_contact_id'])) {
-      $contact_id = (int) $data['anonymous_open_contact_id'];
+  protected function renderContact($data, $key) {
+    if (!empty($data["anonymous_{$key}_contact_id"])) {
+      $contact_id = (int) CRM_Utils_Array::value("anonymous_{$key}_contact_id", $data, 0);
       if ($contact_id) {
         $result = civicrm_api3('Contact', 'get', ['id' => $contact_id, 'return' => 'display_name,contact_type']);
         if (!empty($result['id'])) {
           $contact = reset($result['values']);
-          $this->assign('anonymous_open_contact_name', "{$contact['display_name']} ({$contact['contact_type']})");
+          $this->assign("anonymous_{$key}_contact_name", "{$contact['display_name']} ({$contact['contact_type']})");
         } else {
-          $this->assign('anonymous_open_contact_name', E::ts("Contact [%1] not found!", [1 => $contact_id]));
+          $this->assign("anonymous_{$key}_contact_name", E::ts("Contact [%1] not found!", [1 => $contact_id]));
         }
       } else {
-        $this->assign('anonymous_open_contact_name', E::ts("Bad contact ID: '%1'", [1 => $data['anonymous_open_contact_id']]));
+        $this->assign("anonymous_{$key}_contact_name", E::ts("Bad contact ID: '%1'", [1 => CRM_Utils_Array::value("anonymous_{$key}_contact_id", $data, '')]));
       }
     } else {
-      $this->assign('anonymous_open_contact_name', E::ts("disabled"));
+      $this->assign("anonymous_{$key}_contact_name", E::ts("disabled"));
     }
   }
 
@@ -148,6 +183,10 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
       'anonymous_open_url',
       'anonymous_open_permission',
       'anonymous_open_contact_id',
+      'anonymous_link_enabled',
+      'anonymous_link_url',
+      'anonymous_link_permission',
+      'anonymous_link_contact_id',
     );
   }
 
@@ -165,7 +204,8 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
     $config->setSettings($settings);
 
     // re-render new value
-    $this->renderContact($values);
+    $this->renderContact($values, 'open');
+    $this->renderContact($values, 'link');
 
     parent::postProcess();
   }

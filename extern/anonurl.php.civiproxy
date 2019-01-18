@@ -1,7 +1,7 @@
 <?php
 /*-------------------------------------------------------+
 | SYSTOPIA Mailingtools Extension                        |
-| Copyright (C) 2018 SYSTOPIA                            |
+| Copyright (C) 2019 SYSTOPIA                            |
 | Author: B. Endres (endres@systopia.de)                 |
 +--------------------------------------------------------+
 | This program is released as free software under the    |
@@ -16,39 +16,38 @@
 ini_set('include_path', dirname(dirname(__FILE__)));
 require_once "proxy.php";
 
-// see if mail open tracking is enabled
+// see if mail click tracking is enabled
 if (!$mail_subscription_user_key) civiproxy_http_error("Feature disabled", 405);
 
 // basic check
-civiproxy_security_check('mail-anonymous-open');
+civiproxy_security_check('mail-anonymous-link');
 
 // basic restraints
-$valid_parameters = array('mid' => 'int');
+$valid_parameters = array('u' => 'int');
 $parameters = civiproxy_get_parameters($valid_parameters);
 
 // check if parameters specified
-if (empty($parameters['mid'])) civiproxy_http_error("Missing/invalid parameter 'mid'.");
+if (empty($parameters['u'])) civiproxy_http_error("Missing/invalid parameter 'u'.");
 
-// PERFORM Mailingtools.anonopen
+// PERFORM Mailingtools.anonurl
 try {
-  civicrm_api3('Mailingtools', 'anonopen', array(
-      'mid'     => $parameters['mid'],
+  $url_result = civicrm_api3('Mailingtools', 'anonurl', array(
+      'u'       => $parameters['u'],
       'api_key' => $mail_subscription_user_key));
+
+  // redirect user to the given URL
+  $target_url = reset($url_result['values']);
+  civiproxy_redirect($target_url, []);
+
 } catch(Exception $ex) {
   // something's wrong:
   if (function_exists('civiproxy_log')) {
-    civiproxy_log("Couldn't call Mailingtools.anonopen with mid={$parameters['mid']}");
+    civiproxy_log("Couldn't call Mailingtools.anonurl with u={$parameters['u']}");
   } else {
-    error_log("Couldn't call Mailingtools.anonopen with mid={$parameters['mid']}");
+    error_log("Couldn't call Mailingtools.anonurl with u={$parameters['u']}");
   }
 }
 
-// FINALLY: WRITE image file
-header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
-header('Content-Description: File Transfer');
-header('Content-type: image/gif');
-header('Content-Length: 49');
-header('Content-Disposition: inline; filename=tracker.gif');
-print(base64_decode("R0lGODlhAQABAKEBAAAAAP///////////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="));
+
 
 ?>

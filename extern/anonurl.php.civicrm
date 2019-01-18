@@ -1,7 +1,7 @@
 <?php
 /*-------------------------------------------------------+
 | SYSTOPIA Mailingtools Extension                        |
-| Copyright (C) 2018 SYSTOPIA                            |
+| Copyright (C) 2019 SYSTOPIA                            |
 | Author: B. Endres (endres@systopia.de)                 |
 +--------------------------------------------------------+
 | This program is released as free software under the    |
@@ -18,24 +18,20 @@ require_once 'CRM/Core/Config.php';
 require_once 'CRM/Core/Error.php';
 require_once 'CRM/Utils/Array.php';
 
-$config = CRM_Core_Config::singleton();
-$mid = (int) CRM_Utils_Array::value('mid', $_GET);
-
-// register open event
-$config = CRM_Core_Config::singleton();
-require_once 'CRM/Mailingtools/AnonymousOpen.php';
-if ($mid) {
-  CRM_Mailingtools_AnonymousOpen::processAnonymousOpenEvent($mid);
+$link_id = (int) CRM_Utils_Array::value('u', $_GET);
+if (!$link_id) {
+  echo "Missing input parameters\n";
+  exit();
 }
 
-// return tracker gif
-$filename = "../i/tracker.gif";
+// register open event and retrieve URL
+$config = CRM_Core_Config::singleton();
+require_once 'CRM/Mailingtools/AnonymousURL.php';
+$url = CRM_Mailingtools_AnonymousURL::processAnonymousClickEvent($link_id);
 
-header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
-header('Content-Description: File Transfer');
-header('Content-type: image/gif');
-header('Content-Length: ' . filesize($filename));
-header('Content-Disposition: inline; filename=tracker.gif');
-readfile($filename);
+// CRM-18320 - Fix encoded ampersands (see CRM_Utils_System::redirect)
+$url = str_replace('&amp;', '&', $url);
 
-exit();
+// CRM-17953 - The CMS is not bootstrapped so cannot use CRM_Utils_System::redirect
+header('Location: ' . $url);
+CRM_Utils_System::civiExit();
