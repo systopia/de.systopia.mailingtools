@@ -36,8 +36,26 @@ try {
       'api_key' => $mail_subscription_user_key));
 
   // redirect user to the given URL
-  $target_url = reset($url_result['values']);
-  civiproxy_redirect($target_url, []);
+  if (!empty($url_result['is_error'])) {
+    // this is an error
+    if (!empty($url_result['error_message'])) {
+      civiproxy_http_error($url_result['error_message']);
+    } else {
+      civiproxy_http_error("Bad Link");
+    }
+  }
+
+  if (!empty($url_result['id'])) {
+    $link_id = $url_result['id'];
+    if (!empty($url_result['values'][$link_id])) {
+      $target_url = $url_result['values'][$link_id];
+
+      // issue a redirect
+      $target_url = str_replace('&amp;', '&', $target_url);
+      header('Location: ' . $target_url);
+      exit();
+    }
+  }
 
 } catch(Exception $ex) {
   // something's wrong:
@@ -48,6 +66,7 @@ try {
   }
 }
 
-
+// we shouldn't get here, but:
+civiproxy_http_error("Unknown Error");
 
 ?>
