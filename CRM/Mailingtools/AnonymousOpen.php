@@ -192,20 +192,31 @@ class CRM_Mailingtools_AnonymousOpen {
    * @return int queue item id
    */
   public static function injectQueueItem($mid, $contact_id) {
-    // first: select a job
+    // first: select a job (preferrably: not test)
     $job_id = CRM_Core_DAO::singleValueQuery("
           SELECT MIN(job.id)
           FROM civicrm_mailing_job job
+          WHERE job.mailing_id = %1
+            AND is_test = 0", [
+        1 => [$mid, 'Integer']]);
+    if (!$job_id) {
+      $job_id = CRM_Core_DAO::singleValueQuery("
+          SELECT MIN(job.id)
+          FROM civicrm_mailing_job job
           WHERE job.mailing_id = %1", [
-        1 => [$mid,                  'Integer']]);
-
+          1 => [$mid, 'Integer']]);
+    }
     if (!$job_id) {
       CRM_Core_Error::debug_log_message("AnonymousOpen: No job found for mailing [{$mid}]");
       return NULL;
     }
 
     // create item for the given job
-    $hash = substr(sha1(random_bytes(16)), 0, 16);
+    if (function_exists('random_bytes')) {
+      $hash = substr(sha1(random_bytes(16)), 0, 16);
+    } else {
+      $hash = substr(sha1(rand(0, PHP_INT_MAX)), 0, 16);
+    }
     CRM_Core_DAO::executeQuery("
       INSERT IGNORE INTO civicrm_mailing_event_queue (job_id, contact_id, hash)
       VALUES (%1, %2, %3)", [
