@@ -1,6 +1,6 @@
-# de.systopia.mailingtools
+# Mailing Tools
 
-![Screenshot](/images/screenshot.png)
+![Screenshot](img/screenshot.png)
 
 Provides Tools to support Massmailings in CiviCRM. Options are:
 
