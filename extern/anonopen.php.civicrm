@@ -1,0 +1,41 @@
+<?php
+/*-------------------------------------------------------+
+| SYSTOPIA Mailingtools Extension                        |
+| Copyright (C) 2018 SYSTOPIA                            |
+| Author: B. Endres (endres@systopia.de)                 |
++--------------------------------------------------------+
+| This program is released as free software under the    |
+| Affero GPL license. You can redistribute it and/or     |
+| modify it under the terms of this license which you    |
+| can read by viewing the included agpl.txt or online    |
+| at www.gnu.org/licenses/agpl.html. Removal of this     |
+| copyright header is strictly prohibited without        |
+| written permission from the original author(s).        |
++--------------------------------------------------------*/
+
+require_once '../civicrm.config.php';
+require_once 'CRM/Core/Config.php';
+require_once 'CRM/Core/Error.php';
+require_once 'CRM/Utils/Array.php';
+
+$config = CRM_Core_Config::singleton();
+$mid = (int) CRM_Utils_Array::value('mid', $_GET);
+
+// register open event
+$config = CRM_Core_Config::singleton();
+require_once 'CRM/Mailingtools/AnonymousOpen.php';
+if ($mid) {
+  CRM_Mailingtools_AnonymousOpen::processAnonymousOpenEvent($mid);
+}
+
+// return tracker gif
+$filename = "../i/tracker.gif";
+
+header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+header('Content-Description: File Transfer');
+header('Content-type: image/gif');
+header('Content-Length: ' . filesize($filename));
+header('Content-Disposition: inline; filename=tracker.gif');
+readfile($filename);
+
+exit();

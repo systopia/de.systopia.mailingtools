@@ -1,4 +1,18 @@
 <?php
+/*-------------------------------------------------------+
+| SYSTOPIA Mailingtools Extension                        |
+| Copyright (C) 2018 SYSTOPIA                            |
+| Author: P. Batroff (batroff@systopia.de)               |
++--------------------------------------------------------+
+| This program is released as free software under the    |
+| Affero GPL license. You can redistribute it and/or     |
+| modify it under the terms of this license which you    |
+| can read by viewing the included agpl.txt or online    |
+| at www.gnu.org/licenses/agpl.html. Removal of this     |
+| copyright header is strictly prohibited without        |
+| written permission from the original author(s).        |
++--------------------------------------------------------*/
+
 use CRM_Mailingtools_ExtensionUtil as E;
 
 /**
@@ -10,12 +24,12 @@ use CRM_Mailingtools_ExtensionUtil as E;
  * @see http://wiki.civicrm.org/confluence/display/CRMDOC/API+Architecture+Standards
  */
 function _civicrm_api3_mailingtools_Emailsync_spec(&$spec) {
-  $spec['verify_size']['api.default'] = 1000;
-  $spec['verify_size']['api.description'] = "The number of emails verified.";
-  $spec['checking_index']['api.default'] = NULL;
+  $spec['verify_size']['api.default']        = 1000;
+  $spec['verify_size']['api.description']    = "The number of emails verified.";
+  $spec['checking_index']['api.default']     = NULL;
   $spec['checking_index']['api.description'] = "Uses an email identifier to start checking from there. Id from civicrm_email table is used.";
-  $spec['debug']['api.default'] = FALSE;
-  $spec['debug']['api.description'] = "Writes errors of each lookup to CiviCRM log.";
+  $spec['debug']['api.default']              = FALSE;
+  $spec['debug']['api.description']          = "Writes errors of each lookup to CiviCRM log.";
 }
 
 /**

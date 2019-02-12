@@ -1,0 +1,72 @@
+<?php
+/*-------------------------------------------------------+
+| SYSTOPIA Mailingtools Extension                        |
+| Copyright (C) 2019 SYSTOPIA                            |
+| Author: B. Endres (endres@systopia.de)                 |
++--------------------------------------------------------+
+| This program is released as free software under the    |
+| Affero GPL license. You can redistribute it and/or     |
+| modify it under the terms of this license which you    |
+| can read by viewing the included agpl.txt or online    |
+| at www.gnu.org/licenses/agpl.html. Removal of this     |
+| copyright header is strictly prohibited without        |
+| written permission from the original author(s).        |
++--------------------------------------------------------*/
+
+ini_set('include_path', dirname(dirname(__FILE__)));
+require_once "proxy.php";
+
+// see if mail click tracking is enabled
+if (!$mail_subscription_user_key) civiproxy_http_error("Feature disabled", 405);
+
+// basic check
+civiproxy_security_check('mail-anonymous-link');
+
+// basic restraints
+$valid_parameters = array('u' => 'int');
+$parameters = civiproxy_get_parameters($valid_parameters);
+
+// check if parameters specified
+if (empty($parameters['u'])) civiproxy_http_error("Missing/invalid parameter 'u'.");
+
+// PERFORM Mailingtools.anonurl
+try {
+  $url_result = civicrm_api3('Mailingtools', 'anonurl', array(
+      'u'       => $parameters['u'],
+      'api_key' => $mail_subscription_user_key));
+
+  // redirect user to the given URL
+  if (!empty($url_result['is_error'])) {
+    // this is an error
+    if (!empty($url_result['error_message'])) {
+      civiproxy_http_error($url_result['error_message']);
+    } else {
+      civiproxy_http_error("Bad Link");
+    }
+  }
+
+  if (!empty($url_result['id'])) {
+    $link_id = $url_result['id'];
+    if (!empty($url_result['values'][$link_id])) {
+      $target_url = $url_result['values'][$link_id];
+
+      // issue a redirect
+      $target_url = str_replace('&amp;', '&', $target_url);
+      header('Location: ' . $target_url);
+      exit();
+    }
+  }
+
+} catch(Exception $ex) {
+  // something's wrong:
+  if (function_exists('civiproxy_log')) {
+    civiproxy_log("Couldn't call Mailingtools.anonurl with u={$parameters['u']}");
+  } else {
+    error_log("Couldn't call Mailingtools.anonurl with u={$parameters['u']}");
+  }
+}
+
+// we shouldn't get here, but:
+civiproxy_http_error("Unknown Error");
+
+?>

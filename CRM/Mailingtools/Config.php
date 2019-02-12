@@ -21,6 +21,8 @@ use CRM_Mailingtools_ExtensionUtil as E;
 class CRM_Mailingtools_Config {
 
   private static $singleton = NULL;
+  private static $settings  = NULL;
+
 
   protected $jobs = NULL;
   /**
@@ -34,13 +36,28 @@ class CRM_Mailingtools_Config {
   }
 
   /**
+   * Get a single setting
+   *
+   * @param $name          string setting name
+   * @param $default_value mixed  default value
+   * @return mixed setting
+   */
+  public function getSetting($name, $default_value = NULL) {
+    $settings = self::getSettings();
+    return CRM_Utils_Array::value($name, $settings, $default_value);
+  }
+
+  /**
    * get Mailingtools settings
    *
    * @return array
    */
   public function getSettings() {
-    $settings = CRM_Core_BAO_Setting::getItem('de.systopia.Mailingtools', 'Mailingtools_settings');
-    return $settings;
+    if (self::$settings === NULL) {
+      self::$settings = CRM_Core_BAO_Setting::getItem('de.systopia.Mailingtools', 'Mailingtools_settings');
+    }
+
+    return self::$settings;
   }
 
   /**
@@ -49,6 +66,7 @@ class CRM_Mailingtools_Config {
    * @param $settings array
    */
   public function setSettings($settings) {
+    self::$settings = $settings;
     CRM_Core_BAO_Setting::setItem($settings, 'de.systopia.Mailingtools', 'Mailingtools_settings');
   }
 
