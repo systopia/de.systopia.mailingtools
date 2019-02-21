@@ -12,9 +12,9 @@
 | written permission from the original author(s).        |
 +-------------------------------------------------------*}
 
-<h3>{ts domain='de.systopia.mailingtools'}Custom Mail Header Fields{/ts}</h3>
+<br/><h3>{ts domain='de.systopia.mailingtools'}Custom Mail Header Fields{/ts}</h3><br/>
 
-<div class="crm-section mailingtools mailingtools-custommailheader">
+<div class="crm-section mailingtools mailingtools">
   <div class="crm-section">
     <div class="label">{$form.extra_mail_header_key.label}</div>
     <div class="content">{$form.extra_mail_header_key.html}</div>
@@ -26,7 +26,7 @@
     <div class="clear"></div>
   </div>
 
-<h3>{ts domain='de.systopia.mailingtools'}Anonymous Open Tracking{/ts}</h3>
+<br/><h3>{ts domain='de.systopia.mailingtools'}Anonymous Open Tracking{/ts}</h3><br/>
   <div class="crm-section">
     <div class="label">{$form.anonymous_open_enabled.label} <a onclick='CRM.help("{ts domain='de.systopia.mailingtools'}Anonymous Open Tracking{/ts}", {literal}{"id":"id-mailtools-anonymous-open-enable","file":"CRM\/Mailingtools\/Form\/Settings"}{/literal}); return false;' href="#" title="{ts domain='de.systopia.mailingtools'}Help{/ts}" class="helpicon">&nbsp;</a></div>
     <div class="content">{$form.anonymous_open_enabled.html}</div>
@@ -52,7 +52,7 @@
   </div>
 
 
-<h3>{ts domain='de.systopia.mailingtools'}Anonymous Link Tracking{/ts}</h3>
+<br/><h3>{ts domain='de.systopia.mailingtools'}Anonymous Link Tracking{/ts}</h3><br/>
   <div class="crm-section">
     <div class="label">{$form.anonymous_link_enabled.label} <a onclick='CRM.help("{ts domain='de.systopia.mailingtools'}Anonymous Link Tracking{/ts}", {literal}{"id":"id-mailtools-anonymous-link-enable","file":"CRM\/Mailingtools\/Form\/Settings"}{/literal}); return false;' href="#" title="{ts domain='de.systopia.mailingtools'}Help{/ts}" class="helpicon">&nbsp;</a></div>
     <div class="content">{$form.anonymous_link_enabled.html}</div>
@@ -78,7 +78,7 @@
   </div>
 
 
-<h3>{ts domain='de.systopia.mailingtools'}Bounce Mailbox Retention{/ts}</h3>
+<br/><h3>{ts domain='de.systopia.mailingtools'}Bounce Mailbox Retention{/ts}</h3><br/>
   <p>{ts domain='de.systopia.mailingtools'}Retention Time is interpreted as days. If no value is configured, no mails will be deleted.{/ts}</p>
 
   <div class="crm-section">
@@ -93,7 +93,17 @@
   </div>
 
 
+<br/><h3>{ts domain='de.systopia.mailingtools'}Token Tools{/ts}</h3><br/>
+
+  <div class="crm-section">
+    <div class="label">{$form.fix_hash_token.label} <a onclick='CRM.help("{ts domain='de.systopia.mailingtools'}Anonymous Contact ID{/ts}", {literal}{"id":"id-mailtools-fix-hash-token","file":"CRM\/Mailingtools\/Form\/Settings"}{/literal}); return false;' href="#" title="{ts domain='de.systopia.mailingtools'}Help{/ts}" class="helpicon">&nbsp;</a></div>
+    <div class="content">{$form.fix_hash_token.html}</div>
+    <div class="clear"></div>
+  </div>
+
+
 </div>
+
 
 <div class="crm-submit-buttons">
     {include file="CRM/common/formButtons.tpl" location="bottom"}
@@ -104,7 +114,7 @@
 
 <br/><br/><br/><br/>
 
-<h3>{ts domain='de.systopia.mailingtools'}Additional Bounce Patterns{/ts}</h3>
+<br/><h3>{ts domain='de.systopia.mailingtools'}Additional Bounce Patterns{/ts}</h3>
 <p><i>{ts domain='de.systopia.mailingtools'}Add additional Bounce pattern to the Database. Checks first if pattern is already available. Outputs the number of pattern added/ignored from the specified file.{/ts}</i></p>
 
 <div class="crm-section mailingtools mailingtools-custommailheader">

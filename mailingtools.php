@@ -171,3 +171,27 @@ function mailingtools_civicrm_alterAPIPermissions($entity, $action, &$params, &$
     }
   }
 }
+
+/**
+ * Some token fixes
+ *  - make sure that hash is there
+ */
+function mailingtools_civicrm_tokenValues(&$values, $cids, $job = null, $tokens = array(), $context = null) {
+  $config = CRM_Mailingtools_Config::singleton();
+
+  $fix_hash_token = $config->getSetting('fix_hash_token');
+  if ($fix_hash_token) {
+    // make sure 'hash' is there:
+    if (!empty($tokens['contact'])) {
+      if (in_array('hash', $tokens['contact']) || !empty($tokens['contact']['hash'])) {
+        // hash token is requested
+        foreach ($values as $contact_id => &$contact_values) {
+          if (empty($contact_values['hash'])) {
+            CRM_Contact_BAO_Contact_Utils::generateChecksum($contact_id);
+            $contact_values['hash'] = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact', $contact_id, 'hash');
+          }
+        }
+      }
+    }
+  }
+}
