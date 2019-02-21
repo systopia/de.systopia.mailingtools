@@ -123,6 +123,14 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
         FALSE
     );
 
+    // Token Tools
+    $this->add(
+        'checkbox',
+        'fix_hash_token',
+        E::ts('Fix {contact.hash} Token')
+    );
+
+
     // load contacts
     $this->renderContact($current_values, 'link');
 
@@ -187,6 +195,7 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
       'anonymous_link_url',
       'anonymous_link_permission',
       'anonymous_link_contact_id',
+      'fix_hash_token',
     );
   }
 

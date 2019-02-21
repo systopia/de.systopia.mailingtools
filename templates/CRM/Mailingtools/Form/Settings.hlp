@@ -66,3 +66,7 @@
   <p>{ts domain="de.systopia.mailingtools"}You can define a contact ID to be used as a <i>the</i> anonymous contact.{/ts}</p>
   <p>{ts domain="de.systopia.mailingtools"}If you don't do that, the contact with the smallest ID will be used in any tracked click events.{/ts}</p>
 {/htxt}
+
+{htxt id="id-mailtools-fix-hash-token"}
+  <p>{ts domain="de.systopia.mailingtools"}If you have problems filling the {literal}{contact.hash}{/literal} token with Mosaico/Flexmailer, you may try activating this option.{/ts}</p>
+{/htxt}
