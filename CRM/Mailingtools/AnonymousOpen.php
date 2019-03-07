@@ -78,16 +78,29 @@ class CRM_Mailingtools_AnonymousOpen {
     $preferred_contact_id = (int) $config->getSetting($default_contact_setting);
     if ($preferred_contact_id) {
       $event_queue_id = CRM_Core_DAO::singleValueQuery("
-        SELECT queue.id
+        SELECT MIN(queue.id)
+        FROM civicrm_mailing_event_queue queue
+        LEFT JOIN civicrm_mailing_job    job   ON queue.job_id = job.id
+        WHERE queue.contact_id = %1
+          AND job.mailing_id = %2
+          AND job.is_test = 0", [
+          1 => [$preferred_contact_id, 'Integer'],
+          2 => [$mid,                  'Integer']]);
+
+      if (empty($event_queue_id)) {
+        // no real (is_test = 0) job found? Ok, let's take the test one...
+        $event_queue_id = CRM_Core_DAO::singleValueQuery("
+        SELECT MIN(queue.id)
         FROM civicrm_mailing_event_queue queue
         LEFT JOIN civicrm_mailing_job    job   ON queue.job_id = job.id
         WHERE queue.contact_id = %1
           AND job.mailing_id = %2", [
-          1 => [$preferred_contact_id, 'Integer'],
-          2 => [$mid,                  'Integer']]);
+            1 => [$preferred_contact_id, 'Integer'],
+            2 => [$mid, 'Integer']]);
+      }
 
-      // check if this worked...
       if (empty($event_queue_id)) {
+        // still no queue item? Then we'll create one!
         $event_queue_id = self::injectQueueItem($mid, $preferred_contact_id);
       }
     }
@@ -226,7 +239,7 @@ class CRM_Mailingtools_AnonymousOpen {
 
     // now the following query should return the new ID
     return CRM_Core_DAO::singleValueQuery("
-        SELECT queue.id
+        SELECT MAX(queue.id)
         FROM civicrm_mailing_event_queue queue
         LEFT JOIN civicrm_mailing_job    job   ON queue.job_id = job.id
         WHERE queue.contact_id = %1
