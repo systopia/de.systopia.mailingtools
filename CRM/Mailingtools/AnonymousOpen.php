@@ -88,15 +88,20 @@ class CRM_Mailingtools_AnonymousOpen {
           2 => [$mid,                  'Integer']]);
 
       if (empty($event_queue_id)) {
-        // no real (is_test = 0) job found? Ok, let's take the test one...
-        $event_queue_id = CRM_Core_DAO::singleValueQuery("
-        SELECT MIN(queue.id)
-        FROM civicrm_mailing_event_queue queue
-        LEFT JOIN civicrm_mailing_job    job   ON queue.job_id = job.id
-        WHERE queue.contact_id = %1
-          AND job.mailing_id = %2", [
-            1 => [$preferred_contact_id, 'Integer'],
-            2 => [$mid, 'Integer']]);
+        // maybe no real (is_test = 0) job found...?
+        $mailing_is_live = self::isMailingLive($mid);
+        if (!$mailing_is_live) {
+          // ...ah, the mailing is not live yet!
+          //  In that case it's ok to use the test job...
+          $event_queue_id = CRM_Core_DAO::singleValueQuery("
+            SELECT MIN(queue.id)
+            FROM civicrm_mailing_event_queue queue
+            LEFT JOIN civicrm_mailing_job    job   ON queue.job_id = job.id
+            WHERE queue.contact_id = %1
+              AND job.mailing_id = %2", [
+              1 => [$preferred_contact_id, 'Integer'],
+              2 => [$mid, 'Integer']]);
+        }
       }
 
       if (empty($event_queue_id)) {
@@ -195,6 +200,21 @@ class CRM_Mailingtools_AnonymousOpen {
     return $queue_id_to_mailing_id;
   }
 
+  /**
+   * Check if the given mailing is LIVE, i.e. has jobs with is_test=0
+   *
+   * @param $mid integer mailing ID
+   *
+   * @return bool is the mailing LIVE?
+   */
+  public static function isMailingLive($mid) {
+    $mid = (int) $mid;
+    return (bool) CRM_Core_DAO::singleValueQuery("
+      SELECT COUNT(*) 
+      FROM civicrm_mailing_job 
+      WHERE mailing_id = {$mid}
+        AND is_test = 0;");
+  }
 
   /**
    * Create a new (fake) queue item for the given contact
