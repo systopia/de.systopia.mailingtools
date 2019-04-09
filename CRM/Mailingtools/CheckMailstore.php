@@ -163,7 +163,7 @@ class CRM_Mailingtools_CheckMailstore {
    */
   private function create_imap_suffix($dao)
   {
-    if ($dao->is_ssl) {
+    if ($dao->ssl) {
       return "/imap/ssl";
     } else {
       return "/imap/novalidate-cert";
