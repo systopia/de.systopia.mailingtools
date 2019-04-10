@@ -53,7 +53,7 @@ class CRM_Mailingtools_EmailVerifier {
    * @throws \API_Exception
    */
   public function process() {
-    $this->get_email_addresses($this->checking_index);
+    $this->get_email_addresses($this->checking_index +1);
     $last_email_id = $this->checking_index;
     foreach ($this->email_lookup_values as $email_val) {
       // clear spaces and non-breaking spaces
@@ -138,8 +138,7 @@ class CRM_Mailingtools_EmailVerifier {
     $config = CRM_Mailingtools_Config::singleton();
     $settings = $config->getSettings();
     if (isset($settings['email_verifier_index'])) {
-      // add one, since the saved value is last processed email
-      return $settings['email_verifier_index'] += 1;
+      return $settings['email_verifier_index'];
     }
     return 1;
   }
