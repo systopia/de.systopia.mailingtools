@@ -195,3 +195,21 @@ function mailingtools_civicrm_tokenValues(&$values, $cids, $job = null, $tokens 
     }
   }
 }
+
+/**
+ * Implements hook_civicrm_pre
+ * @see https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_pre/
+ */
+function mailingtools_civicrm_pre($op, $objectName, $id, &$params) {
+  if ($op == 'delete' && $id) {
+    if ($objectName == 'Individual' || $objectName == 'Household' || $objectName == 'Organization') {
+      // make sure the contact used for the anonymous open/click tracking is not deleted
+      $config = CRM_Mailingtools_Config::singleton();
+      $open_contact_id  = (int) $config->getSetting('anonymous_open_contact_id');
+      $click_contact_id = (int) $config->getSetting('anonymous_link_contact_id');
+      if ($id == $open_contact_id || $id == $click_contact_id) {
+        throw new Exception(E::ts("You cannot delete the contact currently used for anonymous open/click tracking. Remove Contact [%1] from the settings of the MailingTools extension. Caution: you will lose the anonymous mailing statistics if you delete this contact.", [1 => $id]));
+      }
+    }
+  }
+}
