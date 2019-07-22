@@ -213,3 +213,18 @@ function mailingtools_civicrm_pre($op, $objectName, $id, &$params) {
     }
   }
 }
+
+/**
+ * implements hook_civicrm_pageRun( &$page )
+ * @param $page
+ */
+function mailingtools_civicrm_pageRun(&$page) {
+  $name = $page->getVar('_name');
+  switch ($name) {
+    case 'Civi\\Angular\\Page\\Main':
+      CRM_Mailingtools_Page_MosaicoSave::buildPagehook($page);
+      break;
+    default:
+      return;
+  }
+}
