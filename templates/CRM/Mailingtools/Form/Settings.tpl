@@ -102,8 +102,16 @@
   </div>
 
 
+<br/><h3>{ts domain='de.systopia.mailingtools'}Mosaico Save Message{/ts}</h3><br/>
+
+<div class="crm-section">
+  <div class="label">{$form.mosaico_save_message.label} <a onclick='CRM.help("{ts domain='de.systopia.mailingtools'}Mosaico Save Message{/ts}", {literal}{"id":"id-mailtools-mosaico-save","file":"CRM\/Mailingtools\/Form\/Settings"}{/literal}); return false;' href="#" title="{ts domain='de.systopia.mailingtools'}Help{/ts}" class="helpicon">&nbsp;</a></div>
+  <div class="content">{$form.mosaico_save_message.html}</div>
+  <div class="clear"></div>
 </div>
 
+
+</div>
 
 <div class="crm-submit-buttons">
     {include file="CRM/common/formButtons.tpl" location="bottom"}

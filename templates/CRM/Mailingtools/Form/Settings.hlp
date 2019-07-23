@@ -70,3 +70,7 @@
 {htxt id="id-mailtools-fix-hash-token"}
   <p>{ts domain="de.systopia.mailingtools"}If you have problems filling the {literal}{contact.hash}{/literal} token with Mosaico/Flexmailer, you may try activating this option.{/ts}</p>
 {/htxt}
+
+{htxt id="id-mailtools-mosaico-save"}
+  <p>{ts domain="de.systopia.mailingtools"}If you want to prevent the user on the Mosaico Screen to navigate away check this option. There will always be a warning on that page.{/ts}</p>
+{/htxt}

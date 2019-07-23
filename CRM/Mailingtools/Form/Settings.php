@@ -130,6 +130,13 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
         E::ts('Fix {contact.hash} Token')
     );
 
+    // Token Tools
+    $this->add(
+      'checkbox',
+      'mosaico_save_message',
+      E::ts('JS Warning to save Mosaico templates')
+    );
+
 
     // load contacts
     $this->renderContact($current_values, 'link');
@@ -196,6 +203,7 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
       'anonymous_link_permission',
       'anonymous_link_contact_id',
       'fix_hash_token',
+      'mosaico_save_message',
     );
   }
 
