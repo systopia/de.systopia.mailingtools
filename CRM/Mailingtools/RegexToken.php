@@ -44,12 +44,16 @@ class CRM_Mailingtools_RegexToken {
    * @return array list of such specs
    */
   public static function getTokenDefinitions() {
-    $value = Civi::settings()->get('mailingtools_regex_tokens');
-    if (empty($value) || !is_array($value)) {
-      return [];
-    } else {
-      return $value;
+    static function $token_definitions = NULL;
+    if ($token_definitions === NULL) {
+      $value = Civi::settings()->get('mailingtools_regex_tokens');
+      if (empty($value) || !is_array($value)) {
+        $token_definitions = [];
+      } else {
+        $token_definitions = $value;
+      }
     }
+    return $token_definitions;
   }
 
   /**
@@ -60,6 +64,84 @@ class CRM_Mailingtools_RegexToken {
     Civi::settings()->set('mailingtools_regex_tokens', $token_definitions);
   }
 
+  /**
+   * Do a replace of all tokens in the given string
+   *
+   * @param $string  string the source text
+   * @param $context array  context information to be passed on to the value functions
+   * @return string the input string with all tokens replaced
+   */
+  public static function tokenReplace($string, $context) {
+    $token_definitions = self::getTokenDefinitions();
+    foreach ($token_definitions as $token_definition) {
+      if (preg_match_all(self::REGEX_DELIMITER . $token_definition['def'] . self::REGEX_DELIMITER, $string, $match)) {
+        // FIXME: make it work
+        foreach ($match['matches'] as $match) {
+          $matched_string = $match['string'];
+          $value = self::getTokenValue($matched_string, $token_definition, $context);
+          // TODO: replace matched_string with value
+        }
+      }
+    }
+    return $string;
+  }
+
+  /**
+   * Calculate the new value for the given token_definition
+   * @param $matched_string   string the string matched
+   * @param $token_definition array  token definition
+   * @param $context          array  context information passed trough to the functions
+   * @return string the calculated value
+   */
+  public static function getTokenValue($matched_string, $token_definition, $context) {
+    $params = array_merge(['matched_string' => $matched_string], $token_definition, $context);
+    switch ($token_definition['op']) {
+      case self::OPERATOR_API3:
+        if (preg_match(self::VALUE_API_CALL, $token_definition['val'], $match)) {
+          // compile $params
+          try {
+            $result = civicrm_api3($match['entity'], $match['action'], $params);
+            if (is_string($result)) {
+              return $result;
+            }
+            if (is_array($result)) {
+              if (isset($result['value'])) {
+                return $result['value'];
+              }
+              if (isset($result['result'])) {
+                return $result['result'];
+              }
+            }
+          } catch (Exception $ex) {
+            // nothing to do...
+          }
+        }
+        return 'ERROR';
+        break;
+
+      case self::OPERATOR_STATIC:
+        if (preg_match(self::VALUE_STATIC_FUNCTION, $token_definition['val'], $match)) {
+          $params = array_merge($match, $context);
+          return call_user_func($token_definition['val'], $params);
+        } else {
+          return 'ERROR';
+        }
+        break;
+
+
+      case self::OPERATOR_REPLACE:
+        try {
+          return preg_replace(self::REGEX_DELIMITER . $token_definition['def'] . self::REGEX_DELIMITER, $matched_string, $token_definition['val']);
+        } catch (Exception $ex) {
+          return 'ERROR';
+        }
+        break;
+
+      default:
+        return 'UNDEFINED';
+    }
+
+  }
 
   /**
    * Verify the presented token definition, and return an

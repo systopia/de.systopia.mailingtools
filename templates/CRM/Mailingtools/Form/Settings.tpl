@@ -12,6 +12,10 @@
 | written permission from the original author(s).        |
 +-------------------------------------------------------*}
 
+<div class="crm-submit-buttons">
+  {include file="CRM/common/formButtons.tpl" location="top"}
+</div>
+
 <br/><h3>{ts domain='de.systopia.mailingtools'}Custom Mail Header Fields{/ts}</h3><br/>
 
 <div class="crm-section mailingtools mailingtools">
@@ -135,6 +139,7 @@
 
 <br/><br/><br/><br/>
 
+<br/><h2>{ts domain='de.systopia.mailingtools'}Data Adjustments (not Settings){/ts}</h2>
 <br/><h3>{ts domain='de.systopia.mailingtools'}Additional Bounce Patterns{/ts}</h3>
 <p><i>{ts domain='de.systopia.mailingtools'}Add additional Bounce pattern to the Database. Checks first if pattern is already available. Outputs the number of pattern added/ignored from the specified file.{/ts}</i></p>
 
@@ -142,20 +147,14 @@
   <a class="button" href="{crmURL p="civicrm/admin/setting/ImportBouncePattern" q="name=smtp_code_pattern_simple"}">
     {ts domain='de.systopia.mailingtools'}Add Simple SMTP Patterns{/ts}
   </a>
-</div>
-</br>
-<p> </p>
-
-<div class="crm-section mailingtools mailingtools-custommailheader">
   <a class="button" href="{crmURL p="civicrm/admin/setting/ImportBouncePattern" q="name=smtp_code_pattern_enhanced"}">
     {ts domain='de.systopia.mailingtools'}Add Enhanced SMTP Patterns{/ts}
   </a>
-</div>
-</br>
-<p> </p>
-
-<div class="crm-section mailingtools mailingtools-custommailheader">
   <a class="button" href="{crmURL p="civicrm/admin/setting/ImportBouncePattern" q="name=update_away_bounce_pattern_german"}">
     {ts domain='de.systopia.mailingtools'}Add German Away Patterns{/ts}
   </a>
+</div>
+</br>
+
+<div class="crm-section mailingtools mailingtools-custommailheader">
 </div>
