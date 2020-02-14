@@ -21,6 +21,7 @@ use CRM_Mailingtools_ExtensionUtil as E;
  * @see https://wiki.civicrm.org/confluence/display/CRMDOC/QuickForm+Reference
  */
 class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
+
   public function buildQuickForm() {
 
     $config = CRM_Mailingtools_Config::singleton();
@@ -130,7 +131,37 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
         E::ts('Fix {contact.hash} Token')
     );
 
-    // Token Tools
+    // Regex Tokens
+    $token_indices = range(0,CRM_Mailingtools_RegexToken::MT_REGEX_TOKEN_COUNT);
+    $this->assign('regex_token_indices', $token_indices);
+    foreach ($token_indices as $token_index) {
+      $this->add(
+          'text',
+          "regex_token_{$token_index}_def",
+          E::ts('Regular Expression')
+      );
+      $this->add(
+          'select',
+          "regex_token_{$token_index}_op",
+          E::ts('Operator Type')
+      );
+      $this->add(
+          'text',
+          "regex_token_{$token_index}_val",
+          E::ts('Value Function')
+      );
+    }
+    // set defaults
+    $current_tokens = CRM_Mailingtools_RegexToken::getTokenDefinitions();
+    foreach ($current_tokens as $token_index => $token_definition) {
+      $this->setDefaults([
+          "regex_token_{$token_index}_def" => $token_definition['def'],
+          "regex_token_{$token_index}_op"  => $token_definition['op'],
+          "regex_token_{$token_index}_val" => $token_definition['val'],
+      ]);
+    }
+
+    // Mosaico Save Message
     $this->add(
       'checkbox',
       'mosaico_save_message',
