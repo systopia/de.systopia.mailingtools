@@ -149,24 +149,6 @@ function mailingtools_civicrm_alterMailer(&$mailer, $driver, $params) {
 }
 
 /**
- * Implement hook_civicrm_alterMailContent
- */
-function mailingtools_civicrm_alterMailContent(&$content) {
-  // run the TokenReplace routine
-  $context = [
-      'groupName'         => CRM_Utils_Array::value('groupName', $content),
-      'valueName'         => CRM_Utils_Array::value('valueName', $content),
-      'messageTemplateID' => CRM_Utils_Array::value('messageTemplateID', $content),
-      'mailingID'         => CRM_Utils_Array::value('mailingID', $content),
-  ];
-  foreach (['html', 'text', 'subject'] as $field) {
-    if (isset($content[$field])) {
-      $content[$field] = CRM_Mailingtools_RegexToken::tokenReplace($content[$field], $context);
-    }
-  }
-}
-
-/**
  * Set permissions for API calls
  */
 function mailingtools_civicrm_alterAPIPermissions($entity, $action, &$params, &$permissions) {
