@@ -33,6 +33,14 @@ class CRM_Mailingtools_RegexToken {
   const VALUE_STATIC_FUNCTION = '/^(?P<class>[a-zA-Z_]+)::(?P<function>[a-zA-Z_]+)$/';
   const VALUE_API_CALL        = '/^(?P<entity>[a-zA-Z]+)[.](?P<action>[a-zA-Z_]+)$/';
 
+  /**
+   * Check if this regex tokens are enabled
+   * @return bool true if enabled
+   */
+  public static function isEnabled() {
+    $defs = self::getTokenDefinitions();
+    return !empty($defs);
+  }
 
   /**
    * Get the current token definition specs as an array of
@@ -44,7 +52,7 @@ class CRM_Mailingtools_RegexToken {
    * @return array list of such specs
    */
   public static function getTokenDefinitions() {
-    static function $token_definitions = NULL;
+    static $token_definitions = NULL;
     if ($token_definitions === NULL) {
       $value = Civi::settings()->get('mailingtools_regex_tokens');
       if (empty($value) || !is_array($value)) {
@@ -74,13 +82,10 @@ class CRM_Mailingtools_RegexToken {
   public static function tokenReplace($string, $context) {
     $token_definitions = self::getTokenDefinitions();
     foreach ($token_definitions as $token_definition) {
-      if (preg_match_all(self::REGEX_DELIMITER . $token_definition['def'] . self::REGEX_DELIMITER, $string, $match)) {
-        // FIXME: make it work
-        foreach ($match['matches'] as $match) {
-          $matched_string = $match['string'];
-          $value = self::getTokenValue($matched_string, $token_definition, $context);
-          // TODO: replace matched_string with value
-        }
+      while (preg_match(self::REGEX_DELIMITER . $token_definition['def'] . self::REGEX_DELIMITER, $string, $match, PREG_OFFSET_CAPTURE)) {
+        $matched_string = $match['string'];
+        $value = self::getTokenValue($matched_string, $token_definition, $context);
+        $string = substr($string, 0, $match[0][1]) . $value . substr($string, $match[0][1] + strlen($match[0][0]));
       }
     }
     return $string;
@@ -204,7 +209,7 @@ class CRM_Mailingtools_RegexToken {
           if (!class_exists($match['class'])) {
             return E::ts("Class '%1' not found", [1 => $match['class']]);
           }
-          if (!function_exists($match['class'])) {
+          if (!method_exists($match['class'], $match['function'])) {
             return E::ts("Function '%1' not found", [1 => $token_definition['val']]);
           }
         } else {
