@@ -96,10 +96,23 @@
 <br/><h3>{ts domain='de.systopia.mailingtools'}Token Tools{/ts}</h3><br/>
 
   <div class="crm-section">
-    <div class="label">{$form.fix_hash_token.label} <a onclick='CRM.help("{ts domain='de.systopia.mailingtools'}Anonymous Contact ID{/ts}", {literal}{"id":"id-mailtools-fix-hash-token","file":"CRM\/Mailingtools\/Form\/Settings"}{/literal}); return false;' href="#" title="{ts domain='de.systopia.mailingtools'}Help{/ts}" class="helpicon">&nbsp;</a></div>
+    <div class="label">{$form.fix_hash_token.label} <a onclick='CRM.help("{ts domain='de.systopia.mailingtools'}Hash Token Fix{/ts}", {literal}{"id":"id-mailtools-fix-hash-token","file":"CRM\/Mailingtools\/Form\/Settings"}{/literal}); return false;' href="#" title="{ts domain='de.systopia.mailingtools'}Help{/ts}" class="helpicon">&nbsp;</a></div>
     <div class="content">{$form.fix_hash_token.html}</div>
     <div class="clear"></div>
   </div>
+
+<br/><h3>{ts domain='de.systopia.mailingtools'}Custom (Regex) Tokens{/ts} <a onclick='CRM.help("{ts domain='de.systopia.mailingtools'}Custom (Regex) Tokens{/ts}", {literal}{"id":"id-mailtools-regex-tokens","file":"CRM\/Mailingtools\/Form\/Settings"}{/literal}); return false;' href="#" title="{ts domain='de.systopia.mailingtools'}Help{/ts}" class="helpicon">&nbsp;</a></h3><br/>
+{foreach from=$regex_token_indices item=token_index}
+  {capture assign=token_def}regex_token_{$token_index}_def{/capture}
+  {capture assign=token_op}regex_token_{$token_index}_op{/capture}
+  {capture assign=token_val}regex_token_{$token_index}_val{/capture}
+  <div class="crm-section">
+    <div class="label">{ts 1=$token_index domain='de.systopia.mailingtools'}Token&nbsp;%1 {/ts}</div>
+    <div class="content">#{$form.$token_def.html}#&nbsp;{$form.$token_op.html}&nbsp;{$form.$token_val.html}</div>
+    <div class="clear"></div>
+  </div>
+
+{/foreach}
 
 
 <br/><h3>{ts domain='de.systopia.mailingtools'}Mosaico Save Message{/ts}</h3><br/>

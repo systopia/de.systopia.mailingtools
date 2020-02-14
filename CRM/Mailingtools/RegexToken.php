@@ -94,6 +94,9 @@ class CRM_Mailingtools_RegexToken {
           // verify api entity.action
           try {
             $actions = civicrm_api3($match['entity'], 'getactions');
+            if (empty($actions['values'])) {
+              return E::ts("API3 action '%1' not found in entity '%2'", [1 => $match['entity'], 2 => $match['action']]);
+            }
             $action_found = FALSE;
             $our_action = strtolower($match['action']);
             foreach ($actions['values'] as $known_action) {
