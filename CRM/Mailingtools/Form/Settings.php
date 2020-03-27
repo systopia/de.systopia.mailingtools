@@ -138,7 +138,8 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
       $this->add(
           'text',
           "regex_token_{$token_index}_def",
-          E::ts('Regular Expression')
+          E::ts('Regular Expression'),
+          ['class' => 'huge']
       );
       $this->add(
           'select',
