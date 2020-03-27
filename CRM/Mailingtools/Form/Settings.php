@@ -246,9 +246,9 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
     foreach ($token_indices as $token_index) {
       if (!empty($data["regex_token_{$token_index}_def"]) && !empty($data["regex_token_{$token_index}_val"])) {
         $token_defs[] = [
-            'def' => $data["regex_token_{$token_index}_def"],
+            'def' => html_entity_decode($data["regex_token_{$token_index}_def"]),
             'op'  => $data["regex_token_{$token_index}_op"],
-            'val' => $data["regex_token_{$token_index}_val"],
+            'val' => html_entity_decode($data["regex_token_{$token_index}_val"]),
         ];
       }
     }
