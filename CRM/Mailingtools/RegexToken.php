@@ -24,7 +24,7 @@ class CRM_Mailingtools_RegexToken {
   /**
    * Maximum amount of regex token definitions
    */
-  const MT_REGEX_TOKEN_COUNT  = 10;
+  const MT_REGEX_TOKEN_COUNT  = 5;
   const REGEX_DELIMITER  = '#';
   const OPERATOR_API3    = 'api3';     // API3 call
   const OPERATOR_STATIC  = 'static';   // static function call
@@ -75,20 +75,28 @@ class CRM_Mailingtools_RegexToken {
   /**
    * Do a replace of all tokens in the given string
    *
-   * @param $string  string the source text
+   * @param $text    string the source text
    * @param $context array  context information to be passed on to the value functions
    * @return string the input string with all tokens replaced
    */
-  public static function tokenReplace($string, $context) {
+  public static function tokenReplace($text, $context = []) {
     $token_definitions = self::getTokenDefinitions();
     foreach ($token_definitions as $token_definition) {
-      while (preg_match(self::REGEX_DELIMITER . $token_definition['def'] . self::REGEX_DELIMITER, $string, $match, PREG_OFFSET_CAPTURE)) {
-        $matched_string = $match['string'];
-        $value = self::getTokenValue($matched_string, $token_definition, $context);
-        $string = substr($string, 0, $match[0][1]) . $value . substr($string, $match[0][1] + strlen($match[0][0]));
+      while (preg_match(self::REGEX_DELIMITER . $token_definition['def'] . self::REGEX_DELIMITER, $text, $match)) {
+
+        // token found -> get the replacement value
+        $matched_string = $match[0];
+        $match_data = array_merge($match, $context);
+        $value = self::getTokenValue($matched_string, $token_definition, $match_data);
+
+        // get the offsets and do the replacement
+        if ($value != $matched_string) {
+          preg_match(self::REGEX_DELIMITER . $token_definition['def'] . self::REGEX_DELIMITER, $text, $offsets, PREG_OFFSET_CAPTURE);
+          $text = substr($text, 0, $offsets[0][1]) . $value . substr($text, $offsets[0][1] + strlen($offsets[0][0]));
+        }
       }
     }
-    return $string;
+    return $text;
   }
 
   /**
@@ -126,7 +134,6 @@ class CRM_Mailingtools_RegexToken {
 
       case self::OPERATOR_STATIC:
         if (preg_match(self::VALUE_STATIC_FUNCTION, $token_definition['val'], $match)) {
-          $params = array_merge($match, $context);
           return call_user_func($token_definition['val'], $params);
         } else {
           return 'ERROR';
