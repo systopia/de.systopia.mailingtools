@@ -50,8 +50,12 @@ class CRM_Mailingtools_Mailer {
 
     // apply regex tokens to body _and_ headers
     if (CRM_Mailingtools_RegexToken::isEnabled()) {
-      $body = CRM_Mailingtools_RegexToken::tokenReplace($body);
-      $headers = CRM_Mailingtools_RegexToken::tokenReplace($headers);
+      $context = [
+          'recipients' => $recipients,
+          'headers'    => $headers,
+      ];
+      $body = CRM_Mailingtools_RegexToken::tokenReplace($body, $context);
+      $headers = CRM_Mailingtools_RegexToken::tokenReplace($headers, $context);
     }
 
     $this->mailer->send($recipients, $headers, $body);
