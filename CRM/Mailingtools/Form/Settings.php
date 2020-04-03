@@ -154,7 +154,8 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
       $this->add(
           'text',
           "regex_token_{$token_index}_val",
-          E::ts('Value Function')
+          E::ts('Value Function'),
+          ['class' => 'huge']
       );
     }
     // set defaults
