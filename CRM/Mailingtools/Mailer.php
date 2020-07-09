@@ -29,7 +29,8 @@ class CRM_Mailingtools_Mailer {
   public static function isNeeded() {
     $config = CRM_Mailingtools_Config::singleton();
     return  ($config->getSetting('anonymous_open_enabled') && $config->getSetting('anonymous_open_url'))
-         || ($config->getSetting('anonymous_link_enabled') && $config->getSetting('anonymous_link_url'));
+         || ($config->getSetting('anonymous_link_enabled') && $config->getSetting('anonymous_link_url'))
+         || CRM_Mailingtools_RegexToken::isEnabled();
   }
 
   /**
@@ -46,6 +47,17 @@ class CRM_Mailingtools_Mailer {
   function send($recipients, $headers, $body) {
     CRM_Mailingtools_AnonymousOpen::modifyEmailBody($body);
     CRM_Mailingtools_AnonymousURL::modifyEmailBody($body);
+
+    // apply regex tokens to body _and_ headers
+    if (CRM_Mailingtools_RegexToken::isEnabled()) {
+      $context = [
+          'recipients' => $recipients,
+          'headers'    => $headers,
+      ];
+      $body = CRM_Mailingtools_RegexToken::tokenReplace($body, $context);
+      $headers = CRM_Mailingtools_RegexToken::tokenReplace($headers, $context);
+    }
+
     $this->mailer->send($recipients, $headers, $body);
   }
 }

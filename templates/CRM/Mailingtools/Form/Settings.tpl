@@ -12,6 +12,10 @@
 | written permission from the original author(s).        |
 +-------------------------------------------------------*}
 
+<div class="crm-submit-buttons">
+  {include file="CRM/common/formButtons.tpl" location="top"}
+</div>
+
 <br/><h3>{ts domain='de.systopia.mailingtools'}Custom Mail Header Fields{/ts}</h3><br/>
 
 <div class="crm-section mailingtools mailingtools">
@@ -96,10 +100,23 @@
 <br/><h3>{ts domain='de.systopia.mailingtools'}Token Tools{/ts}</h3><br/>
 
   <div class="crm-section">
-    <div class="label">{$form.fix_hash_token.label} <a onclick='CRM.help("{ts domain='de.systopia.mailingtools'}Anonymous Contact ID{/ts}", {literal}{"id":"id-mailtools-fix-hash-token","file":"CRM\/Mailingtools\/Form\/Settings"}{/literal}); return false;' href="#" title="{ts domain='de.systopia.mailingtools'}Help{/ts}" class="helpicon">&nbsp;</a></div>
+    <div class="label">{$form.fix_hash_token.label} <a onclick='CRM.help("{ts domain='de.systopia.mailingtools'}Hash Token Fix{/ts}", {literal}{"id":"id-mailtools-fix-hash-token","file":"CRM\/Mailingtools\/Form\/Settings"}{/literal}); return false;' href="#" title="{ts domain='de.systopia.mailingtools'}Help{/ts}" class="helpicon">&nbsp;</a></div>
     <div class="content">{$form.fix_hash_token.html}</div>
     <div class="clear"></div>
   </div>
+
+<br/><h3>{ts domain='de.systopia.mailingtools'}Custom (Regex) Tokens{/ts} <a onclick='CRM.help("{ts domain='de.systopia.mailingtools'}Custom (Regex) Tokens{/ts}", {literal}{"id":"id-mailtools-regex-tokens","file":"CRM\/Mailingtools\/Form\/Settings"}{/literal}); return false;' href="#" title="{ts domain='de.systopia.mailingtools'}Help{/ts}" class="helpicon">&nbsp;</a></h3><br/>
+{foreach from=$regex_token_indices item=token_index}
+  {capture assign=token_def}regex_token_{$token_index}_def{/capture}
+  {capture assign=token_op}regex_token_{$token_index}_op{/capture}
+  {capture assign=token_val}regex_token_{$token_index}_val{/capture}
+  <div class="crm-section">
+    <div class="label">{ts 1=$token_index domain='de.systopia.mailingtools'}Token&nbsp;%1 {/ts}</div>
+    <div class="content">#{$form.$token_def.html}#&nbsp;{$form.$token_op.html}&nbsp;{$form.$token_val.html}</div>
+    <div class="clear"></div>
+  </div>
+
+{/foreach}
 
 
 <br/><h3>{ts domain='de.systopia.mailingtools'}Mosaico Save Message{/ts}</h3><br/>
@@ -122,6 +139,7 @@
 
 <br/><br/><br/><br/>
 
+<br/><h2>{ts domain='de.systopia.mailingtools'}Data Adjustments (not Settings){/ts}</h2>
 <br/><h3>{ts domain='de.systopia.mailingtools'}Additional Bounce Patterns{/ts}</h3>
 <p><i>{ts domain='de.systopia.mailingtools'}Add additional Bounce pattern to the Database. Checks first if pattern is already available. Outputs the number of pattern added/ignored from the specified file.{/ts}</i></p>
 
@@ -129,20 +147,14 @@
   <a class="button" href="{crmURL p="civicrm/admin/setting/ImportBouncePattern" q="name=smtp_code_pattern_simple"}">
     {ts domain='de.systopia.mailingtools'}Add Simple SMTP Patterns{/ts}
   </a>
-</div>
-</br>
-<p> </p>
-
-<div class="crm-section mailingtools mailingtools-custommailheader">
   <a class="button" href="{crmURL p="civicrm/admin/setting/ImportBouncePattern" q="name=smtp_code_pattern_enhanced"}">
     {ts domain='de.systopia.mailingtools'}Add Enhanced SMTP Patterns{/ts}
   </a>
-</div>
-</br>
-<p> </p>
-
-<div class="crm-section mailingtools mailingtools-custommailheader">
   <a class="button" href="{crmURL p="civicrm/admin/setting/ImportBouncePattern" q="name=update_away_bounce_pattern_german"}">
     {ts domain='de.systopia.mailingtools'}Add German Away Patterns{/ts}
   </a>
+</div>
+</br>
+
+<div class="crm-section mailingtools mailingtools-custommailheader">
 </div>

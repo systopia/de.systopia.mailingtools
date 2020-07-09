@@ -21,6 +21,7 @@ use CRM_Mailingtools_ExtensionUtil as E;
  * @see https://wiki.civicrm.org/confluence/display/CRMDOC/QuickForm+Reference
  */
 class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
+
   public function buildQuickForm() {
 
     $config = CRM_Mailingtools_Config::singleton();
@@ -130,7 +131,44 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
         E::ts('Fix {contact.hash} Token')
     );
 
-    // Token Tools
+    // Regex Tokens
+    $token_indices = range(0,CRM_Mailingtools_RegexToken::MT_REGEX_TOKEN_COUNT - 1);
+    $this->assign('regex_token_indices', $token_indices);
+    foreach ($token_indices as $token_index) {
+      $this->add(
+          'text',
+          "regex_token_{$token_index}_def",
+          E::ts('Regular Expression'),
+          ['class' => 'huge']
+      );
+      $this->add(
+          'select',
+          "regex_token_{$token_index}_op",
+          E::ts('Operator Type'),
+          [
+              'api3'    => E::ts("APIv3 Call"),
+              'static'  => E::ts("Static Method Call"),
+              'replace' => E::ts("Regex Replace"),
+          ]
+      );
+      $this->add(
+          'text',
+          "regex_token_{$token_index}_val",
+          E::ts('Value Function'),
+          ['class' => 'huge']
+      );
+    }
+    // set defaults
+    $current_tokens = CRM_Mailingtools_RegexToken::getTokenDefinitions();
+    foreach ($current_tokens as $token_index => $token_definition) {
+      $this->setDefaults([
+          "regex_token_{$token_index}_def" => $token_definition['def'],
+          "regex_token_{$token_index}_op"  => $token_definition['op'],
+          "regex_token_{$token_index}_val" => $token_definition['val'],
+      ]);
+    }
+
+    // Mosaico Save Message
     $this->add(
       'checkbox',
       'mosaico_save_message',
@@ -155,6 +193,68 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
 
     // export form elements
     parent::buildQuickForm();
+  }
+
+  /**
+   * Override validation for custom tokens
+   * @return bool|void
+   */
+  public function validate() {
+    parent::validate();
+
+    $regex_tokens = $this->extractRegexTokens($this->_submitValues);
+    foreach ($regex_tokens as $index => $token_spec) {
+      $error = CRM_Mailingtools_RegexToken::verifyTokenDefinition($token_spec);
+      if ($error) {
+        $this->_errors["regex_token_{$index}_val"] = $error;
+      }
+    }
+
+    return count($this->_errors) == 0;
+  }
+
+  /**
+   * Post process input values and save them to DB
+   */
+  public function postProcess() {
+    $config = CRM_Mailingtools_Config::singleton();
+    $values = $this->exportValues();
+    $settings = $config->getSettings();
+    $settings_in_form = $this->getSettingsInForm();
+    foreach ($settings_in_form as $name) {
+      $settings[$name] = CRM_Utils_Array::value($name, $values, NULL);
+    }
+    $config->setSettings($settings);
+
+    // extract regex tokens
+    $regex_tokens = $this->extractRegexTokens($values);
+    CRM_Mailingtools_RegexToken::setTokenDefinitions($regex_tokens);
+
+    // re-render new value
+    $this->renderContact($values, 'open');
+    $this->renderContact($values, 'link');
+
+    parent::postProcess();
+  }
+
+  /**
+   * Extract the (complete) token definitions in the form
+   * @param $data array
+   * @return array list of token definitions
+   */
+  protected function extractRegexTokens($data) {
+    $token_defs = [];
+    $token_indices = range(0,CRM_Mailingtools_RegexToken::MT_REGEX_TOKEN_COUNT - 1);
+    foreach ($token_indices as $token_index) {
+      if (!empty($data["regex_token_{$token_index}_def"]) && !empty($data["regex_token_{$token_index}_val"])) {
+        $token_defs[] = [
+            'def' => html_entity_decode($data["regex_token_{$token_index}_def"]),
+            'op'  => $data["regex_token_{$token_index}_op"],
+            'val' => html_entity_decode($data["regex_token_{$token_index}_val"]),
+        ];
+      }
+    }
+    return $token_defs;
   }
 
   /**
@@ -190,41 +290,21 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
    */
   protected function getSettingsInForm() {
     return array(
-      'extra_mail_header_key',
-      'extra_mail_header_value',
-      'processed_retention_value',
-      'ignored_retention_value',
-      'anonymous_open_enabled',
-      'anonymous_open_url',
-      'anonymous_open_permission',
-      'anonymous_open_contact_id',
-      'anonymous_link_enabled',
-      'anonymous_link_url',
-      'anonymous_link_permission',
-      'anonymous_link_contact_id',
-      'fix_hash_token',
-      'mosaico_save_message',
+        'extra_mail_header_key',
+        'extra_mail_header_value',
+        'processed_retention_value',
+        'ignored_retention_value',
+        'anonymous_open_enabled',
+        'anonymous_open_url',
+        'anonymous_open_permission',
+        'anonymous_open_contact_id',
+        'anonymous_link_enabled',
+        'anonymous_link_url',
+        'anonymous_link_permission',
+        'anonymous_link_contact_id',
+        'fix_hash_token',
+        'mosaico_save_message',
     );
-  }
-
-  /**
-   * Post process input values and save them to DB
-   */
-  public function postProcess() {
-    $config = CRM_Mailingtools_Config::singleton();
-    $values = $this->exportValues();
-    $settings = $config->getSettings();
-    $settings_in_form = $this->getSettingsInForm();
-    foreach ($settings_in_form as $name) {
-      $settings[$name] = CRM_Utils_Array::value($name, $values, NULL);
-    }
-    $config->setSettings($settings);
-
-    // re-render new value
-    $this->renderContact($values, 'open');
-    $this->renderContact($values, 'link');
-
-    parent::postProcess();
   }
 
 }
