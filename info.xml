@@ -23,11 +23,15 @@
     <ver>5.4</ver>
   </compatibility>
   <comments>For use of Email Domain Verification a couple of dependencies exist:
-            - PHP >= 7.0
+            - PHP &gt;= 7.0
             - php-intl (idn_to_ascii)
             - composer voku/email-check
   </comments>
   <civix>
     <namespace>CRM/Mailingtools</namespace>
+    <format>22.05.2</format>
   </civix>
+  <mixins>
+    <mixin>menu-xml@1.0.0</mixin>
+  </mixins>
 </extension>
