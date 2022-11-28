@@ -10,7 +10,7 @@ use Civi\Test\TransactionalInterface;
  * This is a generic test class implemented with PHPUnit.
  * @group headless
  */
-class api_v3_Mailingtools_EmailsyncTest extends \PHPUnit_Framework_TestCase implements HeadlessInterface {
+class api_v3_Mailingtools_EmailsyncTest extends \PHPUnit\Framework\TestCase implements HeadlessInterface {
 
   private $contact_id;
   private $email_ids;
