@@ -60,6 +60,21 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
       FALSE
     );
 
+    // bcc addresses
+    $this->add(
+      'text',
+      'bcc_default_address',
+      E::ts('CiviMail Default BCC Address'),
+      array("class" => "huge"),
+      FALSE
+    );
+
+    $this->add(
+      'checkbox',
+      'bcc_logged_in_user_mail',
+      E::ts('Enabled')
+    );
+
     // ANONYMOUS open mailing stuff
     $this->add(
         'checkbox',
@@ -304,6 +319,8 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
         'anonymous_link_contact_id',
         'fix_hash_token',
         'mosaico_save_message',
+        'bcc_default_address',
+        'bcc_logged_in_user_mail',
     );
   }
 

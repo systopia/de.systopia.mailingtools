@@ -81,6 +81,18 @@
     <div class="clear"></div>
   </div>
 
+<br/><h3>{ts domain='de.systopia.mailingtools'}Automatic BCC Emails{/ts}</h3><br/>
+  <div class="crm-section">
+    <div class="label">{$form.bcc_default_address.label} <a onclick='CRM.help("{ts domain='de.systopia.mailingtools'}Default BCC Address{/ts}", {literal}{"id":"id-mailtools-default-bcc-address","file":"CRM\/Mailingtools\/Form\/Settings"}{/literal}); return false;' href="#" title="{ts domain='de.systopia.mailingtools'}Help{/ts}" class="helpicon">&nbsp;</a></div>
+    <div class="content">{$form.bcc_default_address.html}</div>
+    <div class="clear"></div>
+  </div>
+  <div class="crm-section">
+    <div class="label">{$form.bcc_logged_in_user_mail.label} <a onclick='CRM.help("{ts domain='de.systopia.mailingtools'}Default BCC Address{/ts}", {literal}{"id":"id-mailtools-bcc-logged-in-user-mail","file":"CRM\/Mailingtools\/Form\/Settings"}{/literal}); return false;' href="#" title="{ts domain='de.systopia.mailingtools'}Help{/ts}" class="helpicon">&nbsp;</a></div>
+    <div class="content">{$form.bcc_logged_in_user_mail.html}</div>
+    <div class="clear"></div>
+  </div>
+
 
 <br/><h3>{ts domain='de.systopia.mailingtools'}Bounce Mailbox Retention{/ts}</h3><br/>
   <p>{ts domain='de.systopia.mailingtools'}Retention Time is interpreted as days. If no value is configured, no mails will be deleted.{/ts}</p>

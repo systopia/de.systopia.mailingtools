@@ -74,3 +74,12 @@
 {htxt id="id-mailtools-mosaico-save"}
   <p>{ts domain="de.systopia.mailingtools"}If you want to prevent the user on the Mosaico Screen to navigate away check this option. There will always be a warning on that page.{/ts}</p>
 {/htxt}
+
+
+{htxt id="id-mailtools-default-bcc-address"}
+  <p>{ts domain="de.systopia.mailingtools"}If this field is filled, all non-mailing Emails are sent as BCC to this address. For Mailings this address is added {/ts}</p>
+{/htxt}
+
+{htxt id="id-mailtools-bcc-logged-in-user-mail"}
+  <p>{ts domain="de.systopia.mailingtools"}If this is aktivated, the logged in user will be added as a BCC in transactional mailings.{/ts}</p>
+{/htxt}
