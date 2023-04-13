@@ -14,20 +14,27 @@
     <url desc="Support">https://github.com/systopia/de.systopia.mailingtools/issues</url>
     <url desc="Licensing">http://www.gnu.org/licenses/agpl-3.0.html</url>
   </urls>
-  <releaseDate></releaseDate>
+  <releaseDate/>
   <version>0.8-dev</version>
   <develStage>dev</develStage>
   <compatibility>
-    <ver>4.6</ver>
-    <ver>4.7</ver>
-    <ver>5.4</ver>
+    <ver>5.27</ver>
   </compatibility>
   <comments>For use of Email Domain Verification a couple of dependencies exist:
-            - PHP >= 7.0
+            - PHP &gt;= 7.0
             - php-intl (idn_to_ascii)
             - composer voku/email-check
   </comments>
   <civix>
     <namespace>CRM/Mailingtools</namespace>
+    <format>23.02.1</format>
   </civix>
+  <mixins>
+    <mixin>menu-xml@1.0.0</mixin>
+    <mixin>smarty-v2@1.0.1</mixin>
+  </mixins>
+  <classloader>
+    <psr0 prefix="CRM_" path="."/>
+    <psr4 prefix="Civi\" path="Civi"/>
+  </classloader>
 </extension>
