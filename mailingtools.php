@@ -22,24 +22,6 @@ function mailingtools_civicrm_install() {
 }
 
 /**
- * Implements hook_civicrm_postInstall().
- *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_postInstall
- */
-function mailingtools_civicrm_postInstall() {
-  _mailingtools_civix_civicrm_postInstall();
-}
-
-/**
- * Implements hook_civicrm_uninstall().
- *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_uninstall
- */
-function mailingtools_civicrm_uninstall() {
-  _mailingtools_civix_civicrm_uninstall();
-}
-
-/**
  * Implements hook_civicrm_enable().
  *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_enable
@@ -47,25 +29,6 @@ function mailingtools_civicrm_uninstall() {
 function mailingtools_civicrm_enable() {
   _mailingtools_civix_civicrm_enable();
   CRM_Mailingtools_Config::installScheduledJob();
-}
-
-/**
- * Implements hook_civicrm_disable().
- *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_disable
- */
-function mailingtools_civicrm_disable() {
-  _mailingtools_civix_civicrm_disable();
-  // TODO: remove scheduled job!
-}
-
-/**
- * Implements hook_civicrm_upgrade().
- *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_upgrade
- */
-function mailingtools_civicrm_upgrade($op, CRM_Queue_Queue $queue = NULL) {
-  return _mailingtools_civix_civicrm_upgrade($op, $queue);
 }
 
 /**
@@ -170,13 +133,4 @@ function mailingtools_civicrm_pageRun(&$page) {
     default:
       return;
   }
-}
-
-/**
- * Implements hook_civicrm_entityTypes().
- *
- * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_entityTypes
- */
-function mailingtools_civicrm_entityTypes(&$entityTypes) {
-  _mailingtools_civix_civicrm_entityTypes($entityTypes);
 }

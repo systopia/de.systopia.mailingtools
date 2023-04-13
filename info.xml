@@ -18,9 +18,7 @@
   <version>0.8-dev</version>
   <develStage>dev</develStage>
   <compatibility>
-    <ver>4.6</ver>
-    <ver>4.7</ver>
-    <ver>5.4</ver>
+    <ver>5.27</ver>
   </compatibility>
   <comments>For use of Email Domain Verification a couple of dependencies exist:
             - PHP &gt;= 7.0
@@ -29,9 +27,14 @@
   </comments>
   <civix>
     <namespace>CRM/Mailingtools</namespace>
-    <format>22.05.2</format>
+    <format>23.02.1</format>
   </civix>
   <mixins>
     <mixin>menu-xml@1.0.0</mixin>
+    <mixin>smarty-v2@1.0.1</mixin>
   </mixins>
+  <classloader>
+    <psr0 prefix="CRM_" path="."/>
+    <psr4 prefix="Civi\" path="Civi"/>
+  </classloader>
 </extension>
