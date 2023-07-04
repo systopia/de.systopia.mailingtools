@@ -134,3 +134,26 @@ function mailingtools_civicrm_pageRun(&$page) {
       return;
   }
 }
+
+/**
+ * This hook is called after a db write on entities.
+ *
+ * @param string $op
+ *   The type of operation being performed.
+ * @param string $objectName
+ *   The name of the object.
+ * @param int $objectId
+ *   The unique identifier for the object.
+ * @param object $objectRef
+ *   The reference to the object.
+ *
+ * https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_post/
+ */
+function mailingtools_civicrm_post($op, $objectName, $objectId, &$objectRef) {
+//  Trigger when EMail is edited or updated
+  if($objectName == "Email" && in_array($op, ['update', 'edit', 'create'])) {
+    // TODO
+    // verify Email address; if invalid then set on hold
+    CRM_Mailingtools_Utils::verify_email($op, $objectName, $objectId,$objectRef);
+  }
+}
