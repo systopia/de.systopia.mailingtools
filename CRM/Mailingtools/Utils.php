@@ -35,6 +35,9 @@ class CRM_Mailingtools_Utils
       require_once (__DIR__ . '/../../resources/lib/vendor/voku/email-check/src/voku/helper/EmailCheck.php');
       $email = $objectRef->email;
       $email_id = $objectRef->id;
+      if (empty($email) || empty($email_id)) {
+        return;
+      }
       if(\voku\helper\EmailCheck::isValid($email, FALSE, FALSE, FALSE, TRUE)) {
         return;
       }
