@@ -60,6 +60,12 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
       FALSE
     );
 
+    $this->add(
+      'checkbox',
+      'enable_automatic_email_check',
+      E::ts('Enabled')
+    );
+
     // ANONYMOUS open mailing stuff
     $this->add(
         'checkbox',
@@ -304,6 +310,7 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
         'anonymous_link_contact_id',
         'fix_hash_token',
         'mosaico_save_message',
+        'enable_automatic_email_check',
     );
   }
 

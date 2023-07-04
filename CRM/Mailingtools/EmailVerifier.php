@@ -58,7 +58,9 @@ class CRM_Mailingtools_EmailVerifier {
     foreach ($this->email_lookup_values as $email_val) {
       // clear spaces and non-breaking spaces
       if (!$this->check_email(trim($email_val['email'],"\xc2\xa0\x20"))) {
-        $this->set_email_on_hold($email_val['id'], $email_val['email']);
+        if (CRM_Mailingtools_Utils::set_email_on_hold($email_val['id'], $email_val['email'])) {
+          $this->result_stats['on_hold'] += 1;
+        }
       }
       $last_email_id = $email_val['id'];
       $this->result_stats['processed'] += 1;
@@ -123,10 +125,10 @@ class CRM_Mailingtools_EmailVerifier {
       'hold_date' => date('d.m.Y H:i:s'),
     ]);
     if ($result['is_error'] == '1') {
-      $this->log("Error setting Email with ID {$id} on hold. Error Message: {$result['error_message']}", TRUE);
+      CRM_Mailingtools_Utils::log("Error setting Email with ID {$id} on hold. Error Message: {$result['error_message']}");
       return;
     }
-    $this->log("Set Email {$email} ({$id}) on hold");
+    CRM_Mailingtools_Utils::log("Set Email {$email} ({$id}) on hold");
     $this->result_stats['on_hold'] += 1;
   }
 
@@ -148,21 +150,11 @@ class CRM_Mailingtools_EmailVerifier {
    * @param $index
    */
   private function set_address_index($index) {
-    $this->log("Setting last Email Index to {$index}");
+    CRM_Mailingtools_Utils::log("Setting last Email Index to {$index}");
     $config = CRM_Mailingtools_Config::singleton();
     $settings = $config->getSettings();
     $settings['email_verifier_index'] = $index;
     $config->setSettings($settings);
   }
 
-  /**
-   * Logging function if configured
-   * @param      $message
-   * @param bool $force
-   */
-  private function log($message, $force = FALSE) {
-    if ($this->debug || $force) {
-      CRM_Core_Error::debug_log_message("[de.systopia.mailingtools] " . $message);
-    }
-  }
 }

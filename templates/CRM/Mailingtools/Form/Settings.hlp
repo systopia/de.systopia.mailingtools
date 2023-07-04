@@ -74,3 +74,7 @@
 {htxt id="id-mailtools-mosaico-save"}
   <p>{ts domain="de.systopia.mailingtools"}If you want to prevent the user on the Mosaico Screen to navigate away check this option. There will always be a warning on that page.{/ts}</p>
 {/htxt}
+
+{htxt id="id-mailtools-enable-automatic-email-check"}
+  <p>{ts domain="de.systopia.mailingtools"}Enable automatic Email verification when creating / updating / editing Emails into the system. Invalid Emails (DNS Errors, malformed etc) will automatically be set on hold! Needs voku/email checker via composer{/ts}</p>
+{/htxt}
