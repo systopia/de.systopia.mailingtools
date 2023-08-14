@@ -155,5 +155,6 @@ function mailingtools_civicrm_post($op, $objectName, $objectId, &$objectRef) {
     // TODO
     // verify Email address; if invalid then set on hold
     CRM_Mailingtools_Utils::verify_email($op, $objectName, $objectId,$objectRef);
+    CRM_Mailingtools_Utils::check_email_dns_blacklist($objectRef->email, $objectRef->id);
   }
 }

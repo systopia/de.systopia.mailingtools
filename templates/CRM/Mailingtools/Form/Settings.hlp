@@ -78,3 +78,7 @@
 {htxt id="id-mailtools-enable-automatic-email-check"}
   <p>{ts domain="de.systopia.mailingtools"}Enable automatic Email verification when creating / updating / editing Emails into the system. Invalid Emails (DNS Errors, malformed etc) will automatically be set on hold! Needs voku/email checker via composer{/ts}</p>
 {/htxt}
+
+{htxt id="id-mailtools-email-domain-check"}
+  <p>{ts domain="de.systopia.mailingtools"}Automatically blacklist Emails based on their domain. Multiple Domains can be input comma separated. All Mailboxes from that domain (e.g. test1@example.com, test2@example.com for the domain example.com) will be automatically blacklisted if put into the system. Contacts with blacklisted domains will get the tag 'blacklisted_email_domain'{/ts}</p>
+{/htxt}

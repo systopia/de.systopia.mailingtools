@@ -99,8 +99,14 @@
 <br/><h3>{ts domain='de.systopia.mailingtools'}Email Validation{/ts}</h3><br/>
 
   <div class="crm-section">
-    <div class="label">{$form.enable_automatic_email_check.label} <a onclick='CRM.help("{ts domain='de.systopia.mailingtools'}Hash Token Fix{/ts}", {literal}{"id":"id-mailtools-enable-automatic-email-check","file":"CRM\/Mailingtools\/Form\/Settings"}{/literal}); return false;' href="#" title="{ts domain='de.systopia.mailingtools'}Help{/ts}" class="helpicon">&nbsp;</a></div>
+    <div class="label">{$form.enable_automatic_email_check.label} <a onclick='CRM.help("{ts domain='de.systopia.mailingtools'}Automatic Email Check{/ts}", {literal}{"id":"id-mailtools-enable-automatic-email-check","file":"CRM\/Mailingtools\/Form\/Settings"}{/literal}); return false;' href="#" title="{ts domain='de.systopia.mailingtools'}Help{/ts}" class="helpicon">&nbsp;</a></div>
     <div class="content">{$form.enable_automatic_email_check.html}</div>
+    <div class="clear"></div>
+  </div>
+
+  <div class="crm-section">
+    <div class="label">{$form.email_domain_blacklist.label} <a onclick='CRM.help("{ts domain='de.systopia.mailingtools'}Email Domain Blacklist{/ts}", {literal}{"id":"id-mailtools-email-domain-check","file":"CRM\/Mailingtools\/Form\/Settings"}{/literal}); return false;' href="#" title="{ts domain='de.systopia.mailingtools'}Help{/ts}" class="helpicon">&nbsp;</a></div>
+    <div class="content">{$form.email_domain_blacklist.html}</div>
     <div class="clear"></div>
   </div>
 

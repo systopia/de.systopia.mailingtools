@@ -49,16 +49,21 @@ class CRM_Mailingtools_EmailVerifier {
   }
 
   /**
-   * process configured amount of emails from hte database with an index
+   * process configured amount of emails from the database with an index
    * @throws \API_Exception
    */
   public function process() {
     $this->get_email_addresses($this->checking_index +1);
     $last_email_id = $this->checking_index;
     foreach ($this->email_lookup_values as $email_val) {
+      if (CRM_Mailingtools_Utils::check_email_dns_blacklist($email_val['email'],$email_val['id'])) {
+        $this->result_stats['on_hold'] += 1;
+        continue; // email was set on hold because of blacklist, no further validation needed
+      }
+
       // clear spaces and non-breaking spaces
       if (!$this->check_email(trim($email_val['email'],"\xc2\xa0\x20"))) {
-        if (CRM_Mailingtools_Utils::set_email_on_hold($email_val['id'], $email_val['email'])) {
+        if (CRM_Mailingtools_Utils::set_email_on_hold($email_val['id'], $email_val['email'], "DNS Error")) {
           $this->result_stats['on_hold'] += 1;
         }
       }

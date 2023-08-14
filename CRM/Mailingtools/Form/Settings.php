@@ -66,6 +66,14 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
       E::ts('Enabled')
     );
 
+    $this->add(
+      'textarea',
+      'email_domain_blacklist',
+      E::ts('Automatic Email Domain Blacklist'),
+      array("class" => "huge"),
+      FALSE
+    );
+
     // ANONYMOUS open mailing stuff
     $this->add(
         'checkbox',
@@ -215,6 +223,10 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
         $this->_errors["regex_token_{$index}_val"] = $error;
       }
     }
+    $error = $this->validate_domains($this->_submitValues);
+    if ($error) {
+      $this->_errors["email_domain_blacklist"] = $error;
+    }
 
     return count($this->_errors) == 0;
   }
@@ -261,6 +273,28 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
       }
     }
     return $token_defs;
+  }
+
+  /**
+   * @param $data
+   * @return string|true
+   *
+   * Validate input domains via regex pattern, https://regex101.com/r/IY4AVw/1
+   */
+  protected function validate_domains($data) {
+    $pattern = "/^(?!\-)(?:(?:[a-zA-Z\d][a-zA-Z\d\-]{0,61})?[a-zA-Z\d]\.){1,126}(?!\d+)[a-zA-Z\d]{1,63}$/";
+    if (empty($data['email_domain_blacklist'])) {
+      // it's ok to not have blacklisted domains, or delete them
+      return false;
+    }
+    $domains = explode(",", $data['email_domain_blacklist']);
+
+    foreach ($domains as $domain) {
+      if (!preg_match($pattern, $domain)) {
+        return "Invalid Domain {$domain}, please enter valid Domain Names comma searated. e.g. example1.com,example2.com";
+      }
+    }
+    return false;
   }
 
   /**
@@ -311,6 +345,7 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
         'fix_hash_token',
         'mosaico_save_message',
         'enable_automatic_email_check',
+        'email_domain_blacklist',
     );
   }
 
