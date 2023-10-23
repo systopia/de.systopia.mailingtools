@@ -24,14 +24,14 @@ class CRM_Mailingtools_RegexToken {
   /**
    * Maximum amount of regex token definitions
    */
-  const MT_REGEX_TOKEN_COUNT  = 5;
-  const REGEX_DELIMITER  = '#';
-  const OPERATOR_API3    = 'api3';     // API3 call
-  const OPERATOR_STATIC  = 'static';   // static function call
-  const OPERATOR_REPLACE = 'replace';  // preg_replace call
+  public const MT_REGEX_TOKEN_COUNT  = 5;
+  public const REGEX_DELIMITER  = '#';
+  public const OPERATOR_API3    = 'api3';     // API3 call
+  public const OPERATOR_STATIC  = 'static';   // static function call
+  public const OPERATOR_REPLACE = 'replace';  // preg_replace call
 
-  const VALUE_STATIC_FUNCTION = '/^(?P<class>[a-zA-Z_]+)::(?P<function>[a-zA-Z_]+)$/';
-  const VALUE_API_CALL        = '/^(?P<entity>[a-zA-Z]+)[.](?P<action>[a-zA-Z_]+)$/';
+  public const VALUE_STATIC_FUNCTION = '/^(?P<class>[a-zA-Z_]+)::(?P<function>[a-zA-Z_]+)$/';
+  public const VALUE_API_CALL        = '/^(?P<entity>[a-zA-Z]+)[.](?P<action>[a-zA-Z_]+)$/';
 
   /**
    * Check if this regex tokens are enabled

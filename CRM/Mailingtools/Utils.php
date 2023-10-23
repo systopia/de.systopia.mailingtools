@@ -58,9 +58,8 @@ class CRM_Mailingtools_Utils
   /**
    * @param $email
    * @param $email_id
-   * @return bool
    */
-  public static function check_email_dns_blacklist($email, $email_id) {
+  public static function check_email_dns_blacklist($email, $email_id): bool {
     $config = CRM_Mailingtools_Config::singleton();
     $email_domain_blacklist = $config->getSetting('email_domain_blacklist');
     if(empty($email_domain_blacklist))  {
@@ -88,10 +87,9 @@ class CRM_Mailingtools_Utils
    * @param $id
    * @param $email
    *
-   * @return bool
    * @throws \CiviCRM_API3_Exception
    */
-  public static function set_email_on_hold($id, $email, $reason = "") {
+  public static function set_email_on_hold($id, $email, $reason = ""): bool {
     $result = civicrm_api3('Email', 'create', [
       'id' => $id,
       'on_hold' => 1,

@@ -26,7 +26,7 @@ class CRM_Mailingtools_Mailer {
   /**
    * Check if the deployment of this mailer wrapper is needed
    */
-  public static function isNeeded() {
+  public static function isNeeded(): bool {
     $config = CRM_Mailingtools_Config::singleton();
     return  ($config->getSetting('anonymous_open_enabled') && $config->getSetting('anonymous_open_url'))
          || ($config->getSetting('anonymous_link_enabled') && $config->getSetting('anonymous_link_url'))

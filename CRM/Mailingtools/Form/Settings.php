@@ -213,7 +213,7 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
    * Override validation for custom tokens
    * @return bool|void
    */
-  public function validate() {
+  public function validate(): bool {
     parent::validate();
 
     $regex_tokens = $this->extractRegexTokens($this->_submitValues);

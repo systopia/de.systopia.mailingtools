@@ -130,9 +130,8 @@ class CRM_Mailingtools_CheckMailstore {
   /**
    * Check if retentino is configured. If not, we don't delete anything and return false here
    * @param $settings
-   * @return bool
    */
-  private function verify_settings($settings)
+  private function verify_settings($settings): bool
   {
     return !isset($settings['processed_retention_value']) || $settings['processed_retention_value'] == 0
       || !isset($settings['ignored_retention_value']) || $settings['ignored_retention_value'] == 0;
