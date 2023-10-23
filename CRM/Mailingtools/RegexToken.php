@@ -130,7 +130,6 @@ class CRM_Mailingtools_RegexToken {
           }
         }
         return 'ERROR';
-        break;
 
       case self::OPERATOR_STATIC:
         if (preg_match(self::VALUE_STATIC_FUNCTION, $token_definition['val'], $match)) {
@@ -138,7 +137,6 @@ class CRM_Mailingtools_RegexToken {
         } else {
           return 'ERROR';
         }
-        break;
 
 
       case self::OPERATOR_REPLACE:
@@ -147,7 +145,6 @@ class CRM_Mailingtools_RegexToken {
         } catch (Exception $ex) {
           return 'ERROR';
         }
-        break;
 
       default:
         return 'UNDEFINED';
