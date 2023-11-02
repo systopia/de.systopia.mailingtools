@@ -24,7 +24,7 @@ use CRM_Mailingtools_ExtensionUtil as E;
  *
  * @param array $params containing 'mid'
  * @return array result
- * @throws CiviCRM_API3_Exception
+ * @throws CRM_Core_Exception
  */
 function civicrm_api3_mailingtools_anonopen($params) {
   try {
@@ -35,7 +35,7 @@ function civicrm_api3_mailingtools_anonopen($params) {
       return civicrm_api3_create_success("Anonymous open tracking disabled.");
     }
   } catch (Exception $ex) {
-    throw new CiviCRM_API3_Exception($ex->getMessage(), $ex->getCode());
+    throw new CRM_Core_Exception($ex->getMessage(), $ex->getCode());
   }
 }
 

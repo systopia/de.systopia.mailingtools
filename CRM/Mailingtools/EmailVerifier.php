@@ -88,7 +88,7 @@ class CRM_Mailingtools_EmailVerifier {
    * @param $index
    *
    * @throws \API_Exception
-   * @throws \CiviCRM_API3_Exception
+   * @throws \CRM_Core_Exception
    */
   private function get_email_addresses($index) {
     $result = civicrm_api3('Email', 'get', [
@@ -121,7 +121,7 @@ class CRM_Mailingtools_EmailVerifier {
    * @param $id
    * @param $email
    *
-   * @throws \CiviCRM_API3_Exception
+   * @throws \CRM_Core_Exception
    */
   private function set_email_on_hold($id, $email) {
     $result = civicrm_api3('Email', 'create', [

@@ -87,7 +87,7 @@ class CRM_Mailingtools_Utils
    * @param $id
    * @param $email
    *
-   * @throws \CiviCRM_API3_Exception
+   * @throws \CRM_Core_Exception
    */
   public static function set_email_on_hold($id, $email, $reason = ""): bool {
     $result = civicrm_api3('Email', 'create', [

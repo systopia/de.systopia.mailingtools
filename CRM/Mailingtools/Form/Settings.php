@@ -302,7 +302,7 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
    *
    * @param $data array  data
    * @param $key  string key (open|link)
-   * @throws CiviCRM_API3_Exception
+   * @throws CRM_Core_Exception
    */
   protected function renderContact($data, $key) {
     if (!empty($data["anonymous_{$key}_contact_id"])) {
