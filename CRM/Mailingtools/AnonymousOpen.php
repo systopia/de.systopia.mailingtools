@@ -52,7 +52,7 @@ class CRM_Mailingtools_AnonymousOpen {
     }
 
     // all good: add entry
-    CRM_Core_Error::debug_log_message("Tracked anonymous open event for mailing [{$mid}]");
+    Civi::log()->debug("Tracked anonymous open event for mailing [{$mid}]");
     CRM_Core_DAO::executeQuery("
         INSERT INTO civicrm_mailing_event_opened (event_queue_id, time_stamp)
         VALUES (%1, NOW())", [
@@ -240,7 +240,7 @@ class CRM_Mailingtools_AnonymousOpen {
           1 => [$mid, 'Integer']]);
     }
     if (!$job_id) {
-      CRM_Core_Error::debug_log_message("AnonymousOpen: No job found for mailing [{$mid}]");
+      Civi::log()->debug("AnonymousOpen: No job found for mailing [{$mid}]");
       return NULL;
     }
 

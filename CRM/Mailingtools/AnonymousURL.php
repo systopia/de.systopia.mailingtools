@@ -58,7 +58,7 @@ class CRM_Mailingtools_AnonymousURL {
     }
 
     // all good: add entry
-    CRM_Core_Error::debug_log_message("Tracked anonymous click event for link {$trackable_url_id} in mailing [{$link->mailing_id}]");
+    Civi::log()->debug("Tracked anonymous click event for link {$trackable_url_id} in mailing [{$link->mailing_id}]");
     CRM_Core_DAO::executeQuery("
         INSERT INTO civicrm_mailing_event_trackable_url_open (event_queue_id, trackable_url_id, time_stamp)
         VALUES (%1, %2, NOW())", [
