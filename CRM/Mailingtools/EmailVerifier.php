@@ -144,10 +144,7 @@ class CRM_Mailingtools_EmailVerifier {
   private function get_address_index() {
     $config = CRM_Mailingtools_Config::singleton();
     $settings = $config->getSettings();
-    if (isset($settings['email_verifier_index'])) {
-      return $settings['email_verifier_index'];
-    }
-    return 1;
+    return $settings['email_verifier_index'] ?? 1;
   }
 
   /**

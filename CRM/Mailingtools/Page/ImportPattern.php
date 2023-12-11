@@ -77,11 +77,10 @@ class CRM_Mailingtools_Page_ImportPattern extends CRM_Core_Page {
    */
   private function isInDB($pattern) {
 
-    $counter = CRM_Core_DAO::singleValueQuery(
+    return CRM_Core_DAO::singleValueQuery(
       "SELECT COUNT(*) FROM `civicrm_mailing_bounce_pattern` WHERE `pattern`=%1;",
       array(1 => array($pattern, "String"))
     );
-    return $counter;
   }
 
 }

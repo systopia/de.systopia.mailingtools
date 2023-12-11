@@ -125,8 +125,7 @@ class CRM_Mailingtools_Utils
       ]);
     }
 
-//    create tag for contact
-    $result = civicrm_api3('EntityTag', 'create', [
+civicrm_api3('EntityTag', 'create', [
       'tag_id' => "blacklisted_email_domain",
       'contact_id' => $contact_id,
       'entity_table' => "civicrm_contact",
