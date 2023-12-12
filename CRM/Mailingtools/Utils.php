@@ -63,7 +63,7 @@ class CRM_Mailingtools_Utils
     $config = CRM_Mailingtools_Config::singleton();
     $email_domain_blacklist = $config->getSetting('email_domain_blacklist');
     if(empty($email_domain_blacklist))  {
-      return true;
+      return false;
     }
     $email_domains = explode(',', $email_domain_blacklist);
 
