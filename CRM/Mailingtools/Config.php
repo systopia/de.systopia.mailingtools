@@ -54,7 +54,7 @@ class CRM_Mailingtools_Config {
    */
   public function getSettings() {
     if (self::$settings === NULL) {
-      self::$settings = CRM_Core_BAO_Setting::getItem('de.systopia.Mailingtools', 'Mailingtools_settings');
+        self::$settings = Civi::settings()->get('Mailingtools_settings');
     }
 
     return self::$settings;
@@ -67,7 +67,7 @@ class CRM_Mailingtools_Config {
    */
   public function setSettings($settings) {
     self::$settings = $settings;
-    CRM_Core_BAO_Setting::setItem($settings, 'de.systopia.Mailingtools', 'Mailingtools_settings');
+    Civi::settings()->set('Mailingtools_settings', $settings);
   }
 
   /**
