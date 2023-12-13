@@ -139,7 +139,7 @@ civicrm_api3('EntityTag', 'create', [
    * @return void
    *
    */
-  public static function log($message, $loglevel = "DEBUG")
+  public static function log($message, $loglevel = "debug")
   {
     if (self::$debug) {
       Civi::log()->log($loglevel, "[de.systopia.mailingtools] " . $message);
