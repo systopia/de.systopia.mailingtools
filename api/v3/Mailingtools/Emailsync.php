@@ -26,7 +26,7 @@ use CRM_Mailingtools_ExtensionUtil as E;
 function _civicrm_api3_mailingtools_Emailsync_spec(&$spec) {
   $spec['verify_size']['api.default']        = 1000;
   $spec['verify_size']['api.description']    = "The number of emails verified.";
-  $spec['checking_index']['api.default']     = NULL;
+  $spec['checking_index']['api.default']     = 0;
   $spec['checking_index']['api.description'] = "Uses an email identifier to start checking from there. Id from civicrm_email table is used.";
   $spec['debug']['api.default']              = FALSE;
   $spec['debug']['api.description']          = "Writes errors of each lookup to CiviCRM log.";
