@@ -16,7 +16,6 @@ The extension is licensed under [AGPL-3.0](LICENSE.txt).
 * PHP v5.5+ (better 5.6+)
     * PHP 7.0 for Email MX-Verification
     * composer voku/email-check
-* CiviCRM 4.7
 
 ## Installation (Web UI)
 
