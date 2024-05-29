@@ -189,6 +189,27 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
       E::ts('JS Warning to save Mosaico templates')
     );
 
+    // Mailing Debugging Options, see #17
+    $this->add(
+      'checkbox',
+      'mailing_debugging_short',
+      E::ts('Print Short Debugging information to file')
+    );
+    $this->add(
+      'checkbox',
+      'mailing_debugging_header',
+      E::ts('Print Email Header to File')
+    );
+    $this->add(
+      'checkbox',
+      'mailing_debugging_recipients',
+      E::ts('Print Email Recipients to Log File')
+    );
+    $this->add(
+      'checkbox',
+      'mailing_debugging_body',
+      E::ts('Print full Email Body to Log file')
+    );
 
     // load contacts
     $this->renderContact($current_values, 'link');
@@ -346,6 +367,10 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
         'mosaico_save_message',
         'enable_automatic_email_check',
         'email_domain_blacklist',
+        'mailing_debugging_short',
+        'mailing_debugging_header',
+        'mailing_debugging_recipients',
+        'mailing_debugging_body',
     );
   }
 
