@@ -163,6 +163,11 @@
     <div class="content">{$form.mailing_debugging_body.html}</div>
     <div class="clear"></div>
   </div>
+  <div class="crm-section">
+    <div class="label">{$form.mailing_debugging_omit_mailings.label} <a onclick='CRM.help("{ts domain='de.systopia.mailingtools'}Omit Logging for Mailings{/ts}", {literal}{"id":"id-mailing_debugging_omit_mailings","file":"CRM\/Mailingtools\/Form\/Settings"}{/literal}); return false;' href="#" title="{ts domain='de.systopia.mailingtools'}Help{/ts}" class="helpicon">&nbsp;</a></div>
+    <div class="content">{$form.mailing_debugging_omit_mailings.html}</div>
+    <div class="clear"></div>
+  </div>
 
 <div class="crm-submit-buttons">
     {include file="CRM/common/formButtons.tpl" location="bottom"}

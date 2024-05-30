@@ -210,6 +210,11 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
       'mailing_debugging_body',
       E::ts('Print full Email Body to Log file')
     );
+    $this->add(
+      'checkbox',
+      'mailing_debugging_omit_mailings',
+      E::ts('Omit Logging for Mailings')
+    );
 
     // load contacts
     $this->renderContact($current_values, 'link');
@@ -371,6 +376,7 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
         'mailing_debugging_header',
         'mailing_debugging_recipients',
         'mailing_debugging_body',
+        'mailing_debugging_omit_mailings',
     );
   }
 

@@ -95,5 +95,8 @@
   <p>{ts domain="de.systopia.mailingtools"}Logs a JSON encoded List of all recipients to mailling.log{/ts}</p>
 {/htxt}
 {htxt id="id-mailing_debugging_body"}
-  <p>{ts domain="de.systopia.mailingtools"}Logs the FULL{/ts}</p>
+  <p>{ts domain="de.systopia.mailingtools"}Logs the FULL Body of the Mail. Careful, this can create considerable data in the logging file.{/ts}</p>
+{/htxt}
+{htxt id="id-mailing_debugging_omit_mailings"}
+  <p>{ts domain="de.systopia.mailingtools"}Omits logging for mailing.{/ts}</p>
 {/htxt}
