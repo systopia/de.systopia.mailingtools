@@ -39,6 +39,14 @@ class CRM_Mailingtools_MailLogger {
   public function logMailInfo($recipients, $header, $body) {
     $config = CRM_Mailingtools_Config::singleton();
     if ($config->getSetting('mailing_debugging_short')) {
+      // check if this is a mailing. Check for X-CiviMail-Bounce
+      // header. This should only be set for Mailings afaik
+      if (isset($header['X-CiviMail-Bounce'])) {
+        // do not log anything
+        return;
+      }
+    }
+    if ($config->getSetting('mailing_debugging_short')) {
       $short_info = [];
       $short_info['FROM'] = $header['From'];
       $short_info['TO'] = $header['To'];
