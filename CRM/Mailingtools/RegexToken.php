@@ -233,6 +233,6 @@ class CRM_Mailingtools_RegexToken {
       default:
         return E::ts("Unknown value type/operator '%1'", [1 => $token_definition['op']]);
     }
-    return E::ts("Unknown value type/operator '%1'", [1 => json_encode($token_definition)]);
+    return FALSE;
   }
 }
