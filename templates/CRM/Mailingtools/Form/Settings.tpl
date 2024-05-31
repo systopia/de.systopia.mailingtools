@@ -140,8 +140,34 @@
   <div class="clear"></div>
 </div>
 
+<br/><h3>{ts domain='de.systopia.mailingtools'}Email Debugging Options{/ts}</h3><br/>
+<p>{ts domain='de.systopia.mailingtools'}Debugging Information for all mailings. Uses hook alterMailer. Results are JSON encoded and written to mailing.log. Multiple opotions can be chosen. {/ts}</p>
 
-</div>
+  <div class="crm-section">
+    <div class="label">{$form.mailing_debugging_short.label} <a onclick='CRM.help("{ts domain='de.systopia.mailingtools'}Print Short Debugging information to file{/ts}", {literal}{"id":"id-mailing_debugging_short","file":"CRM\/Mailingtools\/Form\/Settings"}{/literal}); return false;' href="#" title="{ts domain='de.systopia.mailingtools'}Help{/ts}" class="helpicon">&nbsp;</a></div>
+    <div class="content">{$form.mailing_debugging_short.html}</div>
+    <div class="clear"></div>
+  </div>
+  <div class="crm-section">
+    <div class="label">{$form.mailing_debugging_header.label} <a onclick='CRM.help("{ts domain='de.systopia.mailingtools'}Print Email Header to File{/ts}", {literal}{"id":"id-mailing_debugging_header","file":"CRM\/Mailingtools\/Form\/Settings"}{/literal}); return false;' href="#" title="{ts domain='de.systopia.mailingtools'}Help{/ts}" class="helpicon">&nbsp;</a></div>
+    <div class="content">{$form.mailing_debugging_header.html}</div>
+    <div class="clear"></div>
+  </div>
+  <div class="crm-section">
+    <div class="label">{$form.mailing_debugging_recipients.label} <a onclick='CRM.help("{ts domain='de.systopia.mailingtools'}Print Email Recipients to Log File{/ts}", {literal}{"id":"id-mailing_debugging_recipients","file":"CRM\/Mailingtools\/Form\/Settings"}{/literal}); return false;' href="#" title="{ts domain='de.systopia.mailingtools'}Help{/ts}" class="helpicon">&nbsp;</a></div>
+    <div class="content">{$form.mailing_debugging_recipients.html}</div>
+    <div class="clear"></div>
+  </div>
+  <div class="crm-section">
+    <div class="label">{$form.mailing_debugging_body.label} <a onclick='CRM.help("{ts domain='de.systopia.mailingtools'}Print full Email Body to Log file{/ts}", {literal}{"id":"id-mailing_debugging_body","file":"CRM\/Mailingtools\/Form\/Settings"}{/literal}); return false;' href="#" title="{ts domain='de.systopia.mailingtools'}Help{/ts}" class="helpicon">&nbsp;</a></div>
+    <div class="content">{$form.mailing_debugging_body.html}</div>
+    <div class="clear"></div>
+  </div>
+  <div class="crm-section">
+    <div class="label">{$form.mailing_debugging_omit_mailings.label} <a onclick='CRM.help("{ts domain='de.systopia.mailingtools'}Omit Logging for Mailings{/ts}", {literal}{"id":"id-mailing_debugging_omit_mailings","file":"CRM\/Mailingtools\/Form\/Settings"}{/literal}); return false;' href="#" title="{ts domain='de.systopia.mailingtools'}Help{/ts}" class="helpicon">&nbsp;</a></div>
+    <div class="content">{$form.mailing_debugging_omit_mailings.html}</div>
+    <div class="clear"></div>
+  </div>
 
 <div class="crm-submit-buttons">
     {include file="CRM/common/formButtons.tpl" location="bottom"}

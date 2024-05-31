@@ -82,3 +82,21 @@
 {htxt id="id-mailtools-email-domain-check"}
   <p>{ts domain="de.systopia.mailingtools"}Automatically blacklist Emails based on their domain. Multiple Domains can be input comma separated. All Mailboxes from that domain (e.g. test1@example.com, test2@example.com for the domain example.com) will be automatically blacklisted if put into the system. Contacts with blacklisted domains will get the tag 'blacklisted_email_domain'{/ts}</p>
 {/htxt}
+
+
+
+{htxt id="id-mailing_debugging_short"}
+  <p>{ts domain="de.systopia.mailingtools"}Short Debugging information for each outgoing Mail. Logs FROM, TO and Message Subject to mailing.log. Information is JSON encoded{/ts}</p>
+{/htxt}
+{htxt id="id-mailing_debugging_header"}
+  <p>{ts domain="de.systopia.mailingtools"}Logs the Full Header as a JSON arroy to mailing.log{/ts}</p>
+{/htxt}
+{htxt id="id-mailing_debugging_recipients"}
+  <p>{ts domain="de.systopia.mailingtools"}Logs a JSON encoded List of all recipients to mailling.log{/ts}</p>
+{/htxt}
+{htxt id="id-mailing_debugging_body"}
+  <p>{ts domain="de.systopia.mailingtools"}Logs the FULL Body of the Mail. Careful, this can create considerable data in the logging file.{/ts}</p>
+{/htxt}
+{htxt id="id-mailing_debugging_omit_mailings"}
+  <p>{ts domain="de.systopia.mailingtools"}Omits logging for mailing.{/ts}</p>
+{/htxt}

@@ -30,7 +30,12 @@ class CRM_Mailingtools_Mailer {
     $config = CRM_Mailingtools_Config::singleton();
     return  ($config->getSetting('anonymous_open_enabled') && $config->getSetting('anonymous_open_url'))
          || ($config->getSetting('anonymous_link_enabled') && $config->getSetting('anonymous_link_url'))
-         || CRM_Mailingtools_RegexToken::isEnabled();
+         || CRM_Mailingtools_RegexToken::isEnabled()
+         || $config->getSetting('mailing_debugging_short')
+         || $config->getSetting('mailing_debugging_header')
+         || $config->getSetting('mailing_debugging_recipients')
+         || $config->getSetting('mailing_debugging_body')
+      ;
   }
 
   /**
@@ -57,6 +62,9 @@ class CRM_Mailingtools_Mailer {
       $body = CRM_Mailingtools_RegexToken::tokenReplace($body, $context);
       $headers = CRM_Mailingtools_RegexToken::tokenReplace($headers, $context);
     }
+    // Debug output
+    $mail_logger = new CRM_Mailingtools_MailLogger();
+    $mail_logger->logMailInfo($recipients, $headers, $body);
 
     $this->mailer->send($recipients, $headers, $body);
   }
