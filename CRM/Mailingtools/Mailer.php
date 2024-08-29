@@ -24,6 +24,16 @@ class CRM_Mailingtools_Mailer {
   protected $mailer = NULL;
 
   /**
+   * @var Mail Driver, see #26111
+   */
+  protected $driver = NULL;
+
+  /**
+   * @var array Mail Params, currently not used
+   */
+  protected $params = [];
+
+  /**
    * Check if the deployment of this mailer wrapper is needed
    */
   public static function isNeeded(): bool {
@@ -41,8 +51,10 @@ class CRM_Mailingtools_Mailer {
   /**
    * construct this mailer wrapping another one
    */
-  public function __construct($mailer) {
+  public function __construct($mailer, $driver, $params) {
     $this->mailer = $mailer;
+    $this->driver = $driver;
+    $this->params = $params;
   }
 
   /**
@@ -67,5 +79,12 @@ class CRM_Mailingtools_Mailer {
     $mail_logger->logMailInfo($recipients, $headers, $body);
 
     $this->mailer->send($recipients, $headers, $body);
+  }
+
+  /**
+   * @return Mail|null
+   */
+  public function getDriver() {
+    return $this->driver;
   }
 }
