@@ -50,7 +50,7 @@ function mailingtools_civicrm_alterMailParams(&$params, $context) {
 function mailingtools_civicrm_alterMailer(&$mailer, $driver, $params) {
   $needed = CRM_Mailingtools_Mailer::isNeeded();
   if ($needed) {
-    $mailer = new CRM_Mailingtools_Mailer($mailer,$driver, $params);
+    $mailer = new CRM_Mailingtools_Mailer($mailer);
   }
 }
 
