@@ -75,6 +75,7 @@ class CRM_Mailingtools_ExtensionUtil {
     return self::CLASS_PREFIX . '_' . str_replace('\\', '_', $suffix);
   }
 
+
 }
 
 use CRM_Mailingtools_ExtensionUtil as E;
