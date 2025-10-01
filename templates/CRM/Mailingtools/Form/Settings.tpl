@@ -32,25 +32,25 @@
 
 <br/><h3>{ts domain='de.systopia.mailingtools'}Anonymous Open Tracking{/ts}</h3><br/>
   <div class="crm-section">
-    <div class="label">{$form.anonymous_open_enabled.label} <a onclick='CRM.help("{ts domain='de.systopia.mailingtools'}Anonymous Open Tracking{/ts}", {literal}{"id":"id-mailtools-anonymous-open-enable","file":"CRM\/Mailingtools\/Form\/Settings"}{/literal}); return false;' href="#" title="{ts domain='de.systopia.mailingtools'}Help{/ts}" class="helpicon">&nbsp;</a></div>
+    <div class="label">{$form.anonymous_open_enabled.label} <a onclick='CRM.help("{ts escape='htmlattribute' domain='de.systopia.mailingtools'}Anonymous Open Tracking{/ts}", {literal}{"id":"id-mailtools-anonymous-open-enable","file":"CRM\/Mailingtools\/Form\/Settings"}{/literal}); return false;' href="#" title="{ts escape='htmlattribute' domain='de.systopia.mailingtools'}Help{/ts}" class="helpicon">&nbsp;</a></div>
     <div class="content">{$form.anonymous_open_enabled.html}</div>
     <div class="clear"></div>
   </div>
 
   <div class="crm-section">
-    <div class="label">{$form.anonymous_open_url.label} <a onclick='CRM.help("{ts domain='de.systopia.mailingtools'}Anonymous Open URL{/ts}", {literal}{"id":"id-mailtools-anonymous-open-url","file":"CRM\/Mailingtools\/Form\/Settings"}{/literal}); return false;' href="#" title="{ts domain='de.systopia.mailingtools'}Help{/ts}" class="helpicon">&nbsp;</a></div>
+    <div class="label">{$form.anonymous_open_url.label} <a onclick='CRM.help("{ts escape='htmlattribute' domain='de.systopia.mailingtools'}Anonymous Open URL{/ts}", {literal}{"id":"id-mailtools-anonymous-open-url","file":"CRM\/Mailingtools\/Form\/Settings"}{/literal}); return false;' href="#" title="{ts escape='htmlattribute' domain='de.systopia.mailingtools'}Help{/ts}" class="helpicon">&nbsp;</a></div>
     <div class="content">{$form.anonymous_open_url.html}</div>
     <div class="clear"></div>
   </div>
 
   <div class="crm-section">
-    <div class="label">{$form.anonymous_open_permission.label} <a onclick='CRM.help("{ts domain='de.systopia.mailingtools'}API Permission{/ts}", {literal}{"id":"id-mailtools-anonymous-open-permission","file":"CRM\/Mailingtools\/Form\/Settings"}{/literal}); return false;' href="#" title="{ts domain='de.systopia.mailingtools'}Help{/ts}" class="helpicon">&nbsp;</a></div>
+    <div class="label">{$form.anonymous_open_permission.label} <a onclick='CRM.help("{ts escape='htmlattribute' domain='de.systopia.mailingtools'}API Permission{/ts}", {literal}{"id":"id-mailtools-anonymous-open-permission","file":"CRM\/Mailingtools\/Form\/Settings"}{/literal}); return false;' href="#" title="{ts escape='htmlattribute' domain='de.systopia.mailingtools'}Help{/ts}" class="helpicon">&nbsp;</a></div>
     <div class="content">{$form.anonymous_open_permission.html}</div>
     <div class="clear"></div>
   </div>
 
   <div class="crm-section">
-    <div class="label">{$form.anonymous_open_contact_id.label} <a onclick='CRM.help("{ts domain='de.systopia.mailingtools'}Anonymous Contact ID{/ts}", {literal}{"id":"id-mailtools-anonymous-open-contact-id","file":"CRM\/Mailingtools\/Form\/Settings"}{/literal}); return false;' href="#" title="{ts domain='de.systopia.mailingtools'}Help{/ts}" class="helpicon">&nbsp;</a></div>
+    <div class="label">{$form.anonymous_open_contact_id.label} <a onclick='CRM.help("{ts escape='htmlattribute' domain='de.systopia.mailingtools'}Anonymous Contact ID{/ts}", {literal}{"id":"id-mailtools-anonymous-open-contact-id","file":"CRM\/Mailingtools\/Form\/Settings"}{/literal}); return false;' href="#" title="{ts escape='htmlattribute' domain='de.systopia.mailingtools'}Help{/ts}" class="helpicon">&nbsp;</a></div>
     <div class="content">{$form.anonymous_open_contact_id.html} <span id="anonymous_open_contact_name">{$anonymous_open_contact_name}</span></div>
     <div class="clear"></div>
   </div>
@@ -58,25 +58,25 @@
 
 <br/><h3>{ts domain='de.systopia.mailingtools'}Anonymous Link Tracking{/ts}</h3><br/>
   <div class="crm-section">
-    <div class="label">{$form.anonymous_link_enabled.label} <a onclick='CRM.help("{ts domain='de.systopia.mailingtools'}Anonymous Link Tracking{/ts}", {literal}{"id":"id-mailtools-anonymous-link-enable","file":"CRM\/Mailingtools\/Form\/Settings"}{/literal}); return false;' href="#" title="{ts domain='de.systopia.mailingtools'}Help{/ts}" class="helpicon">&nbsp;</a></div>
+    <div class="label">{$form.anonymous_link_enabled.label} <a onclick='CRM.help("{ts escape='htmlattribute' domain='de.systopia.mailingtools'}Anonymous Link Tracking{/ts}", {literal}{"id":"id-mailtools-anonymous-link-enable","file":"CRM\/Mailingtools\/Form\/Settings"}{/literal}); return false;' href="#" title="{ts escape='htmlattribute' domain='de.systopia.mailingtools'}Help{/ts}" class="helpicon">&nbsp;</a></div>
     <div class="content">{$form.anonymous_link_enabled.html}</div>
     <div class="clear"></div>
   </div>
 
   <div class="crm-section">
-    <div class="label">{$form.anonymous_link_url.label} <a onclick='CRM.help("{ts domain='de.systopia.mailingtools'}Anonymous Link URL{/ts}", {literal}{"id":"id-mailtools-anonymous-link-url","file":"CRM\/Mailingtools\/Form\/Settings"}{/literal}); return false;' href="#" title="{ts domain='de.systopia.mailingtools'}Help{/ts}" class="helpicon">&nbsp;</a></div>
+    <div class="label">{$form.anonymous_link_url.label} <a onclick='CRM.help("{ts escape='htmlattribute' domain='de.systopia.mailingtools'}Anonymous Link URL{/ts}", {literal}{"id":"id-mailtools-anonymous-link-url","file":"CRM\/Mailingtools\/Form\/Settings"}{/literal}); return false;' href="#" title="{ts escape='htmlattribute' domain='de.systopia.mailingtools'}Help{/ts}" class="helpicon">&nbsp;</a></div>
     <div class="content">{$form.anonymous_link_url.html}</div>
     <div class="clear"></div>
   </div>
 
   <div class="crm-section">
-    <div class="label">{$form.anonymous_link_permission.label} <a onclick='CRM.help("{ts domain='de.systopia.mailingtools'}API Permission{/ts}", {literal}{"id":"id-mailtools-anonymous-link-permission","file":"CRM\/Mailingtools\/Form\/Settings"}{/literal}); return false;' href="#" title="{ts domain='de.systopia.mailingtools'}Help{/ts}" class="helpicon">&nbsp;</a></div>
+    <div class="label">{$form.anonymous_link_permission.label} <a onclick='CRM.help("{ts escape='htmlattribute' domain='de.systopia.mailingtools'}API Permission{/ts}", {literal}{"id":"id-mailtools-anonymous-link-permission","file":"CRM\/Mailingtools\/Form\/Settings"}{/literal}); return false;' href="#" title="{ts escape='htmlattribute' domain='de.systopia.mailingtools'}Help{/ts}" class="helpicon">&nbsp;</a></div>
     <div class="content">{$form.anonymous_link_permission.html}</div>
     <div class="clear"></div>
   </div>
 
   <div class="crm-section">
-    <div class="label">{$form.anonymous_link_contact_id.label} <a onclick='CRM.help("{ts domain='de.systopia.mailingtools'}Anonymous Contact ID{/ts}", {literal}{"id":"id-mailtools-anonymous-link-contact-id","file":"CRM\/Mailingtools\/Form\/Settings"}{/literal}); return false;' href="#" title="{ts domain='de.systopia.mailingtools'}Help{/ts}" class="helpicon">&nbsp;</a></div>
+    <div class="label">{$form.anonymous_link_contact_id.label} <a onclick='CRM.help("{ts escape='htmlattribute' domain='de.systopia.mailingtools'}Anonymous Contact ID{/ts}", {literal}{"id":"id-mailtools-anonymous-link-contact-id","file":"CRM\/Mailingtools\/Form\/Settings"}{/literal}); return false;' href="#" title="{ts escape='htmlattribute' domain='de.systopia.mailingtools'}Help{/ts}" class="helpicon">&nbsp;</a></div>
     <div class="content">{$form.anonymous_link_contact_id.html} <span id="anonymous_link_contact_name">{$anonymous_link_contact_name}</span></div>
     <div class="clear"></div>
   </div>
@@ -99,13 +99,13 @@
 <br/><h3>{ts domain='de.systopia.mailingtools'}Email Validation{/ts}</h3><br/>
 
   <div class="crm-section">
-    <div class="label">{$form.enable_automatic_email_check.label} <a onclick='CRM.help("{ts domain='de.systopia.mailingtools'}Automatic Email Check{/ts}", {literal}{"id":"id-mailtools-enable-automatic-email-check","file":"CRM\/Mailingtools\/Form\/Settings"}{/literal}); return false;' href="#" title="{ts domain='de.systopia.mailingtools'}Help{/ts}" class="helpicon">&nbsp;</a></div>
+    <div class="label">{$form.enable_automatic_email_check.label} <a onclick='CRM.help("{ts escape='htmlattribute' domain='de.systopia.mailingtools'}Automatic Email Check{/ts}", {literal}{"id":"id-mailtools-enable-automatic-email-check","file":"CRM\/Mailingtools\/Form\/Settings"}{/literal}); return false;' href="#" title="{ts escape='htmlattribute' domain='de.systopia.mailingtools'}Help{/ts}" class="helpicon">&nbsp;</a></div>
     <div class="content">{$form.enable_automatic_email_check.html}</div>
     <div class="clear"></div>
   </div>
 
   <div class="crm-section">
-    <div class="label">{$form.email_domain_blacklist.label} <a onclick='CRM.help("{ts domain='de.systopia.mailingtools'}Email Domain Blacklist{/ts}", {literal}{"id":"id-mailtools-email-domain-check","file":"CRM\/Mailingtools\/Form\/Settings"}{/literal}); return false;' href="#" title="{ts domain='de.systopia.mailingtools'}Help{/ts}" class="helpicon">&nbsp;</a></div>
+    <div class="label">{$form.email_domain_blacklist.label} <a onclick='CRM.help("{ts escape='htmlattribute' domain='de.systopia.mailingtools'}Email Domain Blacklist{/ts}", {literal}{"id":"id-mailtools-email-domain-check","file":"CRM\/Mailingtools\/Form\/Settings"}{/literal}); return false;' href="#" title="{ts escape='htmlattribute' domain='de.systopia.mailingtools'}Help{/ts}" class="helpicon">&nbsp;</a></div>
     <div class="content">{$form.email_domain_blacklist.html}</div>
     <div class="clear"></div>
   </div>
@@ -113,12 +113,12 @@
 <br/><h3>{ts domain='de.systopia.mailingtools'}Token Tools{/ts}</h3><br/>
 
   <div class="crm-section">
-    <div class="label">{$form.fix_hash_token.label} <a onclick='CRM.help("{ts domain='de.systopia.mailingtools'}Hash Token Fix{/ts}", {literal}{"id":"id-mailtools-fix-hash-token","file":"CRM\/Mailingtools\/Form\/Settings"}{/literal}); return false;' href="#" title="{ts domain='de.systopia.mailingtools'}Help{/ts}" class="helpicon">&nbsp;</a></div>
+    <div class="label">{$form.fix_hash_token.label} <a onclick='CRM.help("{ts escape='htmlattribute' domain='de.systopia.mailingtools'}Hash Token Fix{/ts}", {literal}{"id":"id-mailtools-fix-hash-token","file":"CRM\/Mailingtools\/Form\/Settings"}{/literal}); return false;' href="#" title="{ts escape='htmlattribute' domain='de.systopia.mailingtools'}Help{/ts}" class="helpicon">&nbsp;</a></div>
     <div class="content">{$form.fix_hash_token.html}</div>
     <div class="clear"></div>
   </div>
 
-<br/><h3>{ts domain='de.systopia.mailingtools'}Custom (Regex) Tokens{/ts} <a onclick='CRM.help("{ts domain='de.systopia.mailingtools'}Custom (Regex) Tokens{/ts}", {literal}{"id":"id-mailtools-regex-tokens","file":"CRM\/Mailingtools\/Form\/Settings"}{/literal}); return false;' href="#" title="{ts domain='de.systopia.mailingtools'}Help{/ts}" class="helpicon">&nbsp;</a></h3><br/>
+<br/><h3>{ts domain='de.systopia.mailingtools'}Custom (Regex) Tokens{/ts} <a onclick='CRM.help("{ts escape='htmlattribute' domain='de.systopia.mailingtools'}Custom (Regex) Tokens{/ts}", {literal}{"id":"id-mailtools-regex-tokens","file":"CRM\/Mailingtools\/Form\/Settings"}{/literal}); return false;' href="#" title="{ts escape='htmlattribute' domain='de.systopia.mailingtools'}Help{/ts}" class="helpicon">&nbsp;</a></h3><br/>
 {foreach from=$regex_token_indices item=token_index}
   {capture assign=token_def}regex_token_{$token_index}_def{/capture}
   {capture assign=token_op}regex_token_{$token_index}_op{/capture}
@@ -135,7 +135,7 @@
 <br/><h3>{ts domain='de.systopia.mailingtools'}Mosaico Save Message{/ts}</h3><br/>
 
 <div class="crm-section">
-  <div class="label">{$form.mosaico_save_message.label} <a onclick='CRM.help("{ts domain='de.systopia.mailingtools'}Mosaico Save Message{/ts}", {literal}{"id":"id-mailtools-mosaico-save","file":"CRM\/Mailingtools\/Form\/Settings"}{/literal}); return false;' href="#" title="{ts domain='de.systopia.mailingtools'}Help{/ts}" class="helpicon">&nbsp;</a></div>
+  <div class="label">{$form.mosaico_save_message.label} <a onclick='CRM.help("{ts escape='htmlattribute' domain='de.systopia.mailingtools'}Mosaico Save Message{/ts}", {literal}{"id":"id-mailtools-mosaico-save","file":"CRM\/Mailingtools\/Form\/Settings"}{/literal}); return false;' href="#" title="{ts escape='htmlattribute' domain='de.systopia.mailingtools'}Help{/ts}" class="helpicon">&nbsp;</a></div>
   <div class="content">{$form.mosaico_save_message.html}</div>
   <div class="clear"></div>
 </div>
@@ -144,27 +144,27 @@
 <p>{ts domain='de.systopia.mailingtools'}Debugging Information for all mailings. Uses hook alterMailer. Results are JSON encoded and written to mailing.log. Multiple opotions can be chosen. {/ts}</p>
 
   <div class="crm-section">
-    <div class="label">{$form.mailing_debugging_short.label} <a onclick='CRM.help("{ts domain='de.systopia.mailingtools'}Print Short Debugging information to file{/ts}", {literal}{"id":"id-mailing_debugging_short","file":"CRM\/Mailingtools\/Form\/Settings"}{/literal}); return false;' href="#" title="{ts domain='de.systopia.mailingtools'}Help{/ts}" class="helpicon">&nbsp;</a></div>
+    <div class="label">{$form.mailing_debugging_short.label} <a onclick='CRM.help("{ts escape='htmlattribute' domain='de.systopia.mailingtools'}Print Short Debugging information to file{/ts}", {literal}{"id":"id-mailing_debugging_short","file":"CRM\/Mailingtools\/Form\/Settings"}{/literal}); return false;' href="#" title="{ts escape='htmlattribute' domain='de.systopia.mailingtools'}Help{/ts}" class="helpicon">&nbsp;</a></div>
     <div class="content">{$form.mailing_debugging_short.html}</div>
     <div class="clear"></div>
   </div>
   <div class="crm-section">
-    <div class="label">{$form.mailing_debugging_header.label} <a onclick='CRM.help("{ts domain='de.systopia.mailingtools'}Print Email Header to File{/ts}", {literal}{"id":"id-mailing_debugging_header","file":"CRM\/Mailingtools\/Form\/Settings"}{/literal}); return false;' href="#" title="{ts domain='de.systopia.mailingtools'}Help{/ts}" class="helpicon">&nbsp;</a></div>
+    <div class="label">{$form.mailing_debugging_header.label} <a onclick='CRM.help("{ts escape='htmlattribute' domain='de.systopia.mailingtools'}Print Email Header to File{/ts}", {literal}{"id":"id-mailing_debugging_header","file":"CRM\/Mailingtools\/Form\/Settings"}{/literal}); return false;' href="#" title="{ts escape='htmlattribute' domain='de.systopia.mailingtools'}Help{/ts}" class="helpicon">&nbsp;</a></div>
     <div class="content">{$form.mailing_debugging_header.html}</div>
     <div class="clear"></div>
   </div>
   <div class="crm-section">
-    <div class="label">{$form.mailing_debugging_recipients.label} <a onclick='CRM.help("{ts domain='de.systopia.mailingtools'}Print Email Recipients to Log File{/ts}", {literal}{"id":"id-mailing_debugging_recipients","file":"CRM\/Mailingtools\/Form\/Settings"}{/literal}); return false;' href="#" title="{ts domain='de.systopia.mailingtools'}Help{/ts}" class="helpicon">&nbsp;</a></div>
+    <div class="label">{$form.mailing_debugging_recipients.label} <a onclick='CRM.help("{ts escape='htmlattribute' domain='de.systopia.mailingtools'}Print Email Recipients to Log File{/ts}", {literal}{"id":"id-mailing_debugging_recipients","file":"CRM\/Mailingtools\/Form\/Settings"}{/literal}); return false;' href="#" title="{ts escape='htmlattribute' domain='de.systopia.mailingtools'}Help{/ts}" class="helpicon">&nbsp;</a></div>
     <div class="content">{$form.mailing_debugging_recipients.html}</div>
     <div class="clear"></div>
   </div>
   <div class="crm-section">
-    <div class="label">{$form.mailing_debugging_body.label} <a onclick='CRM.help("{ts domain='de.systopia.mailingtools'}Print full Email Body to Log file{/ts}", {literal}{"id":"id-mailing_debugging_body","file":"CRM\/Mailingtools\/Form\/Settings"}{/literal}); return false;' href="#" title="{ts domain='de.systopia.mailingtools'}Help{/ts}" class="helpicon">&nbsp;</a></div>
+    <div class="label">{$form.mailing_debugging_body.label} <a onclick='CRM.help("{ts escape='htmlattribute' domain='de.systopia.mailingtools'}Print full Email Body to Log file{/ts}", {literal}{"id":"id-mailing_debugging_body","file":"CRM\/Mailingtools\/Form\/Settings"}{/literal}); return false;' href="#" title="{ts escape='htmlattribute' domain='de.systopia.mailingtools'}Help{/ts}" class="helpicon">&nbsp;</a></div>
     <div class="content">{$form.mailing_debugging_body.html}</div>
     <div class="clear"></div>
   </div>
   <div class="crm-section">
-    <div class="label">{$form.mailing_debugging_omit_mailings.label} <a onclick='CRM.help("{ts domain='de.systopia.mailingtools'}Omit Logging for Mailings{/ts}", {literal}{"id":"id-mailing_debugging_omit_mailings","file":"CRM\/Mailingtools\/Form\/Settings"}{/literal}); return false;' href="#" title="{ts domain='de.systopia.mailingtools'}Help{/ts}" class="helpicon">&nbsp;</a></div>
+    <div class="label">{$form.mailing_debugging_omit_mailings.label} <a onclick='CRM.help("{ts escape='htmlattribute' domain='de.systopia.mailingtools'}Omit Logging for Mailings{/ts}", {literal}{"id":"id-mailing_debugging_omit_mailings","file":"CRM\/Mailingtools\/Form\/Settings"}{/literal}); return false;' href="#" title="{ts escape='htmlattribute' domain='de.systopia.mailingtools'}Help{/ts}" class="helpicon">&nbsp;</a></div>
     <div class="content">{$form.mailing_debugging_omit_mailings.html}</div>
     <div class="clear"></div>
   </div>

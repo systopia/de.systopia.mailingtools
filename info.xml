@@ -18,7 +18,7 @@
   <version>1.0.0</version>
   <develStage>stable</develStage>
   <compatibility>
-    <ver>5.27</ver>
+    <ver>5.65</ver>
   </compatibility>
   <comments>For use of Email Domain Verification a couple of dependencies exist:
             - PHP &gt;= 7.0
