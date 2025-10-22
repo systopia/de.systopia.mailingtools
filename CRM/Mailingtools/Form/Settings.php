@@ -266,7 +266,7 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
     $settings = $config->getSettings();
     $settings_in_form = $this->getSettingsInForm();
     foreach ($settings_in_form as $name) {
-      $settings[$name] = CRM_Utils_Array::value($name, $values, NULL);
+      $settings[$name] = $values[$name] ?? NULL;
     }
     $config->setSettings($settings);
 
