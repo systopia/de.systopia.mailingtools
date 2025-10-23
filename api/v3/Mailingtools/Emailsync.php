@@ -39,11 +39,11 @@ function _civicrm_api3_mailingtools_Emailsync_spec(&$spec) {
  * @return array API result descriptor
  * @see civicrm_api3_create_success
  * @see civicrm_api3_create_error
- * @throws API_Exception
+ * @throws CRM_Core_Exception
  */
 function civicrm_api3_mailingtools_Emailsync($params) {
   if (version_compare(PHP_VERSION, '7.0.0') == 0) {
-    throw new API_Exception('PHP Version is not compatible with this API command. At least PHP7.0 is needed');
+    throw new CRM_Core_Exception('PHP Version is not compatible with this API command. At least PHP7.0 is needed');
   }
 
   $runner = new CRM_Mailingtools_EmailVerifier($params['verify_size'], $params['checking_index'], $params['debug']);

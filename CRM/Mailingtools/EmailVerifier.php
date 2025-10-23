@@ -34,7 +34,7 @@ class CRM_Mailingtools_EmailVerifier {
    * @param $checking_index
    * @param $debug
    *
-   * @throws \API_Exception
+   * @throws \CRM_Core_Exception
    */
   public function __construct($verify_size, $checking_index, $debug) {
     $this->check_voku_email_checker_include();
@@ -50,7 +50,7 @@ class CRM_Mailingtools_EmailVerifier {
 
   /**
    * process configured amount of emails from the database with an index
-   * @throws \API_Exception
+   * @throws \CRM_Core_Exception
    */
   public function process() {
     $this->get_email_addresses($this->checking_index +1);
@@ -75,11 +75,11 @@ class CRM_Mailingtools_EmailVerifier {
   }
 
   /**
-   * @throws \API_Exception
+   * @throws \CRM_Core_Exception
    */
   private function check_voku_email_checker_include() {
     if (!file_exists(__DIR__ . '/../../resources/lib/vendor/voku/email-check/src/voku/helper/EmailCheck.php')) {
-      throw new API_Exception("Didn't find resources/lib/vendor/voku/email-check/src/voku/helper/EmailCheck.php. Please install library via composer (see Readme) in the resources folder");
+      throw new CRM_Core_Exception("Didn't find resources/lib/vendor/voku/email-check/src/voku/helper/EmailCheck.php. Please install library via composer (see Readme) in the resources folder");
     }
   }
 
@@ -87,7 +87,7 @@ class CRM_Mailingtools_EmailVerifier {
    * Get Email Addresses/IDs from CiviDB
    * @param $index
    *
-   * @throws \API_Exception
+   * @throws \CRM_Core_Exception
    * @throws \CRM_Core_Exception
    */
   private function get_email_addresses($index) {
@@ -98,7 +98,7 @@ class CRM_Mailingtools_EmailVerifier {
       'options' => ['limit' => $this->verify_size],
     ]);
     if ($result['is_error'] == '1') {
-      throw new API_Exception("Error Occured while looking up Emails. Parameters: Index->{$index}, Verify_size->{$this->verify_size}, Error Message: {$result['error_message']}");
+      throw new CRM_Core_Exception("Error Occured while looking up Emails. Parameters: Index->{$index}, Verify_size->{$this->verify_size}, Error Message: {$result['error_message']}");
     }
     $this->email_lookup_values = $result['values'];
   }
