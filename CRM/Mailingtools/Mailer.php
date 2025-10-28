@@ -72,7 +72,9 @@ class CRM_Mailingtools_Mailer {
           'headers'    => $headers,
       ];
       $body = CRM_Mailingtools_RegexToken::tokenReplace($body, $context);
-      $headers = CRM_Mailingtools_RegexToken::tokenReplace($headers, $context);
+      foreach ($headers as $name => $value) {
+        $headers[$name] = CRM_Mailingtools_RegexToken::tokenReplace($value, $context);
+      }
     }
     // Debug output
     $mail_logger = new CRM_Mailingtools_MailLogger();
