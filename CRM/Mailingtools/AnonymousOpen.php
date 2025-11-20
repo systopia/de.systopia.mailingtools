@@ -154,7 +154,7 @@ class CRM_Mailingtools_AnonymousOpen {
     $system_base = $core_config->userFrameworkBaseURL;
 
     // find all all relevant links and collect queue IDs
-    if (preg_match_all("#{$system_base}sites/all/modules/civicrm/extern/open.php\?q=(?P<queue_id>[0-9]+)[^0-9]#i", $body, $matches)) {
+    if (preg_match_all("#{$system_base}civicrm/mailing/open\?qid=(?P<queue_id>[0-9]+)[^0-9]#i", $body, $matches)) {
       $queue_ids = $matches['queue_id'];
 
       if (!empty($queue_ids)) {
@@ -164,7 +164,7 @@ class CRM_Mailingtools_AnonymousOpen {
         // replace open trackers
         foreach ($queue_id_to_mailing_id as $queue_id => $mailing_id) {
           $new_url = $config->getSetting('anonymous_open_url') . "?mid={$mailing_id}";
-          $body = preg_replace("#{$system_base}sites/all/modules/civicrm/extern/open.php\?q={$queue_id}#i", $new_url, $body);
+          $body = preg_replace("#{$system_base}civicrm/mailing/open\?qid={$queue_id}#i", $new_url, $body);
         }
       }
     }
