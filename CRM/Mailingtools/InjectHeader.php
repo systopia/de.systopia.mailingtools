@@ -31,6 +31,14 @@ class CRM_Mailingtools_InjectHeader {
     if (!empty($settings['extra_mail_header_key']) && !empty($settings['extra_mail_header_value'])) {
       $params['headers'][$settings['extra_mail_header_key']] = $settings['extra_mail_header_value'];
     }
+
+    \Civi::log()->debug(sprintf('inject_header. context: %s, params: %s', json_encode($context), json_encode($params)));
+
+    // @todo Make configurable.
+    $from = $params['from'] ?? $params['From'] ?? NULL;
+    if (NULL !== $from) {
+      $params['headers']['Sender'] = CRM_Utils_Mail::pluckEmailFromHeader($from) ?? $from;
+    }
   }
 
 }
