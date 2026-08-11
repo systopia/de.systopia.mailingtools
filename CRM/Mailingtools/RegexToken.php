@@ -95,7 +95,7 @@ class CRM_Mailingtools_RegexToken {
         $value = self::getTokenValue($matched_string, $token_definition, $match_data);
 
         // get the offsets and do the replacement
-        if ($value != $matched_string) {
+        if ((string) $value !== $matched_string) {
           preg_match(
             self::REGEX_DELIMITER . $token_definition['def'] . self::REGEX_DELIMITER,
             $text,

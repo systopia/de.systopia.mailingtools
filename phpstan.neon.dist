@@ -43,4 +43,10 @@ parameters:
 	ignoreErrors:
 		# Note paths are prefixed with "*/" to work with inspections in PHPStorm because of:
 		# https://youtrack.jetbrains.com/issue/WI-63891/PHPStan-ignoreErrors-configuration-isnt-working-with-inspections
+		-
+			identifier: class.notFound
+			message: '#^Call to static method isValid\(\) on an unknown class voku\\helper\\EmailCheck\.$#'
+			paths:
+				- */CRM/Mailingtools/EmailVerifier.php
+				- */CRM/Mailingtools/Utils.php
 	tmpDir: .phpstan
