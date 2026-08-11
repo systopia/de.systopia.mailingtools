@@ -25,7 +25,7 @@ class api_v3_Mailingtools_EmailsyncTest extends \PHPUnit\Framework\TestCase impl
   /**
    * The setup() method is executed before the test is executed (optional).
    */
-  public function setUp() {
+  public function setUp(): void {
     // create Contact
     $result = civicrm_api3('Contact', 'create', [
       'contact_type' => 'Individual',
@@ -65,7 +65,7 @@ class api_v3_Mailingtools_EmailsyncTest extends \PHPUnit\Framework\TestCase impl
    * The tearDown() method is executed after the test was executed (optional)
    * This can be used for cleanup.
    */
-  public function tearDown() {
+  public function tearDown(): void {
     foreach ($this->email_ids as $key => $email_id) {
       $this->delete_entity($email_id, 'Email');
     }
@@ -102,7 +102,7 @@ class api_v3_Mailingtools_EmailsyncTest extends \PHPUnit\Framework\TestCase impl
       'sequential' => 1,
       'email' => ['LIKE' => 'example_%@systop%.de%'],
     ]);
-    if ($result['count'] != 10) {
+    if ($result['count'] !== 10) {
       throw new Exception("Couldn't Find the appropriate amount of Emails matching the creation pattern. "
         . "Found {$result['count']} instead of 10");
     }
@@ -116,7 +116,7 @@ class api_v3_Mailingtools_EmailsyncTest extends \PHPUnit\Framework\TestCase impl
         $activated_email_counter += 1;
       }
     }
-    if ($on_hold_counter == 4 && $activated_email_counter == 6) {
+    if ($on_hold_counter === 4 && $activated_email_counter === 6) {
       echo "Test successful.\n";
     }
     else {

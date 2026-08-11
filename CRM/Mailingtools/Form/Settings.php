@@ -256,7 +256,7 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
       $this->_errors['email_domain_blacklist'] = $error;
     }
 
-    return count($this->_errors) == 0;
+    return count($this->_errors) === 0;
   }
 
   /**
@@ -335,7 +335,7 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
    */
   protected function renderContact($data, $key) {
     if (!empty($data["anonymous_{$key}_contact_id"])) {
-      $contact_id = (int) CRM_Utils_Array::value("anonymous_{$key}_contact_id", $data, 0);
+      $contact_id = (int) ($data["anonymous_{$key}_contact_id"] ?? 0);
       if ($contact_id) {
         $result = civicrm_api3('Contact', 'get', ['id' => $contact_id, 'return' => 'display_name,contact_type']);
         if (!empty($result['id'])) {
@@ -349,7 +349,7 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
       else {
         $this->assign(
           "anonymous_{$key}_contact_name",
-          E::ts("Bad contact ID: '%1'", [1 => CRM_Utils_Array::value("anonymous_{$key}_contact_id", $data, '')])
+          E::ts("Bad contact ID: '%1'", [1 => $data["anonymous_{$key}_contact_id"] ?? ''])
         );
       }
     }

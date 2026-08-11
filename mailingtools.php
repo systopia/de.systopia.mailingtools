@@ -57,7 +57,7 @@ function mailingtools_civicrm_alterMailer(&$mailer, $driver, $params) {
  * Set permissions for API calls
  */
 function mailingtools_civicrm_alterAPIPermissions($entity, $action, &$params, &$permissions) {
-  if ($entity == 'mailingtools' && $action == 'anonopen') {
+  if ($entity === 'mailingtools' && $action === 'anonopen') {
     $config = CRM_Mailingtools_Config::singleton();
     $anonopen_permission = $config->getSetting('anonymous_open_permission');
     if ($anonopen_permission) {
@@ -68,7 +68,7 @@ function mailingtools_civicrm_alterAPIPermissions($entity, $action, &$params, &$
     }
 
   }
-  elseif ($entity == 'mailingtools' && $action == 'anonurl') {
+  elseif ($entity === 'mailingtools' && $action === 'anonurl') {
     $config = CRM_Mailingtools_Config::singleton();
     $anonurl_permission = $config->getSetting('anonymous_link_permission');
     if ($anonurl_permission) {
@@ -91,7 +91,7 @@ function mailingtools_civicrm_tokenValues(&$values, $cids, $job = NULL, $tokens 
   if ($fix_hash_token) {
     // make sure 'hash' is there:
     if (!empty($tokens['contact'])) {
-      if (in_array('hash', $tokens['contact']) || !empty($tokens['contact']['hash'])) {
+      if (in_array('hash', $tokens['contact'], TRUE) || !empty($tokens['contact']['hash'])) {
         // hash token is requested
         foreach ($values as $contact_id => &$contact_values) {
           if (empty($contact_values['hash'])) {
@@ -110,8 +110,8 @@ function mailingtools_civicrm_tokenValues(&$values, $cids, $job = NULL, $tokens 
  * @see https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_pre/
  */
 function mailingtools_civicrm_pre($op, $objectName, $id, &$params) {
-  if ($op == 'delete' && $id) {
-    if ($objectName == 'Individual' || $objectName == 'Household' || $objectName == 'Organization') {
+  if ($op === 'delete' && $id) {
+    if ($objectName === 'Individual' || $objectName === 'Household' || $objectName === 'Organization') {
       // make sure the contact used for the anonymous open/click tracking is not deleted
       $config = CRM_Mailingtools_Config::singleton();
       $open_contact_id  = (int) $config->getSetting('anonymous_open_contact_id');
@@ -159,7 +159,7 @@ function mailingtools_civicrm_pageRun(&$page) {
  */
 function mailingtools_civicrm_post($op, $objectName, $objectId, &$objectRef) {
   //  Trigger when EMail is edited or updated
-  if ($objectName == 'Email' && in_array($op, ['update', 'edit', 'create'])) {
+  if ($objectName === 'Email' && in_array($op, ['update', 'edit', 'create'], TRUE)) {
     // TODO
     // verify Email address; if invalid then set on hold
     CRM_Mailingtools_Utils::verify_email($op, $objectName, $objectId, $objectRef);

@@ -47,7 +47,7 @@ class CRM_Mailingtools_Config {
    */
   public function getSetting($name, $default_value = NULL) {
     $settings = self::getSettings();
-    return CRM_Utils_Array::value($name, $settings, $default_value);
+    return $settings[$name] ?? $default_value;
   }
 
   /**

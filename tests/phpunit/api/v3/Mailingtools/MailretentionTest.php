@@ -26,7 +26,7 @@ class api_v3_Mailingtools_MailretentionTest extends \PHPUnit\Framework\TestCase 
   /**
    * The setup() method is executed before the test is executed (optional).
    */
-  public function setUp() {
+  public function setUp(): void {
     parent::setUp();
   }
 
@@ -34,7 +34,7 @@ class api_v3_Mailingtools_MailretentionTest extends \PHPUnit\Framework\TestCase 
    * The tearDown() method is executed after the test was executed (optional)
    * This can be used for cleanup.
    */
-  public function tearDown() {
+  public function tearDown(): void {
     parent::tearDown();
   }
 
@@ -45,7 +45,7 @@ class api_v3_Mailingtools_MailretentionTest extends \PHPUnit\Framework\TestCase 
    */
   public function testApiExample() {
     $result = civicrm_api3('Mailingtools', 'Mailretention', ['magicword' => 'sesame']);
-    $this->assertEquals('Twelve', $result['values'][12]['name']);
+    self::assertEquals('Twelve', $result['values'][12]['name']);
   }
 
 }

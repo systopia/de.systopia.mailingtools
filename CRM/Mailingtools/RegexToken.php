@@ -210,7 +210,7 @@ class CRM_Mailingtools_RegexToken {
             $action_found = FALSE;
             $our_action = strtolower($match['action']);
             foreach ($actions['values'] as $known_action) {
-              if (strtolower($known_action) == $our_action) {
+              if (strtolower($known_action) === $our_action) {
                 $action_found = TRUE;
                 break;
               }

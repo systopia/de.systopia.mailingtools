@@ -71,7 +71,7 @@ class CRM_Mailingtools_Utils {
     try {
       $email_domain = substr($email, strpos($email, '@') + 1);
       foreach ($email_domains as $domain) {
-        if ($domain == $email_domain) {
+        if ($domain === $email_domain) {
           self::set_email_on_hold($email_id, $email, 'blacklisted');
           self::set_tag_for_blacklisted_email($email_id);
           return TRUE;
@@ -120,7 +120,7 @@ class CRM_Mailingtools_Utils {
       'sequential' => 1,
       'name' => 'blacklisted_email_domain',
     ]);
-    if ($result['count'] == 0) {
+    if ($result['count'] === 0) {
       // create tag
       $result = civicrm_api3('Tag', 'create', [
         'name' => 'blacklisted_email_domain',
