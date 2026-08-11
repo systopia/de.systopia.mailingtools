@@ -52,6 +52,7 @@ class CRM_Mailingtools_Utils {
       self::set_email_on_hold($email_id, $email, 'DNS Error');
     }
     catch (Exception $e) {
+      // @ignoreException
       self::log('Failure to verify Email "{$email}"');
     }
   }
@@ -79,6 +80,7 @@ class CRM_Mailingtools_Utils {
       }
     }
     catch (Exception $e) {
+      // @ignoreException
       self::log('Failure to blacklist Email "{$email}. Message: " . $e');
     }
     return FALSE;

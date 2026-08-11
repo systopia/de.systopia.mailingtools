@@ -41,7 +41,7 @@ class CRM_Mailingtools_AnonymousURL {
     // check the link ID...
     $trackable_url_id = (int) $trackable_url_id;
     if (!$trackable_url_id) {
-      throw new Exception('Bad link ID');
+      throw new \RuntimeException('Bad link ID');
     }
     // load the link
     $link = CRM_Core_DAO::executeQuery('
@@ -49,13 +49,13 @@ class CRM_Mailingtools_AnonymousURL {
         FROM civicrm_mailing_trackable_url 
         WHERE id = %1', [1 => [$trackable_url_id, 'Integer']]);
     if (!$link->fetch()) {
-      throw new Exception('Invalid link ID');
+      throw new \RuntimeException('Invalid link ID');
     }
 
     // NOW: find a matching event queue ID
     $event_queue_id = CRM_Mailingtools_AnonymousOpen::getEventQueueID($link->mailing_id, 'anonymous_link_contact_id');
     if ((int) ($event_queue_id ?? 0) === 0) {
-      throw new Exception("No found event in queue for mailing [{$link->mailing_id}]");
+      throw new \RuntimeException("No found event in queue for mailing [{$link->mailing_id}]");
     }
 
     // all good: add entry

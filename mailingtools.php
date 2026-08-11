@@ -118,7 +118,7 @@ function mailingtools_civicrm_pre($op, $objectName, $id, &$params) {
       $open_contact_id  = (int) $config->getSetting('anonymous_open_contact_id');
       $click_contact_id = (int) $config->getSetting('anonymous_link_contact_id');
       if ((int) $id === $open_contact_id || (int) $id === $click_contact_id) {
-        throw new Exception(E::ts(
+        throw new \RuntimeException(E::ts(
           'You cannot delete the contact currently used for anonymous open/click tracking. Remove Contact [%1] '
           . 'from the settings of the MailingTools extension. Caution: you will lose the anonymous mailing '
           . 'statistics if you delete this contact.',

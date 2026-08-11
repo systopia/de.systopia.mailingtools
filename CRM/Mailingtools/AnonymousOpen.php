@@ -41,7 +41,7 @@ class CRM_Mailingtools_AnonymousOpen {
     // mid needs to be set
     $mid = (int) $mid;
     if (!$mid) {
-      throw new Exception('Invalid mailing ID');
+      throw new \RuntimeException('Invalid mailing ID');
     }
 
     // get a matching event queue ID
@@ -49,7 +49,7 @@ class CRM_Mailingtools_AnonymousOpen {
 
     // ERROR: if this is not set yet, something is wrong.
     if ((int) ($event_queue_id ?? 0) === 0) {
-      throw new Exception("No found event in queue for mailing [{$mid}]");
+      throw new \RuntimeException("No found event in queue for mailing [{$mid}]");
     }
 
     // all good: add entry
@@ -134,7 +134,7 @@ class CRM_Mailingtools_AnonymousOpen {
           ]);
       }
       else {
-        throw new Exception("No contacts in queue for mailing [{$mid}]");
+        throw new \RuntimeException("No contacts in queue for mailing [{$mid}]");
       }
     }
 

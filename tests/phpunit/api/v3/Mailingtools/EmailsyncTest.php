@@ -34,7 +34,7 @@ class api_v3_Mailingtools_EmailsyncTest extends \PHPUnit\Framework\TestCase impl
       'last_name' => 'Example',
     ]);
     if ((string) $result['is_error'] === '1') {
-      throw new Exception("Couldn't create contact.");
+      throw new \RuntimeException("Couldn't create contact.");
     }
     $this->contact_id = $result['id'];
     // create 6 valid emails
@@ -56,7 +56,7 @@ class api_v3_Mailingtools_EmailsyncTest extends \PHPUnit\Framework\TestCase impl
       'email' => $email,
     ]);
     if ((string) $result['is_error'] === '1') {
-      throw new Exception("Couldn't create email {$email} for contact {$this->contact_id}");
+      throw new \RuntimeException("Couldn't create email {$email} for contact {$this->contact_id}");
     }
     $this->email_ids[] = $result['id'];
   }
@@ -77,7 +77,7 @@ class api_v3_Mailingtools_EmailsyncTest extends \PHPUnit\Framework\TestCase impl
       'id' => $entity_id,
     ]);
     if ((string) $result['is_error'] === '1') {
-      throw new Exception("Couldn't delete Entity {$entity} ({$entity_id}). Abroting Test");
+      throw new \RuntimeException("Couldn't delete Entity {$entity} ({$entity_id}). Abroting Test");
     }
     parent::tearDown();
   }
@@ -103,7 +103,7 @@ class api_v3_Mailingtools_EmailsyncTest extends \PHPUnit\Framework\TestCase impl
       'email' => ['LIKE' => 'example_%@systop%.de%'],
     ]);
     if ($result['count'] !== 10) {
-      throw new Exception("Couldn't Find the appropriate amount of Emails matching the creation pattern. "
+      throw new \RuntimeException("Couldn't Find the appropriate amount of Emails matching the creation pattern. "
         . "Found {$result['count']} instead of 10");
     }
     $on_hold_counter = 0;
@@ -120,7 +120,7 @@ class api_v3_Mailingtools_EmailsyncTest extends \PHPUnit\Framework\TestCase impl
       echo "Test successful.\n";
     }
     else {
-      throw new Exception("Test unsuccessful. Found {$on_hold_counter} on_hold Emails matching the pattern "
+      throw new \RuntimeException("Test unsuccessful. Found {$on_hold_counter} on_hold Emails matching the pattern "
         . "and {$activated_email_counter} normal emails matching the pattern.");
     }
   }

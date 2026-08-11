@@ -38,7 +38,7 @@ function civicrm_api3_mailingtools_anonopen($params) {
     }
   }
   catch (Exception $ex) {
-    throw new CRM_Core_Exception($ex->getMessage(), $ex->getCode());
+    throw new CRM_Core_Exception($ex->getMessage(), $ex->getCode(), [], $ex);
   }
 }
 

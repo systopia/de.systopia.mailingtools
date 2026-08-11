@@ -138,7 +138,7 @@ class CRM_Mailingtools_RegexToken {
             }
           }
           catch (Exception $ex) {
-            // nothing to do...
+            // @ignoreException
           }
         }
         return 'ERROR';
@@ -160,6 +160,7 @@ class CRM_Mailingtools_RegexToken {
           );
         }
         catch (Exception $ex) {
+          // @ignoreException
           return 'ERROR';
         }
 
@@ -206,6 +207,7 @@ class CRM_Mailingtools_RegexToken {
       preg_match(self::REGEX_DELIMITER . $token_definition['def'] . self::REGEX_DELIMITER, 'doesntmatter');
     }
     catch (Exception $ex) {
+      // @ignoreException
       return E::ts('Incomplete definition: definition is not a valid regular expression');
     }
 
@@ -232,6 +234,7 @@ class CRM_Mailingtools_RegexToken {
             }
           }
           catch (Exception $ex) {
+            // @ignoreException
             return E::ts("API3 entity '%1' not found", [1 => $match['entity']]);
           }
         }
@@ -263,6 +266,7 @@ class CRM_Mailingtools_RegexToken {
           );
         }
         catch (Exception $ex) {
+          // @ignoreException
           return E::ts('Ill-defined replace expression');
         }
         break;
