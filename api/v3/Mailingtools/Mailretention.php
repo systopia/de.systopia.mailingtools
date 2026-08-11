@@ -42,5 +42,6 @@ function civicrm_api3_mailingtools_Mailretention($params) {
 
   $mailstore = new CRM_Mailingtools_CheckMailstore();
   $result = $mailstore->check_mailstore();
+  // @phpstan-ignore argument.type
   return civicrm_api3_create_success($result);
 }

@@ -35,6 +35,7 @@ function civicrm_api3_mailingtools_anonurl($params) {
       return civicrm_api3_create_success([$link_id => $url]);
     }
     else {
+      // @phpstan-ignore argument.type
       return civicrm_api3_create_success('Anonymous click tracking disabled.');
     }
   }

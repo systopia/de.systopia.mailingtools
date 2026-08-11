@@ -265,7 +265,7 @@ class CRM_Mailingtools_AnonymousOpen {
       $hash = substr(sha1(random_bytes(16)), 0, 16);
     }
     else {
-      $hash = substr(sha1(random_int(0, PHP_INT_MAX)), 0, 16);
+      $hash = substr(sha1((string) random_int(0, PHP_INT_MAX)), 0, 16);
     }
     CRM_Core_DAO::executeQuery('
       INSERT IGNORE INTO civicrm_mailing_event_queue (job_id, contact_id, hash)

@@ -31,9 +31,11 @@ function civicrm_api3_mailingtools_anonopen($params) {
   try {
     $result = CRM_Mailingtools_AnonymousOpen::processAnonymousOpenEvent($params['mid']);
     if ($result !== NULL) {
+      // @phpstan-ignore argument.type
       return civicrm_api3_create_success('Anonymous open event recorded.');
     }
     else {
+      // @phpstan-ignore argument.type
       return civicrm_api3_create_success('Anonymous open tracking disabled.');
     }
   }
