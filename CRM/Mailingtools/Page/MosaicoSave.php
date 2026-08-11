@@ -15,6 +15,7 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+declare(strict_types = 1);
 
 class CRM_Mailingtools_Page_MosaicoSave {
 
@@ -29,8 +30,9 @@ class CRM_Mailingtools_Page_MosaicoSave {
 
     $script = file_get_contents(__DIR__ . '/../../../js/save_mosaico_document.js');
 
-    CRM_Core_Region::instance('page-footer')->add(array(
+    CRM_Core_Region::instance('page-footer')->add([
       'script' => $script,
-    ));
+    ]);
   }
+
 }

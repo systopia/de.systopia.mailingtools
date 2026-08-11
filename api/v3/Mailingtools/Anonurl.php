@@ -13,8 +13,9 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
-use CRM_Mailingtools_ExtensionUtil as E;
+declare(strict_types = 1);
 
+use CRM_Mailingtools_ExtensionUtil as E;
 
 /**
  * API: Mailingtools.Anonurl
@@ -32,10 +33,12 @@ function civicrm_api3_mailingtools_anonurl($params) {
     if ($url) {
       $link_id = (int) $params['u'];
       return civicrm_api3_create_success([$link_id => $url]);
-    } else {
-      return civicrm_api3_create_success("Anonymous click tracking disabled.");
     }
-  } catch (Exception $ex) {
+    else {
+      return civicrm_api3_create_success('Anonymous click tracking disabled.');
+    }
+  }
+  catch (Exception $ex) {
     throw new CRM_Core_Exception($ex->getMessage(), $ex->getCode());
   }
 }
@@ -44,11 +47,11 @@ function civicrm_api3_mailingtools_anonurl($params) {
  * API Specs: Mailingtools.Anonopen
  */
 function _civicrm_api3_mailingtools_anonurl_spec(&$spec) {
-  $spec['u'] = array(
-      'name'         => 'u',
-      'api.required' => 1,
-      'type'         => CRM_Utils_Type::T_INT,
-      'title'        => 'URL ID',
-      'description'  => 'URL ID for which the click event should be recorded',
-  );
+  $spec['u'] = [
+    'name'         => 'u',
+    'api.required' => 1,
+    'type'         => CRM_Utils_Type::T_INT,
+    'title'        => 'URL ID',
+    'description'  => 'URL ID for which the click event should be recorded',
+  ];
 }

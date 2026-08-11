@@ -13,6 +13,8 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+declare(strict_types = 1);
+
 /**
  * Wrapper for CiviCRM Mailer
  */
@@ -38,14 +40,13 @@ class CRM_Mailingtools_Mailer {
    */
   public static function isNeeded(): bool {
     $config = CRM_Mailingtools_Config::singleton();
-    return  ($config->getSetting('anonymous_open_enabled') && $config->getSetting('anonymous_open_url'))
+    return ($config->getSetting('anonymous_open_enabled') && $config->getSetting('anonymous_open_url'))
          || ($config->getSetting('anonymous_link_enabled') && $config->getSetting('anonymous_link_url'))
          || CRM_Mailingtools_RegexToken::isEnabled()
          || $config->getSetting('mailing_debugging_short')
          || $config->getSetting('mailing_debugging_header')
          || $config->getSetting('mailing_debugging_recipients')
-         || $config->getSetting('mailing_debugging_body')
-      ;
+         || $config->getSetting('mailing_debugging_body');
   }
 
   /**
@@ -61,15 +62,15 @@ class CRM_Mailingtools_Mailer {
    * Send an email via the wrapped mailer,
    *  mending the URLs contained
    */
-  function send($recipients, $headers, $body) {
+  public function send($recipients, $headers, $body) {
     CRM_Mailingtools_AnonymousOpen::modifyEmailBody($body);
     CRM_Mailingtools_AnonymousURL::modifyEmailBody($body);
 
     // apply regex tokens to body _and_ headers
     if (CRM_Mailingtools_RegexToken::isEnabled()) {
       $context = [
-          'recipients' => $recipients,
-          'headers'    => $headers,
+        'recipients' => $recipients,
+        'headers'    => $headers,
       ];
       $body = CRM_Mailingtools_RegexToken::tokenReplace($body, $context);
       foreach ($headers as $name => $value) {
@@ -89,4 +90,5 @@ class CRM_Mailingtools_Mailer {
   public function getDriver() {
     return $this->driver;
   }
+
 }

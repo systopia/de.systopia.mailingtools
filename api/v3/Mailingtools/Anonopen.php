@@ -13,8 +13,9 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
-use CRM_Mailingtools_ExtensionUtil as E;
+declare(strict_types = 1);
 
+use CRM_Mailingtools_ExtensionUtil as E;
 
 /**
  * API: Mailingtools.Anonopen
@@ -30,11 +31,13 @@ function civicrm_api3_mailingtools_anonopen($params) {
   try {
     $result = CRM_Mailingtools_AnonymousOpen::processAnonymousOpenEvent($params['mid']);
     if ($result) {
-      return civicrm_api3_create_success("Anonymous open event recorded.");
-    } else {
-      return civicrm_api3_create_success("Anonymous open tracking disabled.");
+      return civicrm_api3_create_success('Anonymous open event recorded.');
     }
-  } catch (Exception $ex) {
+    else {
+      return civicrm_api3_create_success('Anonymous open tracking disabled.');
+    }
+  }
+  catch (Exception $ex) {
     throw new CRM_Core_Exception($ex->getMessage(), $ex->getCode());
   }
 }
@@ -43,11 +46,11 @@ function civicrm_api3_mailingtools_anonopen($params) {
  * API Specs: Mailingtools.Anonopen
  */
 function _civicrm_api3_mailingtools_anonopen_spec(&$spec) {
-  $spec['mid'] = array(
-      'name'         => 'mid',
-      'api.required' => 1,
-      'type'         => CRM_Utils_Type::T_INT,
-      'title'        => 'Mailing ID',
-      'description'  => 'Mailing ID for which an open event should be recorded',
-  );
+  $spec['mid'] = [
+    'name'         => 'mid',
+    'api.required' => 1,
+    'type'         => CRM_Utils_Type::T_INT,
+    'title'        => 'Mailing ID',
+    'description'  => 'Mailing ID for which an open event should be recorded',
+  ];
 }

@@ -13,6 +13,7 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+declare(strict_types = 1);
 
 use CRM_Mailingtools_ExtensionUtil as E;
 
@@ -21,13 +22,12 @@ use CRM_Mailingtools_ExtensionUtil as E;
  */
 class CRM_Mailingtools_CheckMailstore {
 
-  private $mailStore_retention = array();
+  private $mailStore_retention = [];
   private $retention_configured = FALSE;
-  private $imap_login = array();
-  private $mail_folders = array('INBOX.CiviMail.ignored', 'INBOX.CiviMail.processed');
-  private $errors = array();
-  private $results = array();
-
+  private $imap_login = [];
+  private $mail_folders = ['INBOX.CiviMail.ignored', 'INBOX.CiviMail.processed'];
+  private $errors = [];
+  private $results = [];
 
   /**
    * CRM_Mailingtools_CheckMailstore constructor.
@@ -81,12 +81,12 @@ class CRM_Mailingtools_CheckMailstore {
 
     $suffix = $this->create_imap_suffix($dao);
 
-    $port_from_serverUrl = explode(":", $dao->server);
+    $port_from_serverUrl = explode(':', $dao->server);
     if (isset($port_from_serverUrl[1])) {
-      return "{" . $dao->server . $suffix . "}";
+      return '{' . $dao->server . $suffix . '}';
     }
     $port = $this->get_server_port($dao);
-    return "{" . $dao->server . ":" . $port .  $suffix . "}";
+    return '{' . $dao->server . ':' . $port . $suffix . '}';
   }
 
   /**
@@ -115,14 +115,15 @@ class CRM_Mailingtools_CheckMailstore {
         if (!empty($emails_delete_ignored)) {
           $this->delete_imap_emails($emails_delete_ignored, $imap, $folder);
         }
-      } else {
-        error_log("Error Connecting to " . $this->imap_login['hostname'] . $folder);
+      }
+      else {
+        error_log('Error Connecting to ' . $this->imap_login['hostname'] . $folder);
         $this->errors[$folder] = imap_last_error();
       }
 
     }
     if (empty($this->errors)) {
-        return json_encode($this->results);
+      return json_encode($this->results);
     }
     return (json_encode($this->errors) . json_encode($this->results));
   }
@@ -131,8 +132,7 @@ class CRM_Mailingtools_CheckMailstore {
    * Check if retentino is configured. If not, we don't delete anything and return false here
    * @param $settings
    */
-  private function verify_settings($settings): bool
-  {
+  private function verify_settings($settings): bool {
     return !isset($settings['processed_retention_value']) || $settings['processed_retention_value'] == 0
       || !isset($settings['ignored_retention_value']) || $settings['ignored_retention_value'] == 0;
   }
@@ -142,14 +142,14 @@ class CRM_Mailingtools_CheckMailstore {
    * @param $dao
    * @return int
    */
-  private function get_server_port($dao)
-  {
+  private function get_server_port($dao) {
     if ($dao->port) {
       return $dao->port;
     }
     if ($dao->ssl) {
       $port = 993;
-    } else {
+    }
+    else {
       $port = 143;
     }
     return $port;
@@ -160,12 +160,12 @@ class CRM_Mailingtools_CheckMailstore {
    * @param $dao
    * @return string
    */
-  private function create_imap_suffix($dao)
-  {
+  private function create_imap_suffix($dao) {
     if ($dao->ssl) {
-      return "/imap/ssl";
-    } else {
-      return "/imap/novalidate-cert";
+      return '/imap/ssl';
+    }
+    else {
+      return '/imap/novalidate-cert';
     }
   }
 
@@ -174,10 +174,9 @@ class CRM_Mailingtools_CheckMailstore {
    * @param $folder
    * @return false|string
    */
-  private function create_retention_timestamp($folder)
-  {
+  private function create_retention_timestamp($folder) {
     $time = strtotime("now - {$this->mailStore_retention[$folder]} days");
-    return date("j-F-Y", $time);
+    return date('j-F-Y', $time);
   }
 
   /**
@@ -186,14 +185,12 @@ class CRM_Mailingtools_CheckMailstore {
    * @param $imap
    * @param $folder
    */
-  private function delete_imap_emails($emails_delete_ignored, $imap, $folder)
-  {
+  private function delete_imap_emails($emails_delete_ignored, $imap, $folder) {
     foreach ($emails_delete_ignored as $email_index) {
       imap_delete($imap, $email_index);
       $this->results[$folder] += 1;
     }
     imap_expunge($imap);
   }
-
 
 }

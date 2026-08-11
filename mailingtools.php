@@ -1,4 +1,5 @@
 <?php
+declare(strict_types = 1);
 
 require_once 'mailingtools.civix.php';
 use CRM_Mailingtools_ExtensionUtil as E;
@@ -50,7 +51,7 @@ function mailingtools_civicrm_alterMailParams(&$params, $context) {
 function mailingtools_civicrm_alterMailer(&$mailer, $driver, $params) {
   $needed = CRM_Mailingtools_Mailer::isNeeded();
   if ($needed) {
-    $mailer = new CRM_Mailingtools_Mailer($mailer,$driver, $params);
+    $mailer = new CRM_Mailingtools_Mailer($mailer, $driver, $params);
   }
 }
 
@@ -62,18 +63,21 @@ function mailingtools_civicrm_alterAPIPermissions($entity, $action, &$params, &$
     $config = CRM_Mailingtools_Config::singleton();
     $anonopen_permission = $config->getSetting('anonymous_open_permission');
     if ($anonopen_permission) {
-      $permissions['mailingtools']['anonopen'] = array($anonopen_permission);
-    } else {
-      $permissions['mailingtools']['anonopen'] = array('access CiviCRM');
+      $permissions['mailingtools']['anonopen'] = [$anonopen_permission];
+    }
+    else {
+      $permissions['mailingtools']['anonopen'] = ['access CiviCRM'];
     }
 
-  } elseif ($entity == 'mailingtools' && $action == 'anonurl') {
+  }
+  elseif ($entity == 'mailingtools' && $action == 'anonurl') {
     $config = CRM_Mailingtools_Config::singleton();
     $anonurl_permission = $config->getSetting('anonymous_link_permission');
     if ($anonurl_permission) {
-      $permissions['mailingtools']['anonurl'] = array($anonurl_permission);
-    } else {
-      $permissions['mailingtools']['anonurl'] = array('access CiviCRM');
+      $permissions['mailingtools']['anonurl'] = [$anonurl_permission];
+    }
+    else {
+      $permissions['mailingtools']['anonurl'] = ['access CiviCRM'];
     }
   }
 }
@@ -82,7 +86,7 @@ function mailingtools_civicrm_alterAPIPermissions($entity, $action, &$params, &$
  * Some token fixes
  *  - make sure that hash is there
  */
-function mailingtools_civicrm_tokenValues(&$values, $cids, $job = null, $tokens = array(), $context = null) {
+function mailingtools_civicrm_tokenValues(&$values, $cids, $job = NULL, $tokens = [], $context = NULL) {
   $config = CRM_Mailingtools_Config::singleton();
 
   $fix_hash_token = $config->getSetting('fix_hash_token');
@@ -114,7 +118,7 @@ function mailingtools_civicrm_pre($op, $objectName, $id, &$params) {
       $open_contact_id  = (int) $config->getSetting('anonymous_open_contact_id');
       $click_contact_id = (int) $config->getSetting('anonymous_link_contact_id');
       if ($id == $open_contact_id || $id == $click_contact_id) {
-        throw new Exception(E::ts("You cannot delete the contact currently used for anonymous open/click tracking. Remove Contact [%1] from the settings of the MailingTools extension. Caution: you will lose the anonymous mailing statistics if you delete this contact.", [1 => $id]));
+        throw new Exception(E::ts('You cannot delete the contact currently used for anonymous open/click tracking. Remove Contact [%1] from the settings of the MailingTools extension. Caution: you will lose the anonymous mailing statistics if you delete this contact.', [1 => $id]));
       }
     }
   }
@@ -130,6 +134,7 @@ function mailingtools_civicrm_pageRun(&$page) {
     case 'Civi\\Angular\\Page\\Main':
       CRM_Mailingtools_Page_MosaicoSave::buildPagehook($page);
       break;
+
     default:
       return;
   }
@@ -150,11 +155,11 @@ function mailingtools_civicrm_pageRun(&$page) {
  * https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_post/
  */
 function mailingtools_civicrm_post($op, $objectName, $objectId, &$objectRef) {
-//  Trigger when EMail is edited or updated
-  if($objectName == "Email" && in_array($op, ['update', 'edit', 'create'])) {
+  //  Trigger when EMail is edited or updated
+  if ($objectName == 'Email' && in_array($op, ['update', 'edit', 'create'])) {
     // TODO
     // verify Email address; if invalid then set on hold
-    CRM_Mailingtools_Utils::verify_email($op, $objectName, $objectId,$objectRef);
+    CRM_Mailingtools_Utils::verify_email($op, $objectName, $objectId, $objectRef);
     CRM_Mailingtools_Utils::check_email_dns_blacklist($objectRef->email, $objectRef->id);
   }
 }

@@ -13,6 +13,7 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+declare(strict_types = 1);
 
 use CRM_Mailingtools_ExtensionUtil as E;
 
@@ -40,7 +41,7 @@ class CRM_Mailingtools_AnonymousOpen {
     // mid needs to be set
     $mid = (int) $mid;
     if (!$mid) {
-      throw new Exception("Invalid mailing ID");
+      throw new Exception('Invalid mailing ID');
     }
 
     // get a matching event queue ID
@@ -53,20 +54,19 @@ class CRM_Mailingtools_AnonymousOpen {
 
     // all good: add entry
     Civi::log()->debug("Tracked anonymous open event for mailing [{$mid}]");
-    CRM_Core_DAO::executeQuery("
+    CRM_Core_DAO::executeQuery('
         INSERT INTO civicrm_mailing_event_opened (event_queue_id, time_stamp)
-        VALUES (%1, NOW())", [
-            1 => [$event_queue_id, 'Integer']]);
+        VALUES (%1, NOW())', [
+          1 => [$event_queue_id, 'Integer'],
+        ]);
 
     return $event_queue_id;
   }
 
-
-
   /**
    * Get (or create) an event queue ID for the given
    * @param integer $mid                      mailing ID
-   * @param string  $default_contact_setting  setting that yields the default contact ID
+   * @param string $default_contact_setting
    *
    * @return integer|null event queue ID
    * @throws Exception if anything went wrong
@@ -77,15 +77,16 @@ class CRM_Mailingtools_AnonymousOpen {
     // FIRST: try by preferred contact
     $preferred_contact_id = (int) $config->getSetting($default_contact_setting);
     if ($preferred_contact_id) {
-      $event_queue_id = CRM_Core_DAO::singleValueQuery("
+      $event_queue_id = CRM_Core_DAO::singleValueQuery('
         SELECT MIN(queue.id)
         FROM civicrm_mailing_event_queue queue
         LEFT JOIN civicrm_mailing_job    job   ON queue.job_id = job.id
         WHERE queue.contact_id = %1
           AND job.mailing_id = %2
-          AND job.is_test = 0", [
-          1 => [$preferred_contact_id, 'Integer'],
-          2 => [$mid,                  'Integer']]);
+          AND job.is_test = 0', [
+            1 => [$preferred_contact_id, 'Integer'],
+            2 => [$mid, 'Integer'],
+          ]);
 
       if (empty($event_queue_id)) {
         // maybe no real (is_test = 0) job found...?
@@ -93,14 +94,15 @@ class CRM_Mailingtools_AnonymousOpen {
         if (!$mailing_is_live) {
           // ...ah, the mailing is not live yet!
           //  In that case it's ok to use the test job...
-          $event_queue_id = CRM_Core_DAO::singleValueQuery("
+          $event_queue_id = CRM_Core_DAO::singleValueQuery('
             SELECT MIN(queue.id)
             FROM civicrm_mailing_event_queue queue
             LEFT JOIN civicrm_mailing_job    job   ON queue.job_id = job.id
             WHERE queue.contact_id = %1
-              AND job.mailing_id = %2", [
-              1 => [$preferred_contact_id, 'Integer'],
-              2 => [$mid, 'Integer']]);
+              AND job.mailing_id = %2', [
+                1 => [$preferred_contact_id, 'Integer'],
+                2 => [$mid, 'Integer'],
+              ]);
         }
       }
 
@@ -112,30 +114,32 @@ class CRM_Mailingtools_AnonymousOpen {
 
     // PLAN B: take the smallest contact ID
     if (empty($event_queue_id)) {
-      $contact_id = CRM_Core_DAO::singleValueQuery("
+      $contact_id = CRM_Core_DAO::singleValueQuery('
         SELECT MIN(contact_id)
         FROM civicrm_mailing_event_queue queue
         LEFT JOIN civicrm_mailing_job    job   ON queue.job_id = job.id
-        WHERE job.mailing_id = %1", [
-          1 => [$mid, 'Integer']]);
+        WHERE job.mailing_id = %1', [
+          1 => [$mid, 'Integer'],
+        ]);
 
       if ($contact_id) {
-        $event_queue_id = CRM_Core_DAO::singleValueQuery("
+        $event_queue_id = CRM_Core_DAO::singleValueQuery('
         SELECT queue.id
         FROM civicrm_mailing_event_queue queue
         LEFT JOIN civicrm_mailing_job    job   ON queue.job_id = job.id
         WHERE queue.contact_id = %1
-          AND job.mailing_id = %2", [
+          AND job.mailing_id = %2', [
             1 => [$contact_id, 'Integer'],
-            2 => [$mid, 'Integer']]);
-      } else {
+            2 => [$mid, 'Integer'],
+          ]);
+      }
+      else {
         throw new Exception("No contacts in queue for mailing [{$mid}]");
       }
     }
 
     return $event_queue_id;
   }
-
 
   /**
    * This function will manipulate open tracker URLs in emails, so they point
@@ -226,18 +230,20 @@ class CRM_Mailingtools_AnonymousOpen {
    */
   public static function injectQueueItem($mid, $contact_id) {
     // first: select a job (preferrably: not test)
-    $job_id = CRM_Core_DAO::singleValueQuery("
+    $job_id = CRM_Core_DAO::singleValueQuery('
           SELECT MIN(job.id)
           FROM civicrm_mailing_job job
           WHERE job.mailing_id = %1
-            AND is_test = 0", [
-        1 => [$mid, 'Integer']]);
+            AND is_test = 0', [
+              1 => [$mid, 'Integer'],
+            ]);
     if (!$job_id) {
-      $job_id = CRM_Core_DAO::singleValueQuery("
+      $job_id = CRM_Core_DAO::singleValueQuery('
           SELECT MIN(job.id)
           FROM civicrm_mailing_job job
-          WHERE job.mailing_id = %1", [
-          1 => [$mid, 'Integer']]);
+          WHERE job.mailing_id = %1', [
+            1 => [$mid, 'Integer'],
+          ]);
     }
     if (!$job_id) {
       Civi::log()->debug("AnonymousOpen: No job found for mailing [{$mid}]");
@@ -247,24 +253,28 @@ class CRM_Mailingtools_AnonymousOpen {
     // create item for the given job
     if (function_exists('random_bytes')) {
       $hash = substr(sha1(random_bytes(16)), 0, 16);
-    } else {
+    }
+    else {
       $hash = substr(sha1(random_int(0, PHP_INT_MAX)), 0, 16);
     }
-    CRM_Core_DAO::executeQuery("
+    CRM_Core_DAO::executeQuery('
       INSERT IGNORE INTO civicrm_mailing_event_queue (job_id, contact_id, hash)
-      VALUES (%1, %2, %3)", [
+      VALUES (%1, %2, %3)', [
         1 => [$job_id, 'Integer'],
         2 => [$contact_id, 'Integer'],
-        3 => [$hash, 'String']]);
+        3 => [$hash, 'String'],
+      ]);
 
     // now the following query should return the new ID
-    return CRM_Core_DAO::singleValueQuery("
+    return CRM_Core_DAO::singleValueQuery('
         SELECT MAX(queue.id)
         FROM civicrm_mailing_event_queue queue
         LEFT JOIN civicrm_mailing_job    job   ON queue.job_id = job.id
         WHERE queue.contact_id = %1
-          AND job.mailing_id = %2", [
-        1 => [$contact_id, 'Integer'],
-        2 => [$mid,        'Integer']]);
+          AND job.mailing_id = %2', [
+            1 => [$contact_id, 'Integer'],
+            2 => [$mid, 'Integer'],
+          ]);
   }
+
 }

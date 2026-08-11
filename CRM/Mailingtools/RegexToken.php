@@ -13,6 +13,7 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+declare(strict_types = 1);
 
 use CRM_Mailingtools_ExtensionUtil as E;
 
@@ -26,9 +27,12 @@ class CRM_Mailingtools_RegexToken {
    */
   public const MT_REGEX_TOKEN_COUNT  = 5;
   public const REGEX_DELIMITER  = '#';
-  public const OPERATOR_API3    = 'api3';     // API3 call
-  public const OPERATOR_STATIC  = 'static';   // static function call
-  public const OPERATOR_REPLACE = 'replace';  // preg_replace call
+  // API3 call
+  public const OPERATOR_API3 = 'api3';
+  // static function call
+  public const OPERATOR_STATIC = 'static';
+  // preg_replace call
+  public const OPERATOR_REPLACE = 'replace';
 
   public const VALUE_STATIC_FUNCTION = '/^(?P<class>[a-zA-Z_]+)::(?P<function>[a-zA-Z_]+)$/';
   public const VALUE_API_CALL        = '/^(?P<entity>[a-zA-Z]+)[.](?P<action>[a-zA-Z_]+)$/';
@@ -57,7 +61,8 @@ class CRM_Mailingtools_RegexToken {
       $value = Civi::settings()->get('mailingtools_regex_tokens');
       if (empty($value) || !is_array($value)) {
         $token_definitions = [];
-      } else {
+      }
+      else {
         $token_definitions = $value;
       }
     }
@@ -125,7 +130,8 @@ class CRM_Mailingtools_RegexToken {
                 return $result['result'];
               }
             }
-          } catch (Exception $ex) {
+          }
+          catch (Exception $ex) {
             // nothing to do...
           }
         }
@@ -134,15 +140,16 @@ class CRM_Mailingtools_RegexToken {
       case self::OPERATOR_STATIC:
         if (preg_match(self::VALUE_STATIC_FUNCTION, $token_definition['val'], $match)) {
           return call_user_func($token_definition['val'], $params);
-        } else {
+        }
+        else {
           return 'ERROR';
         }
-
 
       case self::OPERATOR_REPLACE:
         try {
           return preg_replace(self::REGEX_DELIMITER . $token_definition['def'] . self::REGEX_DELIMITER, $matched_string, $token_definition['val']);
-        } catch (Exception $ex) {
+        }
+        catch (Exception $ex) {
           return 'ERROR';
         }
 
@@ -162,20 +169,21 @@ class CRM_Mailingtools_RegexToken {
   public static function verifyTokenDefinition($token_definition) {
     // test if present
     if (empty($token_definition['def'])) {
-      return E::ts("Incomplete definition: definition (regular expression) missing");
+      return E::ts('Incomplete definition: definition (regular expression) missing');
     }
     if (empty($token_definition['op'])) {
-      return E::ts("Incomplete definition: value type missing");
+      return E::ts('Incomplete definition: value type missing');
     }
     if (empty($token_definition['val'])) {
-      return E::ts("Incomplete definition: value missing");
+      return E::ts('Incomplete definition: value missing');
     }
 
     // verify definition (regex)
     try {
       preg_match(self::REGEX_DELIMITER . $token_definition['def'] . self::REGEX_DELIMITER, 'doesntmatter');
-    } catch (Exception $ex) {
-      return E::ts("Incomplete definition: definition is not a valid regular expression");
+    }
+    catch (Exception $ex) {
+      return E::ts('Incomplete definition: definition is not a valid regular expression');
     }
 
     // verify operation
@@ -199,14 +207,15 @@ class CRM_Mailingtools_RegexToken {
             if (!$action_found) {
               return E::ts("API3 action '%1' not found in entity '%2'", [1 => $match['entity'], 2 => $match['action']]);
             }
-          } catch (Exception $ex) {
+          }
+          catch (Exception $ex) {
             return E::ts("API3 entity '%1' not found", [1 => $match['entity']]);
           }
-        } else {
+        }
+        else {
           return E::ts("API3 action should be defined as 'entity.action'");
         }
         break;
-
 
       case self::OPERATOR_STATIC:
         if (preg_match(self::VALUE_STATIC_FUNCTION, $token_definition['val'], $match)) {
@@ -216,17 +225,18 @@ class CRM_Mailingtools_RegexToken {
           if (!method_exists($match['class'], $match['function'])) {
             return E::ts("Function '%1' not found", [1 => $token_definition['val']]);
           }
-        } else {
+        }
+        else {
           return E::ts("Function definition should be 'SomeClass::someFunction'");
         }
         break;
 
-
       case self::OPERATOR_REPLACE:
         try {
           preg_replace(self::REGEX_DELIMITER . $token_definition['def'] . self::REGEX_DELIMITER, $token_definition['val'], 'doesntmatter');
-        } catch (Exception $ex) {
-          return E::ts("Ill-defined replace expression");
+        }
+        catch (Exception $ex) {
+          return E::ts('Ill-defined replace expression');
         }
         break;
 
@@ -235,4 +245,5 @@ class CRM_Mailingtools_RegexToken {
     }
     return FALSE;
   }
+
 }

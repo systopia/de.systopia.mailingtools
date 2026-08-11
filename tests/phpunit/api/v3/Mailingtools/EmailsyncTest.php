@@ -1,9 +1,8 @@
 <?php
+declare(strict_types = 1);
 
 use CRM_Mailingtools_ExtensionUtil as E;
 use Civi\Test\HeadlessInterface;
-use Civi\Test\HookInterface;
-use Civi\Test\TransactionalInterface;
 
 /**
  * Mailingtools.Emailsync API Test Case
@@ -14,15 +13,16 @@ class api_v3_Mailingtools_EmailsyncTest extends \PHPUnit\Framework\TestCase impl
 
   private $contact_id;
   private $email_ids;
+
   /**
    * Civi\Test has many helpers, like install(), uninstall(), sql(), and sqlFile().
    * See: https://docs.civicrm.org/dev/en/latest/testing/phpunit/#civitest
    */
   public function setUpHeadless() {
     // Not needed, or rather no schema needed
-//    return \Civi\Test::headless()
-//      ->installMe(__DIR__)
-//      ->apply();
+    //    return \Civi\Test::headless()
+    //      ->installMe(__DIR__)
+    //      ->apply();
   }
 
   /**
@@ -31,10 +31,10 @@ class api_v3_Mailingtools_EmailsyncTest extends \PHPUnit\Framework\TestCase impl
   public function setUp() {
     // create Contact
     $result = civicrm_api3('Contact', 'create', [
-      'contact_type' => "Individual",
-      'first_name' => "Mailingtools",
-      "middle_name" => "Unittest",
-      'last_name' => "Example",
+      'contact_type' => 'Individual',
+      'first_name' => 'Mailingtools',
+      'middle_name' => 'Unittest',
+      'last_name' => 'Example',
     ]);
     if ($result['is_error'] == '1') {
       throw new Exception("Couldn't create contact.");
@@ -94,7 +94,7 @@ class api_v3_Mailingtools_EmailsyncTest extends \PHPUnit\Framework\TestCase impl
     $result = civicrm_api3('Mailingtools', 'emailsync', [
       'verify_size' => 10,
       'checking_index' => $this->email_ids['0'],
-      'debug' => "TRUE",
+      'debug' => 'TRUE',
     ]);
     if ($result['is_error'] == '1') {
       echo "\nError in Mailingtools->emailsync API call. See logs for more details. Message: {$result['error_message']}\n";
@@ -102,7 +102,7 @@ class api_v3_Mailingtools_EmailsyncTest extends \PHPUnit\Framework\TestCase impl
     }
     $result = civicrm_api3('Email', 'get', [
       'sequential' => 1,
-      'email' => ['LIKE' => "example_%@systop%.de%"],
+      'email' => ['LIKE' => 'example_%@systop%.de%'],
     ]);
     if ($result['count'] != 10) {
       throw new Exception("Couldn't Find the appropriate amount of Emails matching the creation pattern. Found {$result['count']} instead of 10");
@@ -112,13 +112,15 @@ class api_v3_Mailingtools_EmailsyncTest extends \PHPUnit\Framework\TestCase impl
     foreach ($result['values'] as $value) {
       if ($value['on_hold'] == '1') {
         $on_hold_counter += 1;
-      } else {
+      }
+      else {
         $activated_email_counter += 1;
       }
     }
     if ($on_hold_counter == 4 && $activated_email_counter == 6) {
       echo "Test successful.\n";
-    } else {
+    }
+    else {
       throw new Exception("Test unsuccessful. Found {$on_hold_counter} on_hold Emails matching the pattern and {$activated_email_counter} normal emails matching the pattern.");
     }
   }

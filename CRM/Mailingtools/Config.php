@@ -13,6 +13,8 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+declare(strict_types = 1);
+
 use CRM_Mailingtools_ExtensionUtil as E;
 
 /**
@@ -25,6 +27,7 @@ class CRM_Mailingtools_Config {
 
 
   protected $jobs = NULL;
+
   /**
    * get the config instance
    */
@@ -54,7 +57,7 @@ class CRM_Mailingtools_Config {
    */
   public function getSettings() {
     if (self::$settings === NULL) {
-        self::$settings = Civi::settings()->get('Mailingtools_settings');
+      self::$settings = Civi::settings()->get('Mailingtools_settings');
     }
 
     return self::$settings;
@@ -78,13 +81,14 @@ class CRM_Mailingtools_Config {
     $jobs = $config->getScheduledJobs();
     if (empty($jobs)) {
       // none found? create a new one
-      civicrm_api3('Job', 'create', array(
+      civicrm_api3('Job', 'create', [
         'api_entity'    => 'Mailingtools',
         'api_action'    => 'mailretention',
         'run_frequency' => 'Always',
         'name'          => E::ts('Check Bounce Mailstore'),
         'description'   => E::ts('Checks the configured Bounce Mailbox, and if a retention is configured deletes older mail'),
-        'is_active'     => '0'));
+        'is_active'     => '0',
+      ]);
     }
   }
 
@@ -94,12 +98,14 @@ class CRM_Mailingtools_Config {
   public function getScheduledJobs() {
     if ($this->jobs === NULL) {
       // find all scheduled jobs calling Sqltask.execute
-      $query = civicrm_api3('Job', 'get', array(
+      $query = civicrm_api3('Job', 'get', [
         'api_entity'   => 'Mailingtools',
         'api_action'   => 'mailretention',
-        'option.limit' => 0));
+        'option.limit' => 0,
+      ]);
       $this->jobs = $query['values'];
     }
     return $this->jobs;
   }
+
 }

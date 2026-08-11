@@ -13,6 +13,8 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+declare(strict_types = 1);
+
 /**
  * Class CRM_Mailingtools_InjectHeader
  *
@@ -25,7 +27,7 @@ class CRM_Mailingtools_InjectHeader {
    * @param $params
    * @param $context
    */
-  static function inject_header(&$params, $context) {
+  public static function inject_header(&$params, $context) {
     $config = CRM_Mailingtools_Config::singleton();
     $settings = $config->getSettings();
     if (!empty($settings['extra_mail_header_key']) && !empty($settings['extra_mail_header_value'])) {

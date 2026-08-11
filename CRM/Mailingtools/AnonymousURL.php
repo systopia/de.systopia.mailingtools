@@ -13,6 +13,7 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+declare(strict_types = 1);
 
 use CRM_Mailingtools_ExtensionUtil as E;
 
@@ -40,15 +41,15 @@ class CRM_Mailingtools_AnonymousURL {
     // check the link ID...
     $trackable_url_id = (int) $trackable_url_id;
     if (!$trackable_url_id) {
-      throw new Exception("Bad link ID");
+      throw new Exception('Bad link ID');
     }
     // load the link
-    $link = CRM_Core_DAO::executeQuery("
+    $link = CRM_Core_DAO::executeQuery('
         SELECT mailing_id, url 
         FROM civicrm_mailing_trackable_url 
-        WHERE id = %1", [1 => [$trackable_url_id, 'Integer']]);
+        WHERE id = %1', [1 => [$trackable_url_id, 'Integer']]);
     if (!$link->fetch()) {
-      throw new Exception("Invalid link ID");
+      throw new Exception('Invalid link ID');
     }
 
     // NOW: find a matching event queue ID
@@ -59,16 +60,15 @@ class CRM_Mailingtools_AnonymousURL {
 
     // all good: add entry
     Civi::log()->debug("Tracked anonymous click event for link {$trackable_url_id} in mailing [{$link->mailing_id}]");
-    CRM_Core_DAO::executeQuery("
+    CRM_Core_DAO::executeQuery('
         INSERT INTO civicrm_mailing_event_trackable_url_open (event_queue_id, trackable_url_id, time_stamp)
-        VALUES (%1, %2, NOW())", [
-            1 => [$event_queue_id,   'Integer'],
-            2 => [$trackable_url_id, 'Integer']]);
+        VALUES (%1, %2, NOW())', [
+          1 => [$event_queue_id, 'Integer'],
+          2 => [$trackable_url_id, 'Integer'],
+        ]);
 
     return $link->url;
   }
-
-
 
   /**
    * This function will manipulate open tracker URLs in emails, so they point
@@ -94,4 +94,5 @@ class CRM_Mailingtools_AnonymousURL {
       }
     }
   }
+
 }

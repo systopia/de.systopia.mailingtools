@@ -13,8 +13,9 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
-use CRM_Mailingtools_ExtensionUtil as E;
+declare(strict_types = 1);
 
+use CRM_Mailingtools_ExtensionUtil as E;
 
 /**
  * Class for Logger
@@ -24,14 +25,14 @@ use CRM_Mailingtools_ExtensionUtil as E;
  */
 class CRM_Mailingtools_MailLogger {
 
-  private $_logFile = null;
+  private $_logFile = NULL;
 
   /**
    * CRM_Mailingtools_MailLogger constructor.
    *
    *
    */
-  function __construct() {
+  public function __construct() {
     $file = CRM_Core_Config::singleton()->configAndLogDir . 'mailing.log';
     $this->_logFile = fopen($file, 'a');
   }
@@ -51,16 +52,16 @@ class CRM_Mailingtools_MailLogger {
       $short_info['FROM'] = $header['From'];
       $short_info['TO'] = $header['To'];
       $short_info['SUBJECT'] = $header['Subject'];
-      $this->addMessage(json_encode($short_info), "SHORT");
+      $this->addMessage(json_encode($short_info), 'SHORT');
     }
     if ($config->getSetting('mailing_debugging_header')) {
-      $this->addMessage(json_encode($header), "HEADER");
+      $this->addMessage(json_encode($header), 'HEADER');
     }
     if ($config->getSetting('mailing_debugging_recipients')) {
-      $this->addMessage(json_encode($recipients), "RECIPIENTS");
+      $this->addMessage(json_encode($recipients), 'RECIPIENTS');
     }
     if ($config->getSetting('mailing_debugging_body')) {
-      $this->addMessage(json_encode($body), "BODY");
+      $this->addMessage(json_encode($body), 'BODY');
     }
     // add empty line for better readablility if debugging is active
     if ($config->getSetting('mailing_debugging_short')
@@ -70,7 +71,6 @@ class CRM_Mailingtools_MailLogger {
       fputs($this->_logFile, "\n");
     }
   }
-
 
   /**
    * Method to log the message
@@ -83,10 +83,12 @@ class CRM_Mailingtools_MailLogger {
       fputs($this->_logFile, ' [');
       fputs($this->_logFile, $info);
       fputs($this->_logFile, '] ');
-    } else {
+    }
+    else {
       fputs($this->_logFile, ' ');
     }
     fputs($this->_logFile, $message);
     fputs($this->_logFile, "\n");
   }
+
 }

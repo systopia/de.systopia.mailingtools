@@ -13,13 +13,13 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+declare(strict_types = 1);
+
 use CRM_Mailingtools_ExtensionUtil as E;
 
-class CRM_Mailingtools_Utils
-{
+class CRM_Mailingtools_Utils {
 
-  public static $debug = True;
-
+  public static $debug = TRUE;
 
   /**
    * @param $op
@@ -32,25 +32,26 @@ class CRM_Mailingtools_Utils
 
     // check if this feature is enabled
     $config = CRM_Mailingtools_Config::singleton();
-    if( !$config->getSetting('enable_automatic_email_check'))  {
+    if (!$config->getSetting('enable_automatic_email_check')) {
       return;
     }
     if (!file_exists(__DIR__ . '/../../resources/lib/vendor/voku/email-check/src/voku/helper/EmailCheck.php')) {
-      self::log("Voku Email Checker not found. Please install via Composer");
+      self::log('Voku Email Checker not found. Please install via Composer');
       return;
     }
-    try{
-      require_once (__DIR__ . '/../../resources/lib/vendor/voku/email-check/src/voku/helper/EmailCheck.php');
+    try {
+      require_once __DIR__ . '/../../resources/lib/vendor/voku/email-check/src/voku/helper/EmailCheck.php';
       $email = $objectRef->email;
       $email_id = $objectRef->id;
       if (empty($email) || empty($email_id)) {
         return;
       }
-      if(\voku\helper\EmailCheck::isValid($email, FALSE, FALSE, FALSE, TRUE)) {
+      if (\voku\helper\EmailCheck::isValid($email, FALSE, FALSE, FALSE, TRUE)) {
         return;
       }
-      self::set_email_on_hold($email_id, $email, "DNS Error");
-    } catch (Exception $e) {
+      self::set_email_on_hold($email_id, $email, 'DNS Error');
+    }
+    catch (Exception $e) {
       self::log('Failure to verify Email "{$email}"');
     }
   }
@@ -62,8 +63,8 @@ class CRM_Mailingtools_Utils
   public static function check_email_dns_blacklist($email, $email_id): bool {
     $config = CRM_Mailingtools_Config::singleton();
     $email_domain_blacklist = $config->getSetting('email_domain_blacklist');
-    if(empty($email_domain_blacklist))  {
-      return false;
+    if (empty($email_domain_blacklist)) {
+      return FALSE;
     }
     $email_domains = explode(',', $email_domain_blacklist);
 
@@ -71,15 +72,16 @@ class CRM_Mailingtools_Utils
       $email_domain = substr($email, strpos($email, '@') + 1);
       foreach ($email_domains as $domain) {
         if ($domain == $email_domain) {
-          self::set_email_on_hold($email_id, $email, "blacklisted");
+          self::set_email_on_hold($email_id, $email, 'blacklisted');
           self::set_tag_for_blacklisted_email($email_id);
-          return true;
+          return TRUE;
         }
       }
-    } catch (Exception $e) {
+    }
+    catch (Exception $e) {
       self::log('Failure to blacklist Email "{$email}. Message: " . $e');
     }
-    return false;
+    return FALSE;
   }
 
   /**
@@ -89,7 +91,7 @@ class CRM_Mailingtools_Utils
    *
    * @throws \CRM_Core_Exception
    */
-  public static function set_email_on_hold($id, $email, $reason = ""): bool {
+  public static function set_email_on_hold($id, $email, $reason = ''): bool {
     $result = civicrm_api3('Email', 'create', [
       'id' => $id,
       'on_hold' => 1,
@@ -97,16 +99,16 @@ class CRM_Mailingtools_Utils
     ]);
     if ($result['is_error'] == '1') {
       self::log("Error setting Email with ID {$id} on hold. Error Message: {$result['error_message']}");
-      return false;
+      return FALSE;
     }
     self::log("Set Email {$email} ({$id}) on hold ({$reason})");
-    return true;
+    return TRUE;
   }
 
   public static function set_tag_for_blacklisted_email($email_id) {
     $result = civicrm_api3('Email', 'get', [
       'sequential' => 1,
-      'return' => ["contact_id"],
+      'return' => ['contact_id'],
       'id' => $email_id,
     ]);
     $contact_id = 0;
@@ -116,22 +118,21 @@ class CRM_Mailingtools_Utils
     // check if tag is available
     $result = civicrm_api3('Tag', 'get', [
       'sequential' => 1,
-      'name' => "blacklisted_email_domain",
+      'name' => 'blacklisted_email_domain',
     ]);
     if ($result['count'] == 0) {
       // create tag
       $result = civicrm_api3('Tag', 'create', [
-        'name' => "blacklisted_email_domain",
+        'name' => 'blacklisted_email_domain',
       ]);
     }
 
-civicrm_api3('EntityTag', 'create', [
-      'tag_id' => "blacklisted_email_domain",
+    civicrm_api3('EntityTag', 'create', [
+      'tag_id' => 'blacklisted_email_domain',
       'contact_id' => $contact_id,
-      'entity_table' => "civicrm_contact",
+      'entity_table' => 'civicrm_contact',
     ]);
   }
-
 
   /**
    * @param $message
@@ -139,10 +140,9 @@ civicrm_api3('EntityTag', 'create', [
    * @return void
    *
    */
-  public static function log($message, $loglevel = "debug")
-  {
+  public static function log($message, $loglevel = 'debug') {
     if (self::$debug) {
-      Civi::log()->log($loglevel, "[de.systopia.mailingtools] " . $message);
+      Civi::log()->log($loglevel, '[de.systopia.mailingtools] ' . $message);
     }
   }
 

@@ -13,6 +13,7 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+declare(strict_types = 1);
 
 use CRM_Mailingtools_ExtensionUtil as E;
 
@@ -42,10 +43,11 @@ class CRM_Mailingtools_EmailVerifier {
     $this->debug = $debug;
     if (isset($checking_index)) {
       $this->checking_index = $checking_index;
-    } else {
+    }
+    else {
       $this->checking_index = $this->get_address_index();
     }
-    $this->result_stats = ['on_hold' => 0, 'processed' =>0];
+    $this->result_stats = ['on_hold' => 0, 'processed' => 0];
   }
 
   /**
@@ -53,17 +55,18 @@ class CRM_Mailingtools_EmailVerifier {
    * @throws \CRM_Core_Exception
    */
   public function process() {
-    $this->get_email_addresses($this->checking_index +1);
+    $this->get_email_addresses($this->checking_index + 1);
     $last_email_id = $this->checking_index;
     foreach ($this->email_lookup_values as $email_val) {
-      if (CRM_Mailingtools_Utils::check_email_dns_blacklist($email_val['email'],$email_val['id'])) {
+      if (CRM_Mailingtools_Utils::check_email_dns_blacklist($email_val['email'], $email_val['id'])) {
         $this->result_stats['on_hold'] += 1;
-        continue; // email was set on hold because of blacklist, no further validation needed
+        // email was set on hold because of blacklist, no further validation needed
+        continue;
       }
 
       // clear spaces and non-breaking spaces
-      if (!$this->check_email(trim($email_val['email'],"\xc2\xa0\x20"))) {
-        if (CRM_Mailingtools_Utils::set_email_on_hold($email_val['id'], $email_val['email'], "DNS Error")) {
+      if (!$this->check_email(trim($email_val['email'], "\xc2\xa0\x20"))) {
+        if (CRM_Mailingtools_Utils::set_email_on_hold($email_val['id'], $email_val['email'], 'DNS Error')) {
           $this->result_stats['on_hold'] += 1;
         }
       }
@@ -93,7 +96,7 @@ class CRM_Mailingtools_EmailVerifier {
   private function get_email_addresses($index) {
     $result = civicrm_api3('Email', 'get', [
       'sequential' => 1,
-      'return' => ["id", "email"],
+      'return' => ['id', 'email'],
       'id' => ['>=' => $index],
       'options' => ['limit' => $this->verify_size],
     ]);
@@ -109,10 +112,10 @@ class CRM_Mailingtools_EmailVerifier {
    *
    * @return bool
    *
-   * TODO: Verify the files are available (composer)
+   *   TODO: Verify the files are available (composer)
    */
   private function check_email($email) {
-    require_once (__DIR__ . '/../../resources/lib/vendor/voku/email-check/src/voku/helper/EmailCheck.php');
+    require_once __DIR__ . '/../../resources/lib/vendor/voku/email-check/src/voku/helper/EmailCheck.php';
     return \voku\helper\EmailCheck::isValid($email, FALSE, FALSE, FALSE, TRUE);
   }
 

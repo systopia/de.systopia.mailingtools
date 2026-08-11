@@ -1,4 +1,5 @@
 <?php
+declare(strict_types = 1);
 
 use Civi\Test\HeadlessInterface;
 use Civi\Test\HookInterface;
@@ -42,7 +43,7 @@ class api_v3_Mailingtools_MailretentionTest extends \PHPUnit\Framework\TestCase 
    * Note how the function name begins with the word "test".
    */
   public function testApiExample() {
-    $result = civicrm_api3('Mailingtools', 'Mailretention', array('magicword' => 'sesame'));
+    $result = civicrm_api3('Mailingtools', 'Mailretention', ['magicword' => 'sesame']);
     $this->assertEquals('Twelve', $result['values'][12]['name']);
   }
 
