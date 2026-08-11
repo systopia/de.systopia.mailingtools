@@ -121,8 +121,8 @@ function mailingtools_civicrm_tokenValues(&$values, $cids, $job = NULL, $tokens 
         // hash token is requested
         foreach ($values as $contact_id => &$contact_values) {
           if (($contact_values['hash'] ?? '') === '' || ($contact_values['hash'] ?? '') === '0') {
-            CRM_Contact_BAO_Contact_Utils::generateChecksum($contact_id);
-            $contact_values['hash'] = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact', $contact_id, 'hash');
+            CRM_Contact_BAO_Contact_Utils::generateChecksum((int) $contact_id);
+            $contact_values['hash'] = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact', (int) $contact_id, 'hash');
           }
         }
       }
@@ -199,6 +199,7 @@ function mailingtools_civicrm_post($op, $objectName, $objectId, &$objectRef) {
     // TODO
     // verify Email address; if invalid then set on hold
     CRM_Mailingtools_Utils::verify_email($op, $objectName, $objectId, $objectRef);
+    // @phpstan-ignore property.notFound, property.notFound
     CRM_Mailingtools_Utils::check_email_dns_blacklist($objectRef->email, $objectRef->id);
   }
 }

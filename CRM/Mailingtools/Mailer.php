@@ -23,7 +23,7 @@ class CRM_Mailingtools_Mailer {
   /**
    * this is the original, wrapped mailer
    *
-   * @var object|null
+   * @var Mail|null
    */
   protected $mailer = NULL;
 
@@ -54,7 +54,7 @@ class CRM_Mailingtools_Mailer {
   /**
    * construct this mailer wrapping another one
    *
-   * @param object $mailer
+   * @param Mail $mailer
    * @param mixed $driver
    * @param array<string, mixed> $params
    * @return void

@@ -122,7 +122,7 @@ class CRM_Mailingtools_RegexToken {
     $params = array_merge(['matched_string' => $matched_string], $token_definition, $context);
     switch ($token_definition['op']) {
       case self::OPERATOR_API3:
-        if (preg_match(self::VALUE_API_CALL, $token_definition['val'], $match)) {
+        if ((bool) preg_match(self::VALUE_API_CALL, $token_definition['val'], $match)) {
           // compile $params
           try {
             $result = civicrm_api3($match['entity'], $match['action'], $params);
@@ -145,7 +145,7 @@ class CRM_Mailingtools_RegexToken {
         return 'ERROR';
 
       case self::OPERATOR_STATIC:
-        if (preg_match(self::VALUE_STATIC_FUNCTION, $token_definition['val'], $match)) {
+        if ((bool) preg_match(self::VALUE_STATIC_FUNCTION, $token_definition['val'], $match)) {
           return call_user_func($token_definition['val'], $params);
         }
         else {
@@ -210,7 +210,7 @@ class CRM_Mailingtools_RegexToken {
     // verify operation
     switch ($token_definition['op']) {
       case self::OPERATOR_API3:
-        if (preg_match(self::VALUE_API_CALL, $token_definition['val'], $match)) {
+        if ((bool) preg_match(self::VALUE_API_CALL, $token_definition['val'], $match)) {
           // verify api entity.action
           try {
             $actions = civicrm_api3($match['entity'], 'getactions');
@@ -240,7 +240,7 @@ class CRM_Mailingtools_RegexToken {
         break;
 
       case self::OPERATOR_STATIC:
-        if (preg_match(self::VALUE_STATIC_FUNCTION, $token_definition['val'], $match)) {
+        if ((bool) preg_match(self::VALUE_STATIC_FUNCTION, $token_definition['val'], $match)) {
           if (!class_exists($match['class'])) {
             return E::ts("Class '%1' not found", [1 => $match['class']]);
           }

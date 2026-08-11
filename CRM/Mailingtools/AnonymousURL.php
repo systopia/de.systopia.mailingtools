@@ -48,17 +48,21 @@ class CRM_Mailingtools_AnonymousURL {
         SELECT mailing_id, url 
         FROM civicrm_mailing_trackable_url 
         WHERE id = %1', [1 => [$trackable_url_id, 'Integer']]);
+    // @phpstan-ignore method.notFound
     if (!$link->fetch()) {
       throw new \RuntimeException('Invalid link ID');
     }
 
     // NOW: find a matching event queue ID
+    // @phpstan-ignore property.notFound
     $event_queue_id = CRM_Mailingtools_AnonymousOpen::getEventQueueID($link->mailing_id, 'anonymous_link_contact_id');
     if ((int) ($event_queue_id ?? 0) === 0) {
+      // @phpstan-ignore property.notFound
       throw new \RuntimeException("No found event in queue for mailing [{$link->mailing_id}]");
     }
 
     // all good: add entry
+    // @phpstan-ignore property.notFound
     Civi::log()->debug("Tracked anonymous click event for link {$trackable_url_id} in mailing [{$link->mailing_id}]");
     CRM_Core_DAO::executeQuery('
         INSERT INTO civicrm_mailing_event_trackable_url_open (event_queue_id, trackable_url_id, time_stamp)
@@ -67,6 +71,7 @@ class CRM_Mailingtools_AnonymousURL {
           2 => [$trackable_url_id, 'Integer'],
         ]);
 
+    // @phpstan-ignore property.notFound
     return $link->url;
   }
 
@@ -90,7 +95,7 @@ class CRM_Mailingtools_AnonymousURL {
     $system_base = $core_config->userFrameworkBaseURL;
 
     // find all all relevant links and collect queue IDs
-    if (preg_match_all(
+    if ((bool) preg_match_all(
       "#{$system_base}sites/all/modules/civicrm/extern/url.php\?u=(?P<link_id>[0-9]+)[^'\"\\n]+#i",
       $body,
       $matches

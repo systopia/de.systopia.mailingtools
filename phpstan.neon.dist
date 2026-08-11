@@ -49,4 +49,9 @@ parameters:
 			paths:
 				- */CRM/Mailingtools/EmailVerifier.php
 				- */CRM/Mailingtools/Utils.php
+		-
+			# civicrm_api3()'s stub declares "array|int" as its return type (the int
+			# case is legacy/very rare); in this extension's usage it's always array.
+			identifier: offsetAccess.nonOffsetAccessible
+			message: '#^Cannot access offset .* on array\|int\.$#'
 	tmpDir: .phpstan

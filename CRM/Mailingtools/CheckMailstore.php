@@ -135,7 +135,7 @@ class CRM_Mailingtools_CheckMailstore {
         $this->imap_login['username'],
         $this->imap_login['password']
       );
-      if ($imap) {
+      if ((bool) $imap) {
         $date = $this->create_retention_timestamp($folder);
         $emails_delete_ignored = imap_search($imap, 'BEFORE "' . $date . '"');
         if ($emails_delete_ignored !== FALSE && $emails_delete_ignored !== []) {
@@ -149,7 +149,8 @@ class CRM_Mailingtools_CheckMailstore {
 
     }
     if ($this->errors === []) {
-      return json_encode($this->results);
+      $encoded_results = json_encode($this->results);
+      return $encoded_results !== FALSE ? $encoded_results : '';
     }
     return (json_encode($this->errors) . json_encode($this->results));
   }
@@ -202,7 +203,7 @@ class CRM_Mailingtools_CheckMailstore {
    */
   private function create_retention_timestamp($folder) {
     $time = strtotime("now - {$this->mailStore_retention[$folder]} days");
-    return date('j-F-Y', $time);
+    return date('j-F-Y', $time !== FALSE ? $time : NULL);
   }
 
   /**

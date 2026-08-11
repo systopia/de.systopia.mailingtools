@@ -37,8 +37,9 @@ class CRM_Mailingtools_Page_ImportPattern extends CRM_Core_Page {
 
     $counter = [];
     foreach ($files as $f) {
-      $pattern = json_decode(file_get_contents($f));
-      $filename = preg_split('/.+\//', $f)[1];
+      $pattern = json_decode((string) file_get_contents($f));
+      $filename_parts = preg_split('/.+\//', $f);
+      $filename = $filename_parts !== FALSE ? ($filename_parts[1] ?? '') : '';
       $counter[$filename] = [
         'ignored'   => 0,
         'inserted'  => 0,

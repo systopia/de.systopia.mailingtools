@@ -46,6 +46,10 @@ class CRM_Mailingtools_MailLogger {
    * @return void
    */
   public function logMailInfo($recipients, $header, $body) {
+    if ($this->_logFile === FALSE) {
+      return;
+    }
+    $log_file = $this->_logFile;
     $config = CRM_Mailingtools_Config::singleton();
     if ((bool) $config->getSetting('mailing_debugging_short')) {
       // check if this is a mailing. Check for X-CiviMail-Bounce
@@ -60,23 +64,23 @@ class CRM_Mailingtools_MailLogger {
       $short_info['FROM'] = $header['From'];
       $short_info['TO'] = $header['To'];
       $short_info['SUBJECT'] = $header['Subject'];
-      $this->addMessage(json_encode($short_info), 'SHORT');
+      $this->addMessage((string) json_encode($short_info), 'SHORT');
     }
     if ((bool) $config->getSetting('mailing_debugging_header')) {
-      $this->addMessage(json_encode($header), 'HEADER');
+      $this->addMessage((string) json_encode($header), 'HEADER');
     }
     if ((bool) $config->getSetting('mailing_debugging_recipients')) {
-      $this->addMessage(json_encode($recipients), 'RECIPIENTS');
+      $this->addMessage((string) json_encode($recipients), 'RECIPIENTS');
     }
     if ((bool) $config->getSetting('mailing_debugging_body')) {
-      $this->addMessage(json_encode($body), 'BODY');
+      $this->addMessage((string) json_encode($body), 'BODY');
     }
     // add empty line for better readablility if debugging is active
     if ((bool) $config->getSetting('mailing_debugging_short')
       || (bool) $config->getSetting('mailing_debugging_header')
       || (bool) $config->getSetting('mailing_debugging_recipients')
       || (bool) $config->getSetting('mailing_debugging_body')) {
-      fwrite($this->_logFile, "\n");
+      fwrite($log_file, "\n");
     }
   }
 
@@ -88,17 +92,21 @@ class CRM_Mailingtools_MailLogger {
    * @return void
    */
   private function addMessage($message, $info) {
-    fwrite($this->_logFile, date('Y-m-d H:i:s'));
+    if ($this->_logFile === FALSE) {
+      return;
+    }
+    $log_file = $this->_logFile;
+    fwrite($log_file, date('Y-m-d H:i:s'));
     if ($info !== NULL && $info !== '' && $info !== '0') {
-      fwrite($this->_logFile, ' [');
-      fwrite($this->_logFile, $info);
-      fwrite($this->_logFile, '] ');
+      fwrite($log_file, ' [');
+      fwrite($log_file, $info);
+      fwrite($log_file, '] ');
     }
     else {
-      fwrite($this->_logFile, ' ');
+      fwrite($log_file, ' ');
     }
-    fwrite($this->_logFile, $message);
-    fwrite($this->_logFile, "\n");
+    fwrite($log_file, $message);
+    fwrite($log_file, "\n");
   }
 
 }

@@ -43,7 +43,9 @@ class CRM_Mailingtools_Utils {
     }
     try {
       require_once __DIR__ . '/../../resources/lib/vendor/voku/email-check/src/voku/helper/EmailCheck.php';
+      // @phpstan-ignore property.notFound
       $email = $objectRef->email;
+      // @phpstan-ignore property.notFound
       $email_id = $objectRef->id;
       if ($email === NULL || $email === '' || $email === '0' || (int) ($email_id ?? 0) === 0) {
         return;
@@ -72,7 +74,11 @@ class CRM_Mailingtools_Utils {
     $email_domains = explode(',', $email_domain_blacklist);
 
     try {
-      $email_domain = substr($email, strpos($email, '@') + 1);
+      $at_position = strpos($email, '@');
+      if ($at_position === FALSE) {
+        return FALSE;
+      }
+      $email_domain = substr($email, $at_position + 1);
       foreach ($email_domains as $domain) {
         if ($domain === $email_domain) {
           self::set_email_on_hold($email_id, $email, 'blacklisted');

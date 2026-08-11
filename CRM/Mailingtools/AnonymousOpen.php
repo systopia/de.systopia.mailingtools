@@ -79,7 +79,7 @@ class CRM_Mailingtools_AnonymousOpen {
     // FIRST: try by preferred contact
     $preferred_contact_id = (int) $config->getSetting($default_contact_setting);
     if ($preferred_contact_id !== 0) {
-      $event_queue_id = CRM_Core_DAO::singleValueQuery('
+      $event_queue_id = (int) CRM_Core_DAO::singleValueQuery('
         SELECT MIN(queue.id)
         FROM civicrm_mailing_event_queue queue
         LEFT JOIN civicrm_mailing_job    job   ON queue.job_id = job.id
@@ -90,13 +90,13 @@ class CRM_Mailingtools_AnonymousOpen {
             2 => [$mid, 'Integer'],
           ]);
 
-      if ((int) ($event_queue_id ?? 0) === 0) {
+      if ($event_queue_id === 0) {
         // maybe no real (is_test = 0) job found...?
         $mailing_is_live = self::isMailingLive($mid);
         if (!$mailing_is_live) {
           // ...ah, the mailing is not live yet!
           //  In that case it's ok to use the test job...
-          $event_queue_id = CRM_Core_DAO::singleValueQuery('
+          $event_queue_id = (int) CRM_Core_DAO::singleValueQuery('
             SELECT MIN(queue.id)
             FROM civicrm_mailing_event_queue queue
             LEFT JOIN civicrm_mailing_job    job   ON queue.job_id = job.id
@@ -108,7 +108,7 @@ class CRM_Mailingtools_AnonymousOpen {
         }
       }
 
-      if ((int) ($event_queue_id ?? 0) === 0) {
+      if ($event_queue_id === 0) {
         // still no queue item? Then we'll create one!
         $event_queue_id = self::injectQueueItem($mid, $preferred_contact_id);
       }
@@ -125,7 +125,7 @@ class CRM_Mailingtools_AnonymousOpen {
         ]);
 
       if ((int) ($contact_id ?? 0) !== 0) {
-        $event_queue_id = CRM_Core_DAO::singleValueQuery('
+        $event_queue_id = (int) CRM_Core_DAO::singleValueQuery('
         SELECT queue.id
         FROM civicrm_mailing_event_queue queue
         LEFT JOIN civicrm_mailing_job    job   ON queue.job_id = job.id
@@ -163,7 +163,7 @@ class CRM_Mailingtools_AnonymousOpen {
     $system_base = $core_config->userFrameworkBaseURL;
 
     // find all all relevant links and collect queue IDs
-    if (preg_match_all(
+    if ((bool) preg_match_all(
       "#{$system_base}sites/all/modules/civicrm/extern/open.php\?q=(?P<queue_id>[0-9]+)[^0-9]#i",
       $body,
       $matches
@@ -210,7 +210,9 @@ class CRM_Mailingtools_AnonymousOpen {
         LEFT JOIN civicrm_mailing_job    job   ON queue.job_id = job.id
         WHERE queue.id IN ({$queue_id_list})
         GROUP BY queue.id");
+    // @phpstan-ignore method.notFound
     while ($query->fetch()) {
+      // @phpstan-ignore property.notFound, property.notFound
       $queue_id_to_mailing_id[$query->queue_id] = $query->mailing_id;
     }
 

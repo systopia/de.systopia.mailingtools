@@ -250,12 +250,12 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
     $regex_tokens = $this->extractRegexTokens($this->_submitValues);
     foreach ($regex_tokens as $index => $token_spec) {
       $error = CRM_Mailingtools_RegexToken::verifyTokenDefinition($token_spec);
-      if ($error) {
+      if ((bool) $error) {
         $this->_errors["regex_token_{$index}_val"] = $error;
       }
     }
     $error = $this->validate_domains($this->_submitValues);
-    if ($error) {
+    if ((bool) $error) {
       $this->_errors['email_domain_blacklist'] = $error;
     }
 
@@ -326,7 +326,7 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
     $domains = explode(',', $data['email_domain_blacklist']);
 
     foreach ($domains as $domain) {
-      if (!preg_match($pattern, $domain)) {
+      if (!(bool) preg_match($pattern, $domain)) {
         return "Invalid Domain {$domain}, please enter valid Domain Names comma searated. "
           . 'e.g. example1.com,example2.com';
       }
