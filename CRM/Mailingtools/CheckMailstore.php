@@ -138,8 +138,8 @@ class CRM_Mailingtools_CheckMailstore {
    * @param $settings
    */
   private function verify_settings($settings): bool {
-    return !isset($settings['processed_retention_value']) || $settings['processed_retention_value'] == 0
-      || !isset($settings['ignored_retention_value']) || $settings['ignored_retention_value'] == 0;
+    return !isset($settings['processed_retention_value']) || (int) $settings['processed_retention_value'] === 0
+      || !isset($settings['ignored_retention_value']) || (int) $settings['ignored_retention_value'] === 0;
   }
 
   /**

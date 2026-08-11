@@ -97,7 +97,7 @@ class CRM_Mailingtools_Utils {
       'on_hold' => 1,
       'hold_date' => date('d.m.Y H:i:s'),
     ]);
-    if ($result['is_error'] == '1') {
+    if ((string) $result['is_error'] === '1') {
       self::log("Error setting Email with ID {$id} on hold. Error Message: {$result['error_message']}");
       return FALSE;
     }

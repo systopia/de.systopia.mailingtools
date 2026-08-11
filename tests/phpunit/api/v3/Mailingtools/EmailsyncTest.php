@@ -33,7 +33,7 @@ class api_v3_Mailingtools_EmailsyncTest extends \PHPUnit\Framework\TestCase impl
       'middle_name' => 'Unittest',
       'last_name' => 'Example',
     ]);
-    if ($result['is_error'] == '1') {
+    if ((string) $result['is_error'] === '1') {
       throw new Exception("Couldn't create contact.");
     }
     $this->contact_id = $result['id'];
@@ -55,7 +55,7 @@ class api_v3_Mailingtools_EmailsyncTest extends \PHPUnit\Framework\TestCase impl
       'contact_id' => $this->contact_id,
       'email' => $email,
     ]);
-    if ($result['is_error'] == '1') {
+    if ((string) $result['is_error'] === '1') {
       throw new Exception("Couldn't create email {$email} for contact {$this->contact_id}");
     }
     $this->email_ids[] = $result['id'];
@@ -76,7 +76,7 @@ class api_v3_Mailingtools_EmailsyncTest extends \PHPUnit\Framework\TestCase impl
     $result = civicrm_api3($entity, 'delete', [
       'id' => $entity_id,
     ]);
-    if ($result['is_error'] == '1') {
+    if ((string) $result['is_error'] === '1') {
       throw new Exception("Couldn't delete Entity {$entity} ({$entity_id}). Abroting Test");
     }
     parent::tearDown();
@@ -93,7 +93,7 @@ class api_v3_Mailingtools_EmailsyncTest extends \PHPUnit\Framework\TestCase impl
       'checking_index' => $this->email_ids['0'],
       'debug' => 'TRUE',
     ]);
-    if ($result['is_error'] == '1') {
+    if ((string) $result['is_error'] === '1') {
       echo "\nError in Mailingtools->emailsync API call. See logs for more details. "
         . "Message: {$result['error_message']}\n";
       return;
@@ -109,7 +109,7 @@ class api_v3_Mailingtools_EmailsyncTest extends \PHPUnit\Framework\TestCase impl
     $on_hold_counter = 0;
     $activated_email_counter = 0;
     foreach ($result['values'] as $value) {
-      if ($value['on_hold'] == '1') {
+      if ((string) $value['on_hold'] === '1') {
         $on_hold_counter += 1;
       }
       else {

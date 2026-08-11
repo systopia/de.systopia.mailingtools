@@ -101,7 +101,7 @@ class CRM_Mailingtools_EmailVerifier {
       'id' => ['>=' => $index],
       'options' => ['limit' => $this->verify_size],
     ]);
-    if ($result['is_error'] == '1') {
+    if ((string) $result['is_error'] === '1') {
       throw new CRM_Core_Exception("Error Occured while looking up Emails. Parameters: Index->{$index}, "
         . "Verify_size->{$this->verify_size}, Error Message: {$result['error_message']}");
     }
@@ -134,7 +134,7 @@ class CRM_Mailingtools_EmailVerifier {
       'on_hold' => 1,
       'hold_date' => date('d.m.Y H:i:s'),
     ]);
-    if ($result['is_error'] == '1') {
+    if ((string) $result['is_error'] === '1') {
       CRM_Mailingtools_Utils::log(
         "Error setting Email with ID {$id} on hold. Error Message: {$result['error_message']}"
       );
