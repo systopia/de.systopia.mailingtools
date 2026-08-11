@@ -40,7 +40,7 @@ class CRM_Mailingtools_AnonymousOpen {
 
     // mid needs to be set
     $mid = (int) $mid;
-    if (!$mid) {
+    if ($mid === 0) {
       throw new \RuntimeException('Invalid mailing ID');
     }
 
@@ -71,12 +71,14 @@ class CRM_Mailingtools_AnonymousOpen {
    * @return integer|null event queue ID
    * @throws Exception if anything went wrong
    */
+  // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
   public static function getEventQueueID($mid, $default_contact_setting = NULL) {
     $config = CRM_Mailingtools_Config::singleton();
+    $event_queue_id = NULL;
 
     // FIRST: try by preferred contact
     $preferred_contact_id = (int) $config->getSetting($default_contact_setting);
-    if ($preferred_contact_id) {
+    if ($preferred_contact_id !== 0) {
       $event_queue_id = CRM_Core_DAO::singleValueQuery('
         SELECT MIN(queue.id)
         FROM civicrm_mailing_event_queue queue
@@ -122,7 +124,7 @@ class CRM_Mailingtools_AnonymousOpen {
           1 => [$mid, 'Integer'],
         ]);
 
-      if ($contact_id) {
+      if ((int) ($contact_id ?? 0) !== 0) {
         $event_queue_id = CRM_Core_DAO::singleValueQuery('
         SELECT queue.id
         FROM civicrm_mailing_event_queue queue
@@ -245,7 +247,7 @@ class CRM_Mailingtools_AnonymousOpen {
             AND is_test = 0', [
               1 => [$mid, 'Integer'],
             ]);
-    if (!$job_id) {
+    if ((int) ($job_id ?? 0) === 0) {
       $job_id = CRM_Core_DAO::singleValueQuery('
           SELECT MIN(job.id)
           FROM civicrm_mailing_job job
@@ -253,7 +255,7 @@ class CRM_Mailingtools_AnonymousOpen {
             1 => [$mid, 'Integer'],
           ]);
     }
-    if (!$job_id) {
+    if ((int) ($job_id ?? 0) === 0) {
       Civi::log()->debug("AnonymousOpen: No job found for mailing [{$mid}]");
       return NULL;
     }

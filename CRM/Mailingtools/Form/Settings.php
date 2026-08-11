@@ -239,7 +239,7 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
 
   /**
    * Override validation for custom tokens
-   * @return bool|void
+   * @return bool
    */
   public function validate(): bool {
     parent::validate();
@@ -337,9 +337,9 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
    * @throws CRM_Core_Exception
    */
   protected function renderContact($data, $key) {
-    if ((int) ($data["anonymous_{$key}_contact_id"] ?? 0) !== 0) {
+    if (($data["anonymous_{$key}_contact_id"] ?? '') !== '' && ($data["anonymous_{$key}_contact_id"] ?? '') !== '0') {
       $contact_id = (int) ($data["anonymous_{$key}_contact_id"] ?? 0);
-      if ($contact_id) {
+      if ($contact_id !== 0) {
         $result = civicrm_api3('Contact', 'get', ['id' => $contact_id, 'return' => 'display_name,contact_type']);
         if ((int) ($result['id'] ?? 0) !== 0) {
           $contact = reset($result['values']);

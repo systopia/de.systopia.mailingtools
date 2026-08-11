@@ -40,7 +40,7 @@ class CRM_Mailingtools_AnonymousURL {
 
     // check the link ID...
     $trackable_url_id = (int) $trackable_url_id;
-    if (!$trackable_url_id) {
+    if ($trackable_url_id === 0) {
       throw new \RuntimeException('Bad link ID');
     }
     // load the link
