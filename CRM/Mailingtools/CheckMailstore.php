@@ -89,8 +89,8 @@ class CRM_Mailingtools_CheckMailstore {
     $dao->fetch();
 
     $this->imap_login['hostname'] = $this->create_mailbox_hostname($dao);
-    $this->imap_login['username'] = $dao->username;
-    $this->imap_login['password'] = $dao->password;
+    $this->imap_login['username'] = $dao->username ?? '';
+    $this->imap_login['password'] = $dao->password ?? '';
   }
 
   /**
@@ -102,7 +102,7 @@ class CRM_Mailingtools_CheckMailstore {
 
     $suffix = $this->create_imap_suffix($dao);
 
-    $port_from_serverUrl = explode(':', $dao->server);
+    $port_from_serverUrl = explode(':', $dao->server ?? '');
     if (isset($port_from_serverUrl[1])) {
       return '{' . $dao->server . $suffix . '}';
     }

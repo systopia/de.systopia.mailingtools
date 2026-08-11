@@ -93,7 +93,10 @@ class CRM_Mailingtools_Mailer {
     $mail_logger = new CRM_Mailingtools_MailLogger();
     $mail_logger->logMailInfo($recipients, $headers, $body);
 
-    $this->mailer->send($recipients, $headers, $body);
+    if ($this->mailer !== NULL) {
+      // @phpstan-ignore method.deprecated
+      $this->mailer->send($recipients, $headers, $body);
+    }
   }
 
   /**
