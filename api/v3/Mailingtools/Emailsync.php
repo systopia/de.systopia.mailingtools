@@ -49,7 +49,7 @@ function civicrm_api3_mailingtools_Emailsync($params) {
     throw new CRM_Core_Exception('PHP Version is not compatible with this API command. At least PHP7.0 is needed');
   }
 
-  $runner = new CRM_Mailingtools_EmailVerifier($params['verify_size'], $params['checking_index'], $params['debug']);
+  $runner = new CRM_Mailingtools_EmailVerifier($params['verify_size'], $params['checking_index']);
   $results = $runner->process();
   return civicrm_api3_create_success(
     "Number of Emails Processed: {$results['processed']}, Number of Emails deactivated: {$results['on_hold']}"

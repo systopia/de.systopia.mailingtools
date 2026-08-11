@@ -24,7 +24,6 @@ class CRM_Mailingtools_EmailVerifier {
 
   private $verify_size;
   private $checking_index;
-  private $debug;
   private $email_lookup_values;
   private $result_stats;
 
@@ -33,14 +32,12 @@ class CRM_Mailingtools_EmailVerifier {
    *
    * @param $verify_size
    * @param $checking_index
-   * @param $debug
    *
    * @throws \CRM_Core_Exception
    */
-  public function __construct($verify_size, $checking_index, $debug) {
+  public function __construct($verify_size, $checking_index) {
     $this->check_voku_email_checker_include();
     $this->verify_size = $verify_size;
-    $this->debug = $debug;
     if (isset($checking_index)) {
       $this->checking_index = $checking_index;
     }
@@ -119,29 +116,6 @@ class CRM_Mailingtools_EmailVerifier {
   private function check_email($email) {
     require_once __DIR__ . '/../../resources/lib/vendor/voku/email-check/src/voku/helper/EmailCheck.php';
     return \voku\helper\EmailCheck::isValid($email, FALSE, FALSE, FALSE, TRUE);
-  }
-
-  /**
-   * Set email on hold in CiviDB
-   * @param $id
-   * @param $email
-   *
-   * @throws \CRM_Core_Exception
-   */
-  private function set_email_on_hold($id, $email) {
-    $result = civicrm_api3('Email', 'create', [
-      'id' => $id,
-      'on_hold' => 1,
-      'hold_date' => date('d.m.Y H:i:s'),
-    ]);
-    if ((string) $result['is_error'] === '1') {
-      CRM_Mailingtools_Utils::log(
-        "Error setting Email with ID {$id} on hold. Error Message: {$result['error_message']}"
-      );
-      return;
-    }
-    CRM_Mailingtools_Utils::log("Set Email {$email} ({$id}) on hold");
-    $this->result_stats['on_hold'] += 1;
   }
 
   /**

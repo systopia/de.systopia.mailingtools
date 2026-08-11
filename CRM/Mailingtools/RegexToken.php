@@ -152,17 +152,12 @@ class CRM_Mailingtools_RegexToken {
         }
 
       case self::OPERATOR_REPLACE:
-        try {
-          return preg_replace(
-            self::REGEX_DELIMITER . $token_definition['def'] . self::REGEX_DELIMITER,
-            $matched_string,
-            $token_definition['val']
-          );
-        }
-        catch (Exception $ex) {
-          // @ignoreException
-          return 'ERROR';
-        }
+        $replaced = @preg_replace(
+          self::REGEX_DELIMITER . $token_definition['def'] . self::REGEX_DELIMITER,
+          $matched_string,
+          $token_definition['val']
+        );
+        return $replaced ?? 'ERROR';
 
       default:
         return 'UNDEFINED';
@@ -203,11 +198,11 @@ class CRM_Mailingtools_RegexToken {
     }
 
     // verify definition (regex)
-    try {
-      preg_match(self::REGEX_DELIMITER . $token_definition['def'] . self::REGEX_DELIMITER, 'doesntmatter');
-    }
-    catch (Exception $ex) {
-      // @ignoreException
+    $regex_check = @preg_match(
+      self::REGEX_DELIMITER . $token_definition['def'] . self::REGEX_DELIMITER,
+      'doesntmatter'
+    );
+    if ($regex_check === FALSE) {
       return E::ts('Incomplete definition: definition is not a valid regular expression');
     }
 
@@ -258,15 +253,11 @@ class CRM_Mailingtools_RegexToken {
         break;
 
       case self::OPERATOR_REPLACE:
-        try {
-          preg_replace(
-            self::REGEX_DELIMITER . $token_definition['def'] . self::REGEX_DELIMITER,
-            $token_definition['val'],
-            'doesntmatter'
-          );
-        }
-        catch (Exception $ex) {
-          // @ignoreException
+        if (@preg_replace(
+          self::REGEX_DELIMITER . $token_definition['def'] . self::REGEX_DELIMITER,
+          $token_definition['val'],
+          'doesntmatter'
+        ) === NULL) {
           return E::ts('Ill-defined replace expression');
         }
         break;
