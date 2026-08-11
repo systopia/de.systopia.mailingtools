@@ -20,7 +20,7 @@ use CRM_Mailingtools_ExtensionUtil as E;
 class CRM_Mailingtools_Page_ImportPattern extends CRM_Core_Page {
 
   /**
-   * @return string|void
+   * @return void
    * @throws CRM_Extension_Exception
    */
   public function run() {
@@ -63,12 +63,13 @@ class CRM_Mailingtools_Page_ImportPattern extends CRM_Core_Page {
         continue;
       }
 
-      CRM_Core_DAO::executeQuery('INSERT INTO `civicrm_mailing_bounce_pattern` (`bounce_type_id`, `pattern`) VALUES(%1, %2);',
+      CRM_Core_DAO::executeQuery(
+        'INSERT INTO `civicrm_mailing_bounce_pattern` (`bounce_type_id`, `pattern`) VALUES(%1, %2);',
         [
           1 => [$pattern[0], 'Integer'],
           2 => [$pattern[1], 'String'],
         ]
-        );
+      );
       $counter['inserted'] += 1;
     }
   }

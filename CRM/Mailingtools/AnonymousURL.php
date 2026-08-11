@@ -87,7 +87,11 @@ class CRM_Mailingtools_AnonymousURL {
     $system_base = $core_config->userFrameworkBaseURL;
 
     // find all all relevant links and collect queue IDs
-    if (preg_match_all("#{$system_base}sites/all/modules/civicrm/extern/url.php\?u=(?P<link_id>[0-9]+)[^'\"\\n]+#i", $body, $matches)) {
+    if (preg_match_all(
+      "#{$system_base}sites/all/modules/civicrm/extern/url.php\?u=(?P<link_id>[0-9]+)[^'\"\\n]+#i",
+      $body,
+      $matches
+    )) {
       foreach ($matches[0] as $i => $string) {
         $new_url = $config->getSetting('anonymous_link_url') . "?u={$matches['link_id'][$i]}";
         $body = str_replace($string, $new_url, $body);

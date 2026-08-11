@@ -19,10 +19,7 @@ class api_v3_Mailingtools_EmailsyncTest extends \PHPUnit\Framework\TestCase impl
    * See: https://docs.civicrm.org/dev/en/latest/testing/phpunit/#civitest
    */
   public function setUpHeadless() {
-    // Not needed, or rather no schema needed
-    //    return \Civi\Test::headless()
-    //      ->installMe(__DIR__)
-    //      ->apply();
+    // Not needed, or rather no schema needed.
   }
 
   /**
@@ -97,7 +94,8 @@ class api_v3_Mailingtools_EmailsyncTest extends \PHPUnit\Framework\TestCase impl
       'debug' => 'TRUE',
     ]);
     if ($result['is_error'] == '1') {
-      echo "\nError in Mailingtools->emailsync API call. See logs for more details. Message: {$result['error_message']}\n";
+      echo "\nError in Mailingtools->emailsync API call. See logs for more details. "
+        . "Message: {$result['error_message']}\n";
       return;
     }
     $result = civicrm_api3('Email', 'get', [
@@ -105,7 +103,8 @@ class api_v3_Mailingtools_EmailsyncTest extends \PHPUnit\Framework\TestCase impl
       'email' => ['LIKE' => 'example_%@systop%.de%'],
     ]);
     if ($result['count'] != 10) {
-      throw new Exception("Couldn't Find the appropriate amount of Emails matching the creation pattern. Found {$result['count']} instead of 10");
+      throw new Exception("Couldn't Find the appropriate amount of Emails matching the creation pattern. "
+        . "Found {$result['count']} instead of 10");
     }
     $on_hold_counter = 0;
     $activated_email_counter = 0;
@@ -121,7 +120,8 @@ class api_v3_Mailingtools_EmailsyncTest extends \PHPUnit\Framework\TestCase impl
       echo "Test successful.\n";
     }
     else {
-      throw new Exception("Test unsuccessful. Found {$on_hold_counter} on_hold Emails matching the pattern and {$activated_email_counter} normal emails matching the pattern.");
+      throw new Exception("Test unsuccessful. Found {$on_hold_counter} on_hold Emails matching the pattern "
+        . "and {$activated_email_counter} normal emails matching the pattern.");
     }
   }
 

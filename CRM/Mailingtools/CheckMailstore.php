@@ -103,12 +103,17 @@ class CRM_Mailingtools_CheckMailstore {
     // - delete mails (FixMe: First only debug Mails --> output)
     if (!$this->retention_configured) {
       // nothing to do here.
+      // phpcs:ignore Drupal.Commenting.FunctionComment.InvalidReturnNotVoid
       return;
     }
 
     foreach ($this->mail_folders as $folder) {
       $this->results[$folder] = 0;
-      $imap = imap_open($this->imap_login['hostname'] . $folder, $this->imap_login['username'], $this->imap_login['password']);
+      $imap = imap_open(
+        $this->imap_login['hostname'] . $folder,
+        $this->imap_login['username'],
+        $this->imap_login['password']
+      );
       if ($imap) {
         $date = $this->create_retention_timestamp($folder);
         $emails_delete_ignored = imap_search($imap, 'BEFORE "' . $date . '"');

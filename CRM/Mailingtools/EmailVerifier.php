@@ -82,7 +82,8 @@ class CRM_Mailingtools_EmailVerifier {
    */
   private function check_voku_email_checker_include() {
     if (!file_exists(__DIR__ . '/../../resources/lib/vendor/voku/email-check/src/voku/helper/EmailCheck.php')) {
-      throw new CRM_Core_Exception("Didn't find resources/lib/vendor/voku/email-check/src/voku/helper/EmailCheck.php. Please install library via composer (see Readme) in the resources folder");
+      throw new CRM_Core_Exception("Didn't find resources/lib/vendor/voku/email-check/src/voku/helper/EmailCheck.php. "
+        . 'Please install library via composer (see Readme) in the resources folder');
     }
   }
 
@@ -101,7 +102,8 @@ class CRM_Mailingtools_EmailVerifier {
       'options' => ['limit' => $this->verify_size],
     ]);
     if ($result['is_error'] == '1') {
-      throw new CRM_Core_Exception("Error Occured while looking up Emails. Parameters: Index->{$index}, Verify_size->{$this->verify_size}, Error Message: {$result['error_message']}");
+      throw new CRM_Core_Exception("Error Occured while looking up Emails. Parameters: Index->{$index}, "
+        . "Verify_size->{$this->verify_size}, Error Message: {$result['error_message']}");
     }
     $this->email_lookup_values = $result['values'];
   }
@@ -133,7 +135,9 @@ class CRM_Mailingtools_EmailVerifier {
       'hold_date' => date('d.m.Y H:i:s'),
     ]);
     if ($result['is_error'] == '1') {
-      CRM_Mailingtools_Utils::log("Error setting Email with ID {$id} on hold. Error Message: {$result['error_message']}");
+      CRM_Mailingtools_Utils::log(
+        "Error setting Email with ID {$id} on hold. Error Message: {$result['error_message']}"
+      );
       return;
     }
     CRM_Mailingtools_Utils::log("Set Email {$email} ({$id}) on hold");

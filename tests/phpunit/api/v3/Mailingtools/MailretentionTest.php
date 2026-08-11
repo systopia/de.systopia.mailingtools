@@ -10,6 +10,7 @@ use Civi\Test\TransactionalInterface;
  * This is a generic test class implemented with PHPUnit.
  * @group headless
  */
+// phpcs:ignore Generic.Files.LineLength.TooLong
 class api_v3_Mailingtools_MailretentionTest extends \PHPUnit\Framework\TestCase implements HeadlessInterface, HookInterface, TransactionalInterface {
 
   /**

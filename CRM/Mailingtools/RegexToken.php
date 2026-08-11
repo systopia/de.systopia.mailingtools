@@ -29,7 +29,7 @@ class CRM_Mailingtools_RegexToken {
   public const REGEX_DELIMITER  = '#';
   // API3 call
   public const OPERATOR_API3 = 'api3';
-  // static function call
+  // Static method call
   public const OPERATOR_STATIC = 'static';
   // preg_replace call
   public const OPERATOR_REPLACE = 'replace';
@@ -96,7 +96,12 @@ class CRM_Mailingtools_RegexToken {
 
         // get the offsets and do the replacement
         if ($value != $matched_string) {
-          preg_match(self::REGEX_DELIMITER . $token_definition['def'] . self::REGEX_DELIMITER, $text, $offsets, PREG_OFFSET_CAPTURE);
+          preg_match(
+            self::REGEX_DELIMITER . $token_definition['def'] . self::REGEX_DELIMITER,
+            $text,
+            $offsets,
+            PREG_OFFSET_CAPTURE
+          );
           $text = substr($text, 0, $offsets[0][1]) . $value . substr($text, $offsets[0][1] + strlen($offsets[0][0]));
         }
       }
@@ -111,6 +116,7 @@ class CRM_Mailingtools_RegexToken {
    * @param $context          array  context information passed trough to the functions
    * @return string the calculated value
    */
+  // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh, Generic.Metrics.NestingLevel.TooHigh
   public static function getTokenValue($matched_string, $token_definition, $context) {
     $params = array_merge(['matched_string' => $matched_string], $token_definition, $context);
     switch ($token_definition['op']) {
@@ -147,7 +153,11 @@ class CRM_Mailingtools_RegexToken {
 
       case self::OPERATOR_REPLACE:
         try {
-          return preg_replace(self::REGEX_DELIMITER . $token_definition['def'] . self::REGEX_DELIMITER, $matched_string, $token_definition['val']);
+          return preg_replace(
+            self::REGEX_DELIMITER . $token_definition['def'] . self::REGEX_DELIMITER,
+            $matched_string,
+            $token_definition['val']
+          );
         }
         catch (Exception $ex) {
           return 'ERROR';
@@ -166,6 +176,7 @@ class CRM_Mailingtools_RegexToken {
    * @param $token_definition array definition, see getTokenDefinitions
    * @return string|false error or false ("all clear")
    */
+  // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh, Generic.Metrics.NestingLevel.TooHigh
   public static function verifyTokenDefinition($token_definition) {
     // test if present
     if (empty($token_definition['def'])) {
@@ -233,7 +244,11 @@ class CRM_Mailingtools_RegexToken {
 
       case self::OPERATOR_REPLACE:
         try {
-          preg_replace(self::REGEX_DELIMITER . $token_definition['def'] . self::REGEX_DELIMITER, $token_definition['val'], 'doesntmatter');
+          preg_replace(
+            self::REGEX_DELIMITER . $token_definition['def'] . self::REGEX_DELIMITER,
+            $token_definition['val'],
+            'doesntmatter'
+          );
         }
         catch (Exception $ex) {
           return E::ts('Ill-defined replace expression');

@@ -86,7 +86,9 @@ class CRM_Mailingtools_Config {
         'api_action'    => 'mailretention',
         'run_frequency' => 'Always',
         'name'          => E::ts('Check Bounce Mailstore'),
-        'description'   => E::ts('Checks the configured Bounce Mailbox, and if a retention is configured deletes older mail'),
+        'description'   => E::ts(
+          'Checks the configured Bounce Mailbox, and if a retention is configured deletes older mail'
+        ),
         'is_active'     => '0',
       ]);
     }

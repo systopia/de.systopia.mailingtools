@@ -29,7 +29,8 @@ function _civicrm_api3_mailingtools_Emailsync_spec(&$spec) {
   $spec['verify_size']['api.default']        = 1000;
   $spec['verify_size']['api.description']    = 'The number of emails verified.';
   $spec['checking_index']['api.default']     = 0;
-  $spec['checking_index']['api.description'] = 'Uses an email identifier to start checking from there. Id from civicrm_email table is used.';
+  $spec['checking_index']['api.description'] = 'Uses an email identifier to start checking from there. '
+    . 'Id from civicrm_email table is used.';
   $spec['debug']['api.default']              = FALSE;
   $spec['debug']['api.description']          = 'Writes errors of each lookup to CiviCRM log.';
 }
@@ -50,6 +51,8 @@ function civicrm_api3_mailingtools_Emailsync($params) {
 
   $runner = new CRM_Mailingtools_EmailVerifier($params['verify_size'], $params['checking_index'], $params['debug']);
   $results = $runner->process();
-  return civicrm_api3_create_success("Number of Emails Processed: {$results['processed']}, Number of Emails deactivated: {$results['on_hold']}");
+  return civicrm_api3_create_success(
+    "Number of Emails Processed: {$results['processed']}, Number of Emails deactivated: {$results['on_hold']}"
+  );
 
 }

@@ -68,7 +68,7 @@ class CRM_Mailingtools_MailLogger {
       || $config->getSetting('mailing_debugging_header')
       || $config->getSetting('mailing_debugging_recipients')
       || $config->getSetting('mailing_debugging_body')) {
-      fputs($this->_logFile, "\n");
+      fwrite($this->_logFile, "\n");
     }
   }
 
@@ -78,17 +78,17 @@ class CRM_Mailingtools_MailLogger {
    * @param $message
    */
   private function addMessage($message, $info) {
-    fputs($this->_logFile, date('Y-m-d H:i:s'));
+    fwrite($this->_logFile, date('Y-m-d H:i:s'));
     if (!empty($info)) {
-      fputs($this->_logFile, ' [');
-      fputs($this->_logFile, $info);
-      fputs($this->_logFile, '] ');
+      fwrite($this->_logFile, ' [');
+      fwrite($this->_logFile, $info);
+      fwrite($this->_logFile, '] ');
     }
     else {
-      fputs($this->_logFile, ' ');
+      fwrite($this->_logFile, ' ');
     }
-    fputs($this->_logFile, $message);
-    fputs($this->_logFile, "\n");
+    fwrite($this->_logFile, $message);
+    fwrite($this->_logFile, "\n");
   }
 
 }

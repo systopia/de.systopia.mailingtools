@@ -1,4 +1,5 @@
 <?php
+// phpcs:disable PSR1.Files.SideEffects.FoundWithSymbols -- civix hook file: require_once + hook functions is the standard, unavoidable pattern here.
 declare(strict_types = 1);
 
 require_once 'mailingtools.civix.php';
@@ -33,12 +34,9 @@ function mailingtools_civicrm_enable() {
 }
 
 /**
- * Implementes hook_civicrm_alterMailParams
+ * Implements hook_civicrm_alterMailParams().
  *
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_alterMailParams/
- *
- * @param $params
- * @param $context
  */
 function mailingtools_civicrm_alterMailParams(&$params, $context) {
   CRM_Mailingtools_InjectHeader::inject_header($params, $context);
@@ -107,7 +105,8 @@ function mailingtools_civicrm_tokenValues(&$values, $cids, $job = NULL, $tokens 
 }
 
 /**
- * Implements hook_civicrm_pre
+ * Implements hook_civicrm_pre().
+ *
  * @see https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_pre/
  */
 function mailingtools_civicrm_pre($op, $objectName, $id, &$params) {
@@ -118,15 +117,19 @@ function mailingtools_civicrm_pre($op, $objectName, $id, &$params) {
       $open_contact_id  = (int) $config->getSetting('anonymous_open_contact_id');
       $click_contact_id = (int) $config->getSetting('anonymous_link_contact_id');
       if ($id == $open_contact_id || $id == $click_contact_id) {
-        throw new Exception(E::ts('You cannot delete the contact currently used for anonymous open/click tracking. Remove Contact [%1] from the settings of the MailingTools extension. Caution: you will lose the anonymous mailing statistics if you delete this contact.', [1 => $id]));
+        throw new Exception(E::ts(
+          'You cannot delete the contact currently used for anonymous open/click tracking. Remove Contact [%1] '
+          . 'from the settings of the MailingTools extension. Caution: you will lose the anonymous mailing '
+          . 'statistics if you delete this contact.',
+          [1 => $id]
+        ));
       }
     }
   }
 }
 
 /**
- * implements hook_civicrm_pageRun( &$page )
- * @param $page
+ * Implements hook_civicrm_pageRun().
  */
 function mailingtools_civicrm_pageRun(&$page) {
   $name = $page->getVar('_name');

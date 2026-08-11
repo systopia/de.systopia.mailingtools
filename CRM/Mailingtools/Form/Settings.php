@@ -319,7 +319,8 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
 
     foreach ($domains as $domain) {
       if (!preg_match($pattern, $domain)) {
-        return "Invalid Domain {$domain}, please enter valid Domain Names comma searated. e.g. example1.com,example2.com";
+        return "Invalid Domain {$domain}, please enter valid Domain Names comma searated. "
+          . 'e.g. example1.com,example2.com';
       }
     }
     return FALSE;
@@ -346,7 +347,10 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
         }
       }
       else {
-        $this->assign("anonymous_{$key}_contact_name", E::ts("Bad contact ID: '%1'", [1 => CRM_Utils_Array::value("anonymous_{$key}_contact_id", $data, '')]));
+        $this->assign(
+          "anonymous_{$key}_contact_name",
+          E::ts("Bad contact ID: '%1'", [1 => CRM_Utils_Array::value("anonymous_{$key}_contact_id", $data, '')])
+        );
       }
     }
     else {
