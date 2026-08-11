@@ -29,7 +29,7 @@ use CRM_Mailingtools_ExtensionUtil as E;
  */
 function civicrm_api3_mailingtools_anonopen($params) {
   try {
-    $result = CRM_Mailingtools_AnonymousOpen::processAnonymousOpenEvent($params['mid']);
+    $result = CRM_Mailingtools_AnonymousOpen::processAnonymousOpenEvent(CRM_Mailingtools_Utils::toInt($params['mid']));
     if ($result !== NULL) {
       // @phpstan-ignore argument.type
       return civicrm_api3_create_success('Anonymous open event recorded.');

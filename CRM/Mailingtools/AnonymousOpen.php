@@ -77,7 +77,9 @@ class CRM_Mailingtools_AnonymousOpen {
     $event_queue_id = NULL;
 
     // FIRST: try by preferred contact
-    $preferred_contact_id = $default_contact_setting !== NULL ? (int) $config->getSetting($default_contact_setting) : 0;
+    $preferred_contact_id = $default_contact_setting !== NULL
+      ? CRM_Mailingtools_Utils::toInt($config->getSetting($default_contact_setting))
+      : 0;
     if ($preferred_contact_id !== 0) {
       $event_queue_id = (int) CRM_Core_DAO::singleValueQuery('
         SELECT MIN(queue.id)
@@ -160,7 +162,7 @@ class CRM_Mailingtools_AnonymousOpen {
 
     // get the base URL
     $core_config = CRM_Core_Config::singleton();
-    $system_base = $core_config->userFrameworkBaseURL;
+    $system_base = CRM_Mailingtools_Utils::toString($core_config->userFrameworkBaseURL);
 
     // find all all relevant links and collect queue IDs
     if ((bool) preg_match_all(
@@ -176,7 +178,7 @@ class CRM_Mailingtools_AnonymousOpen {
 
         // replace open trackers
         foreach ($queue_id_to_mailing_id as $queue_id => $mailing_id) {
-          $new_url = $config->getSetting('anonymous_open_url') . "?mid={$mailing_id}";
+          $new_url = CRM_Mailingtools_Utils::toString($config->getSetting('anonymous_open_url')) . "?mid={$mailing_id}";
           $replaced_body = preg_replace(
             "#{$system_base}sites/all/modules/civicrm/extern/open.php\?q={$queue_id}#i",
             $new_url,

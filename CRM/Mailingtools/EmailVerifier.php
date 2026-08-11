@@ -67,19 +67,21 @@ class CRM_Mailingtools_EmailVerifier {
     $this->get_email_addresses($this->checking_index + 1);
     $last_email_id = $this->checking_index;
     foreach ($this->email_lookup_values as $email_val) {
-      if (CRM_Mailingtools_Utils::check_email_dns_blacklist($email_val['email'], $email_val['id'])) {
+      $email_address = CRM_Mailingtools_Utils::toString($email_val['email'] ?? '');
+      $email_id = CRM_Mailingtools_Utils::toInt($email_val['id'] ?? 0);
+      if (CRM_Mailingtools_Utils::check_email_dns_blacklist($email_address, $email_id)) {
         $this->result_stats['on_hold'] += 1;
         // email was set on hold because of blacklist, no further validation needed
         continue;
       }
 
       // clear spaces and non-breaking spaces
-      if (!$this->check_email(trim($email_val['email'], "\xc2\xa0\x20"))) {
-        if (CRM_Mailingtools_Utils::set_email_on_hold($email_val['id'], $email_val['email'], 'DNS Error')) {
+      if (!$this->check_email(trim($email_address, "\xc2\xa0\x20"))) {
+        if (CRM_Mailingtools_Utils::set_email_on_hold($email_id, $email_address, 'DNS Error')) {
           $this->result_stats['on_hold'] += 1;
         }
       }
-      $last_email_id = $email_val['id'];
+      $last_email_id = $email_id;
       $this->result_stats['processed'] += 1;
     }
     $this->set_address_index($last_email_id);
@@ -138,7 +140,9 @@ class CRM_Mailingtools_EmailVerifier {
   private function get_address_index() {
     $config = CRM_Mailingtools_Config::singleton();
     $settings = $config->getSettings();
-    return $settings['email_verifier_index'] ?? 1;
+    return isset($settings['email_verifier_index'])
+      ? CRM_Mailingtools_Utils::toInt($settings['email_verifier_index'])
+      : 1;
   }
 
   /**

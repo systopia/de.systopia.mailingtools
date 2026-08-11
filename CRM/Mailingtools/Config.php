@@ -65,7 +65,8 @@ class CRM_Mailingtools_Config {
    */
   public function getSettings() {
     if (self::$settings === NULL) {
-      self::$settings = Civi::settings()->get('Mailingtools_settings');
+      $stored_settings = Civi::settings()->get('Mailingtools_settings');
+      self::$settings = is_array($stored_settings) ? $stored_settings : [];
     }
 
     return self::$settings;

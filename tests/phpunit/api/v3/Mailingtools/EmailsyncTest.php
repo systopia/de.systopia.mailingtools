@@ -93,7 +93,8 @@ class api_v3_Mailingtools_EmailsyncTest extends \PHPUnit\Framework\TestCase impl
       'id' => $entity_id,
     ]);
     if ((string) $result['is_error'] === '1') {
-      throw new \RuntimeException("Couldn't delete Entity {$entity} ({$entity_id}). Abroting Test");
+      $entity_id_string = CRM_Mailingtools_Utils::toString($entity_id);
+      throw new \RuntimeException("Couldn't delete Entity {$entity} ({$entity_id_string}). Abroting Test");
     }
     parent::tearDown();
   }

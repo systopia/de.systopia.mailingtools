@@ -29,9 +29,9 @@ use CRM_Mailingtools_ExtensionUtil as E;
  */
 function civicrm_api3_mailingtools_anonurl($params) {
   try {
-    $url = CRM_Mailingtools_AnonymousURL::processAnonymousClickEvent($params['u']);
+    $url = CRM_Mailingtools_AnonymousURL::processAnonymousClickEvent(CRM_Mailingtools_Utils::toInt($params['u']));
     if ($url !== NULL) {
-      $link_id = (int) $params['u'];
+      $link_id = CRM_Mailingtools_Utils::toInt($params['u']);
       return civicrm_api3_create_success([$link_id => $url]);
     }
     else {

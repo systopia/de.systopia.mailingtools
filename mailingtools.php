@@ -53,8 +53,9 @@ function mailingtools_civicrm_alterMailParams(&$params, $context) {
  * We will provide our own Mailer (wrapping the original one).
  * so we can manipulate the content of outgoing emails
  *
- * @param mixed $mailer
- * @param mixed $driver
+ * @param Mail $mailer
+ * @param-out Mail|CRM_Mailingtools_Mailer $mailer
+ * @param Mail $driver
  * @param array<string, mixed> $params
  * @return void
  */
@@ -71,7 +72,7 @@ function mailingtools_civicrm_alterMailer(&$mailer, $driver, $params) {
  * @param string $entity
  * @param string $action
  * @param array<string, mixed> $params
- * @param array<string, mixed> $permissions
+ * @param array<string, array<string, mixed>> $permissions
  * @return void
  */
 function mailingtools_civicrm_alterAPIPermissions($entity, $action, &$params, &$permissions) {
@@ -102,7 +103,7 @@ function mailingtools_civicrm_alterAPIPermissions($entity, $action, &$params, &$
  * Some token fixes
  *  - make sure that hash is there
  *
- * @param array<int|string, mixed> $values
+ * @param array<int|string, array<string, mixed>> $values
  * @param array<int, mixed> $cids
  * @param mixed $job
  * @param array<string, mixed> $tokens
@@ -116,7 +117,7 @@ function mailingtools_civicrm_tokenValues(&$values, $cids, $job = NULL, $tokens 
   if ((bool) $fix_hash_token) {
     // make sure 'hash' is there:
     if (($tokens['contact'] ?? []) !== []) {
-      // @phpstan-ignore empty.notAllowed
+      // @phpstan-ignore empty.notAllowed, argument.type
       if (in_array('hash', $tokens['contact'], TRUE) || !empty($tokens['contact']['hash'])) {
         // hash token is requested
         foreach ($values as $contact_id => &$contact_values) {
@@ -145,8 +146,8 @@ function mailingtools_civicrm_pre($op, $objectName, $id, &$params) {
     if ($objectName === 'Individual' || $objectName === 'Household' || $objectName === 'Organization') {
       // make sure the contact used for the anonymous open/click tracking is not deleted
       $config = CRM_Mailingtools_Config::singleton();
-      $open_contact_id  = (int) $config->getSetting('anonymous_open_contact_id');
-      $click_contact_id = (int) $config->getSetting('anonymous_link_contact_id');
+      $open_contact_id  = CRM_Mailingtools_Utils::toInt($config->getSetting('anonymous_open_contact_id'));
+      $click_contact_id = CRM_Mailingtools_Utils::toInt($config->getSetting('anonymous_link_contact_id'));
       if ((int) $id === $open_contact_id || (int) $id === $click_contact_id) {
         throw new \RuntimeException(E::ts(
           'You cannot delete the contact currently used for anonymous open/click tracking. Remove Contact [%1] '
@@ -166,9 +167,11 @@ function mailingtools_civicrm_pre($op, $objectName, $id, &$params) {
  * @phpstan-return void
  */
 function mailingtools_civicrm_pageRun(&$page) {
+  // @phpstan-ignore method.nonObject
   $name = $page->getVar('_name');
   switch ($name) {
     case 'Civi\\Angular\\Page\\Main':
+      // @phpstan-ignore argument.type
       CRM_Mailingtools_Page_MosaicoSave::buildPagehook($page);
       break;
 

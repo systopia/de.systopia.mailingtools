@@ -55,7 +55,7 @@ class CRM_Mailingtools_Mailer {
    * construct this mailer wrapping another one
    *
    * @param Mail $mailer
-   * @param mixed $driver
+   * @param Mail $driver
    * @param array<string, mixed> $params
    * @return void
    */
@@ -86,7 +86,7 @@ class CRM_Mailingtools_Mailer {
       ];
       $body = CRM_Mailingtools_RegexToken::tokenReplace($body, $context);
       foreach ($headers as $name => $value) {
-        $headers[$name] = CRM_Mailingtools_RegexToken::tokenReplace($value, $context);
+        $headers[$name] = CRM_Mailingtools_RegexToken::tokenReplace(CRM_Mailingtools_Utils::toString($value), $context);
       }
     }
     // Debug output

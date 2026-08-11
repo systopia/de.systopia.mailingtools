@@ -33,7 +33,11 @@ class CRM_Mailingtools_InjectHeader {
     $settings = $config->getSettings();
     if (($settings['extra_mail_header_key'] ?? '') !== '' && ($settings['extra_mail_header_key'] ?? '') !== '0'
       && ($settings['extra_mail_header_value'] ?? '') !== '' && ($settings['extra_mail_header_value'] ?? '') !== '0') {
-      $params['headers'][$settings['extra_mail_header_key']] = $settings['extra_mail_header_value'];
+      if (!isset($params['headers']) || !is_array($params['headers'])) {
+        $params['headers'] = [];
+      }
+      $params['headers'][CRM_Mailingtools_Utils::toString($settings['extra_mail_header_key'])]
+        = CRM_Mailingtools_Utils::toString($settings['extra_mail_header_value']);
     }
   }
 

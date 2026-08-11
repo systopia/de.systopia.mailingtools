@@ -291,7 +291,7 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
   /**
    * Extract the (complete) token definitions in the form
    * @param array<string, mixed> $data
-   * @return array<int, array<string, mixed>> list of token definitions
+   * @return array<int, array{def: string, op: string, val: string}> list of token definitions
    */
   protected function extractRegexTokens($data) {
     $token_defs = [];
@@ -302,9 +302,9 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
         && ($data["regex_token_{$token_index}_val"] ?? '') !== ''
         && ($data["regex_token_{$token_index}_val"] ?? '') !== '0') {
         $token_defs[] = [
-          'def' => html_entity_decode($data["regex_token_{$token_index}_def"]),
-          'op'  => $data["regex_token_{$token_index}_op"],
-          'val' => html_entity_decode($data["regex_token_{$token_index}_val"]),
+          'def' => html_entity_decode(CRM_Mailingtools_Utils::toString($data["regex_token_{$token_index}_def"])),
+          'op'  => CRM_Mailingtools_Utils::toString($data["regex_token_{$token_index}_op"]),
+          'val' => html_entity_decode(CRM_Mailingtools_Utils::toString($data["regex_token_{$token_index}_val"])),
         ];
       }
     }
@@ -323,7 +323,7 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
       // it's ok to not have blacklisted domains, or delete them
       return FALSE;
     }
-    $domains = explode(',', $data['email_domain_blacklist']);
+    $domains = explode(',', CRM_Mailingtools_Utils::toString($data['email_domain_blacklist']));
 
     foreach ($domains as $domain) {
       if (!(bool) preg_match($pattern, $domain)) {
@@ -344,7 +344,7 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
    */
   protected function renderContact($data, $key) {
     if (($data["anonymous_{$key}_contact_id"] ?? '') !== '' && ($data["anonymous_{$key}_contact_id"] ?? '') !== '0') {
-      $contact_id = (int) ($data["anonymous_{$key}_contact_id"] ?? 0);
+      $contact_id = CRM_Mailingtools_Utils::toInt($data["anonymous_{$key}_contact_id"] ?? 0);
       if ($contact_id !== 0) {
         $result = civicrm_api3('Contact', 'get', ['id' => $contact_id, 'return' => 'display_name,contact_type']);
         if ((int) ($result['id'] ?? 0) !== 0) {

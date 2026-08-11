@@ -92,7 +92,7 @@ class CRM_Mailingtools_AnonymousURL {
 
     // get the base URL
     $core_config = CRM_Core_Config::singleton();
-    $system_base = $core_config->userFrameworkBaseURL;
+    $system_base = CRM_Mailingtools_Utils::toString($core_config->userFrameworkBaseURL);
 
     // find all all relevant links and collect queue IDs
     if ((bool) preg_match_all(
@@ -101,7 +101,8 @@ class CRM_Mailingtools_AnonymousURL {
       $matches
     )) {
       foreach ($matches[0] as $i => $string) {
-        $new_url = $config->getSetting('anonymous_link_url') . "?u={$matches['link_id'][$i]}";
+        $link_url = CRM_Mailingtools_Utils::toString($config->getSetting('anonymous_link_url'));
+        $new_url = $link_url . "?u={$matches['link_id'][$i]}";
         $body = str_replace($string, $new_url, $body);
       }
     }

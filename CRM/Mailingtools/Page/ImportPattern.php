@@ -24,8 +24,8 @@ class CRM_Mailingtools_Page_ImportPattern extends CRM_Core_Page {
    * @throws CRM_Extension_Exception
    */
   public function run() {
-    $param = CRM_Utils_Request::retrieve('name', 'String');
-    if ($param === NULL || $param === '' || $param === '0') {
+    $param = CRM_Mailingtools_Utils::toString(CRM_Utils_Request::retrieve('name', 'String'));
+    if ($param === '' || $param === '0') {
       throw new CRM_Extension_Exception('Please Provide a filename in the name parameter of the URL');
     }
     $path = __DIR__ . "../../../resources/*{$param}*.json";
@@ -37,14 +37,15 @@ class CRM_Mailingtools_Page_ImportPattern extends CRM_Core_Page {
 
     $counter = [];
     foreach ($files as $f) {
-      $pattern = json_decode((string) file_get_contents($f));
+      $decoded = json_decode((string) file_get_contents($f), TRUE);
+      $patterns = is_array($decoded) ? $decoded : [];
       $filename_parts = preg_split('/.+\//', $f);
       $filename = $filename_parts !== FALSE ? ($filename_parts[1] ?? '') : '';
       $counter[$filename] = [
         'ignored'   => 0,
         'inserted'  => 0,
       ];
-      $this->parsePattern($pattern, $counter[$filename]);
+      $this->parsePattern($patterns, $counter[$filename]);
     }
 
     $this->assign('name', $param);
@@ -54,13 +55,18 @@ class CRM_Mailingtools_Page_ImportPattern extends CRM_Core_Page {
   }
 
   /**
-   * @param mixed $patterns
+   * @param array<int|string, mixed> $patterns
    * @param array<string, int> $counter
    * @return void
    */
   private function parsePattern($patterns, &$counter) {
     foreach ($patterns as $bounce_value => $pattern) {
-      if ($this->isInDB($pattern[1])) {
+      if (!is_array($pattern)) {
+        continue;
+      }
+      $bounce_type_id = CRM_Mailingtools_Utils::toInt($pattern[0] ?? 0);
+      $bounce_pattern = CRM_Mailingtools_Utils::toString($pattern[1] ?? '');
+      if ($this->isInDB($bounce_pattern)) {
         $counter['ignored'] += 1;
         continue;
       }
@@ -68,8 +74,8 @@ class CRM_Mailingtools_Page_ImportPattern extends CRM_Core_Page {
       CRM_Core_DAO::executeQuery(
         'INSERT INTO `civicrm_mailing_bounce_pattern` (`bounce_type_id`, `pattern`) VALUES(%1, %2);',
         [
-          1 => [$pattern[0], 'Integer'],
-          2 => [$pattern[1], 'String'],
+          1 => [$bounce_type_id, 'Integer'],
+          2 => [$bounce_pattern, 'String'],
         ]
       );
       $counter['inserted'] += 1;
@@ -77,7 +83,7 @@ class CRM_Mailingtools_Page_ImportPattern extends CRM_Core_Page {
   }
 
   /**
-   * @param mixed $pattern
+   * @param string $pattern
    *
    * @return bool
    */

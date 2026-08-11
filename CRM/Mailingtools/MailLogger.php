@@ -35,7 +35,7 @@ class CRM_Mailingtools_MailLogger {
    *
    */
   public function __construct() {
-    $file = CRM_Core_Config::singleton()->configAndLogDir . 'mailing.log';
+    $file = CRM_Mailingtools_Utils::toString(CRM_Core_Config::singleton()->configAndLogDir) . 'mailing.log';
     $this->_logFile = fopen($file, 'a');
   }
 

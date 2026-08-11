@@ -53,7 +53,7 @@ class CRM_Mailingtools_RegexToken {
    *  'op'  => (string) operator type (api3, static, replace)
    *  'val' => (string) call spec, e.g. "entity.action", or "class::function"
    * ]
-   * @return array<int, array<string, mixed>> list of such specs
+   * @return array<int, array{def: string, op: string, val: string}> list of such specs
    */
   public static function getTokenDefinitions() {
     static $token_definitions = NULL;
@@ -71,7 +71,7 @@ class CRM_Mailingtools_RegexToken {
 
   /**
    * Set the current token definition specs
-   * @param array<int, array<string, mixed>> $token_definitions see getTokenDefinitions
+   * @param array<int, array{def: string, op: string, val: string}> $token_definitions see getTokenDefinitions
    * @return void
    */
   public static function setTokenDefinitions($token_definitions) {
@@ -113,7 +113,7 @@ class CRM_Mailingtools_RegexToken {
   /**
    * Calculate the new value for the given token_definition
    * @param string $matched_string   the string matched
-   * @param array<string, mixed> $token_definition  token definition
+   * @param array{def: string, op: string, val: string} $token_definition  token definition
    * @param array<string, mixed> $context           context information passed trough to the functions
    * @return string the calculated value
    */
@@ -146,7 +146,8 @@ class CRM_Mailingtools_RegexToken {
 
       case self::OPERATOR_STATIC:
         if ((bool) preg_match(self::VALUE_STATIC_FUNCTION, $token_definition['val'], $match)) {
-          return call_user_func($token_definition['val'], $params);
+          // @phpstan-ignore argument.type
+          return CRM_Mailingtools_Utils::toString(call_user_func($token_definition['val'], $params));
         }
         else {
           return 'ERROR';
@@ -170,7 +171,7 @@ class CRM_Mailingtools_RegexToken {
    * Check if a definition value is missing: not set, an empty string, or
    * the string '0' (same falsy set empty() would use for a string).
    *
-   * @param array<string, mixed> $token_definition
+   * @param array{def: string, op: string, val: string} $token_definition
    * @param string $key
    */
   private static function isEmptyDefinitionValue($token_definition, $key): bool {
@@ -182,7 +183,7 @@ class CRM_Mailingtools_RegexToken {
    * Verify the presented token definition, and return an
    *  error string if not valid
    *
-   * @param array<string, mixed> $token_definition definition, see getTokenDefinitions
+   * @param array{def: string, op: string, val: string} $token_definition definition, see getTokenDefinitions
    * @return string|false error or false ("all clear")
    */
   // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh, Generic.Metrics.NestingLevel.TooHigh

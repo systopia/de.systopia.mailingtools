@@ -24,6 +24,29 @@ class CRM_Mailingtools_Utils {
   public static $debug = TRUE;
 
   /**
+   * Safely cast a possibly-mixed value (e.g. a setting or array value of
+   * unknown origin) to int. Non-scalar values (arrays, objects, null) become 0.
+   *
+   * @param mixed $value
+   * @return int
+   */
+  public static function toInt($value): int {
+    return is_scalar($value) ? (int) $value : 0;
+  }
+
+  /**
+   * Safely cast a possibly-mixed value (e.g. a setting or array value of
+   * unknown origin) to string. Non-scalar values (arrays, objects, null)
+   * become ''.
+   *
+   * @param mixed $value
+   * @return string
+   */
+  public static function toString($value): string {
+    return is_scalar($value) ? (string) $value : '';
+  }
+
+  /**
    * @param string $op
    * @param string $objectName
    * @param int $objectId
@@ -71,7 +94,7 @@ class CRM_Mailingtools_Utils {
     if ($email_domain_blacklist === NULL || $email_domain_blacklist === '' || $email_domain_blacklist === '0') {
       return FALSE;
     }
-    $email_domains = explode(',', $email_domain_blacklist);
+    $email_domains = explode(',', CRM_Mailingtools_Utils::toString($email_domain_blacklist));
 
     try {
       $at_position = strpos($email, '@');

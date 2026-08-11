@@ -160,8 +160,10 @@ class CRM_Mailingtools_CheckMailstore {
    * @param array<string, mixed> $settings
    */
   private function verify_settings($settings): bool {
-    return !isset($settings['processed_retention_value']) || (int) $settings['processed_retention_value'] === 0
-      || !isset($settings['ignored_retention_value']) || (int) $settings['ignored_retention_value'] === 0;
+    return !isset($settings['processed_retention_value'])
+      || CRM_Mailingtools_Utils::toInt($settings['processed_retention_value']) === 0
+      || !isset($settings['ignored_retention_value'])
+      || CRM_Mailingtools_Utils::toInt($settings['ignored_retention_value']) === 0;
   }
 
   /**
@@ -202,7 +204,8 @@ class CRM_Mailingtools_CheckMailstore {
    * @return string
    */
   private function create_retention_timestamp($folder) {
-    $time = strtotime("now - {$this->mailStore_retention[$folder]} days");
+    $retention_days = CRM_Mailingtools_Utils::toString($this->mailStore_retention[$folder] ?? '');
+    $time = strtotime("now - {$retention_days} days");
     return date('j-F-Y', $time !== FALSE ? $time : NULL);
   }
 
