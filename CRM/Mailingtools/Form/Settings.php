@@ -308,7 +308,7 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
 
   /**
    * @param $data
-   * @return string|true
+   * @return string|false
    *
    *   Validate input domains via regex pattern, https://regex101.com/r/IY4AVw/1
    */

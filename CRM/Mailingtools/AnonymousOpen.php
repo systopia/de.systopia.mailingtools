@@ -236,7 +236,7 @@ class CRM_Mailingtools_AnonymousOpen {
    * @param $mid         int mailing ID
    * @param $contact_id  int contact ID
    *
-   * @return int queue item id
+   * @return int|null queue item id
    */
   public static function injectQueueItem($mid, $contact_id) {
     // first: select a job (preferrably: not test)
@@ -276,7 +276,7 @@ class CRM_Mailingtools_AnonymousOpen {
       ]);
 
     // now the following query should return the new ID
-    return CRM_Core_DAO::singleValueQuery('
+    return (int) CRM_Core_DAO::singleValueQuery('
         SELECT MAX(queue.id)
         FROM civicrm_mailing_event_queue queue
         LEFT JOIN civicrm_mailing_job    job   ON queue.job_id = job.id
