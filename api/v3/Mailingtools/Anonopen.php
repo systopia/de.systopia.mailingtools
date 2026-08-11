@@ -23,8 +23,8 @@ use CRM_Mailingtools_ExtensionUtil as E;
  * Processes an anonymous open event,
  *  based only on the mailing ID
  *
- * @param array $params containing 'mid'
- * @return array result
+ * @param array<string, mixed> $params containing 'mid'
+ * @return array<string, mixed> result
  * @throws CRM_Core_Exception
  */
 function civicrm_api3_mailingtools_anonopen($params) {
@@ -46,6 +46,9 @@ function civicrm_api3_mailingtools_anonopen($params) {
 
 /**
  * API Specs: Mailingtools.Anonopen
+ *
+ * @param array<string, mixed> $spec
+ * @return void
  */
 function _civicrm_api3_mailingtools_anonopen_spec(&$spec) {
   $spec['mid'] = [

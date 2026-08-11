@@ -53,8 +53,9 @@ class CRM_Mailingtools_Page_ImportPattern extends CRM_Core_Page {
   }
 
   /**
-   * @param $patterns
-   * @param $counter
+   * @param mixed $patterns
+   * @param array<string, int> $counter
+   * @return void
    */
   private function parsePattern($patterns, &$counter) {
     foreach ($patterns as $bounce_value => $pattern) {
@@ -75,7 +76,7 @@ class CRM_Mailingtools_Page_ImportPattern extends CRM_Core_Page {
   }
 
   /**
-   * @param $pattern
+   * @param mixed $pattern
    *
    * @return bool
    */

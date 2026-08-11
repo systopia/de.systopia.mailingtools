@@ -24,8 +24,9 @@ class CRM_Mailingtools_InjectHeader {
 
   /**
    *
-   * @param $params
-   * @param $context
+   * @param array<string, mixed> $params
+   * @param mixed $context
+   * @return void
    */
   public static function inject_header(&$params, $context) {
     $config = CRM_Mailingtools_Config::singleton();

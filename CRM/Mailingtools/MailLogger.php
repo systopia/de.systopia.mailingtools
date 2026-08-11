@@ -25,6 +25,8 @@ use CRM_Mailingtools_ExtensionUtil as E;
  */
 class CRM_Mailingtools_MailLogger {
 
+  /**
+   * @var resource|false */
   private $_logFile = NULL;
 
   /**
@@ -37,9 +39,15 @@ class CRM_Mailingtools_MailLogger {
     $this->_logFile = fopen($file, 'a');
   }
 
+  /**
+   * @param array<int|string, mixed>|string $recipients
+   * @param array<string, mixed> $header
+   * @param mixed $body
+   * @return void
+   */
   public function logMailInfo($recipients, $header, $body) {
     $config = CRM_Mailingtools_Config::singleton();
-    if ($config->getSetting('mailing_debugging_short')) {
+    if ((bool) $config->getSetting('mailing_debugging_short')) {
       // check if this is a mailing. Check for X-CiviMail-Bounce
       // header. This should only be set for Mailings afaik
       if (isset($header['X-CiviMail-Bounce'])) {
@@ -47,27 +55,27 @@ class CRM_Mailingtools_MailLogger {
         return;
       }
     }
-    if ($config->getSetting('mailing_debugging_short')) {
+    if ((bool) $config->getSetting('mailing_debugging_short')) {
       $short_info = [];
       $short_info['FROM'] = $header['From'];
       $short_info['TO'] = $header['To'];
       $short_info['SUBJECT'] = $header['Subject'];
       $this->addMessage(json_encode($short_info), 'SHORT');
     }
-    if ($config->getSetting('mailing_debugging_header')) {
+    if ((bool) $config->getSetting('mailing_debugging_header')) {
       $this->addMessage(json_encode($header), 'HEADER');
     }
-    if ($config->getSetting('mailing_debugging_recipients')) {
+    if ((bool) $config->getSetting('mailing_debugging_recipients')) {
       $this->addMessage(json_encode($recipients), 'RECIPIENTS');
     }
-    if ($config->getSetting('mailing_debugging_body')) {
+    if ((bool) $config->getSetting('mailing_debugging_body')) {
       $this->addMessage(json_encode($body), 'BODY');
     }
     // add empty line for better readablility if debugging is active
-    if ($config->getSetting('mailing_debugging_short')
-      || $config->getSetting('mailing_debugging_header')
-      || $config->getSetting('mailing_debugging_recipients')
-      || $config->getSetting('mailing_debugging_body')) {
+    if ((bool) $config->getSetting('mailing_debugging_short')
+      || (bool) $config->getSetting('mailing_debugging_header')
+      || (bool) $config->getSetting('mailing_debugging_recipients')
+      || (bool) $config->getSetting('mailing_debugging_body')) {
       fwrite($this->_logFile, "\n");
     }
   }
@@ -75,7 +83,9 @@ class CRM_Mailingtools_MailLogger {
   /**
    * Method to log the message
    *
-   * @param $message
+   * @param string $message
+   * @param string|null $info
+   * @return void
    */
   private function addMessage($message, $info) {
     fwrite($this->_logFile, date('Y-m-d H:i:s'));

@@ -19,12 +19,16 @@ declare(strict_types = 1);
 
 class CRM_Mailingtools_Page_MosaicoSave {
 
+  /**
+   * @param \Civi\Angular\Page\Main $page
+   * @return void
+   */
   public static function buildPagehook(&$page) {
 
     // check if save message is enabled
     $config = CRM_Mailingtools_Config::singleton();
     $enabled = $config->getSetting('mosaico_save_message');
-    if (!$enabled) {
+    if (!(bool) $enabled) {
       return;
     }
 

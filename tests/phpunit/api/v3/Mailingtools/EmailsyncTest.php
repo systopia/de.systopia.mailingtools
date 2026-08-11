@@ -11,12 +11,19 @@ use Civi\Test\HeadlessInterface;
  */
 class api_v3_Mailingtools_EmailsyncTest extends \PHPUnit\Framework\TestCase implements HeadlessInterface {
 
+  /**
+   * @var int|string|null */
   private $contact_id;
+
+  /**
+   * @var array<int, mixed> */
   private $email_ids;
 
   /**
    * Civi\Test has many helpers, like install(), uninstall(), sql(), and sqlFile().
    * See: https://docs.civicrm.org/dev/en/latest/testing/phpunit/#civitest
+   *
+   * @return void
    */
   public function setUpHeadless() {
     // Not needed, or rather no schema needed.
@@ -50,6 +57,10 @@ class api_v3_Mailingtools_EmailsyncTest extends \PHPUnit\Framework\TestCase impl
     parent::setUp();
   }
 
+  /**
+   * @param string $email
+   * @return void
+   */
   private function create_email($email) {
     $result = civicrm_api3('Email', 'create', [
       'contact_id' => $this->contact_id,
@@ -72,6 +83,11 @@ class api_v3_Mailingtools_EmailsyncTest extends \PHPUnit\Framework\TestCase impl
     $this->delete_entity($this->contact_id, 'Contact');
   }
 
+  /**
+   * @param mixed $entity_id
+   * @param string $entity
+   * @return void
+   */
   private function delete_entity($entity_id, $entity) {
     $result = civicrm_api3($entity, 'delete', [
       'id' => $entity_id,
@@ -86,6 +102,8 @@ class api_v3_Mailingtools_EmailsyncTest extends \PHPUnit\Framework\TestCase impl
    * Simple example test case.
    *
    * Note how the function name begins with the word "test".
+   *
+   * @return void
    */
   public function testEmailVerifier() {
     $result = civicrm_api3('Mailingtools', 'emailsync', [

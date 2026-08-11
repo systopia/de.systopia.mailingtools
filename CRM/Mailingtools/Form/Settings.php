@@ -24,6 +24,9 @@ use CRM_Mailingtools_ExtensionUtil as E;
  */
 class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
 
+  /**
+   * @return void
+   */
   public function buildQuickForm() {
 
     $config = CRM_Mailingtools_Config::singleton();
@@ -261,6 +264,8 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
 
   /**
    * Post process input values and save them to DB
+   *
+   * @return void
    */
   public function postProcess() {
     $config = CRM_Mailingtools_Config::singleton();
@@ -285,8 +290,8 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
 
   /**
    * Extract the (complete) token definitions in the form
-   * @param $data array
-   * @return array list of token definitions
+   * @param array<string, mixed> $data
+   * @return array<int, array<string, mixed>> list of token definitions
    */
   protected function extractRegexTokens($data) {
     $token_defs = [];
@@ -307,7 +312,7 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
   }
 
   /**
-   * @param $data
+   * @param array<string, mixed> $data
    * @return string|false
    *
    *   Validate input domains via regex pattern, https://regex101.com/r/IY4AVw/1
@@ -332,8 +337,9 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
   /**
    * Render the current anonymous_open_contact_id value
    *
-   * @param $data array  data
-   * @param $key  string key (open|link)
+   * @param array<string, mixed> $data  data
+   * @param string $key  key (open|link)
+   * @return void
    * @throws CRM_Core_Exception
    */
   protected function renderContact($data, $key) {
@@ -364,7 +370,7 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
   /**
    * get the elements of the form
    * used as a filter for the values array from post Process
-   * @return array
+   * @return array<int, string>
    */
   protected function getSettingsInForm() {
     return [

@@ -22,16 +22,27 @@ use CRM_Mailingtools_ExtensionUtil as E;
  */
 class CRM_Mailingtools_EmailVerifier {
 
+  /**
+   * @var int */
   private $verify_size;
+
+  /**
+   * @var int */
   private $checking_index;
+
+  /**
+   * @var array<int, array<string, mixed>> */
   private $email_lookup_values;
+
+  /**
+   * @var array<string, int> */
   private $result_stats;
 
   /**
    * CRM_Mailingtools_EmailVerifier constructor.
    *
-   * @param $verify_size
-   * @param $checking_index
+   * @param int $verify_size
+   * @param int|null $checking_index
    *
    * @throws \CRM_Core_Exception
    */
@@ -49,6 +60,7 @@ class CRM_Mailingtools_EmailVerifier {
 
   /**
    * process configured amount of emails from the database with an index
+   * @return array<string, int>
    * @throws \CRM_Core_Exception
    */
   public function process() {
@@ -75,6 +87,7 @@ class CRM_Mailingtools_EmailVerifier {
   }
 
   /**
+   * @return void
    * @throws \CRM_Core_Exception
    */
   private function check_voku_email_checker_include() {
@@ -86,9 +99,9 @@ class CRM_Mailingtools_EmailVerifier {
 
   /**
    * Get Email Addresses/IDs from CiviDB
-   * @param $index
+   * @param int $index
    *
-   * @throws \CRM_Core_Exception
+   * @return void
    * @throws \CRM_Core_Exception
    */
   private function get_email_addresses($index) {
@@ -107,7 +120,7 @@ class CRM_Mailingtools_EmailVerifier {
 
   /**
    * Check Email via voku/email-check
-   * @param $email
+   * @param string $email
    *
    * @return bool
    *
@@ -130,7 +143,8 @@ class CRM_Mailingtools_EmailVerifier {
 
   /**
    * save the index to mailingtools/settings
-   * @param $index
+   * @param int $index
+   * @return void
    */
   private function set_address_index($index) {
     CRM_Mailingtools_Utils::log("Setting last Email Index to {$index}");

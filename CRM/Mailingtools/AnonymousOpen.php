@@ -25,7 +25,7 @@ class CRM_Mailingtools_AnonymousOpen {
   /**
    * Process an anonymous open event
    *
-   * @param $mid int mailing ID
+   * @param int $mid mailing ID
    * @return int|null OpenEvent ID or NULL disabled
    * @throws Exception if something failed.
    */
@@ -34,7 +34,7 @@ class CRM_Mailingtools_AnonymousOpen {
 
     // check if we're enabled
     $enabled = $config->getSetting('anonymous_open_enabled');
-    if (!$enabled) {
+    if (!(bool) $enabled) {
       return NULL;
     }
 
@@ -146,11 +146,14 @@ class CRM_Mailingtools_AnonymousOpen {
   /**
    * This function will manipulate open tracker URLs in emails, so they point
    *  to the anonymous handler instead of the native one
+   *
+   * @param string|null $body
+   * @return void
    */
   public static function modifyEmailBody(&$body) {
     $config = CRM_Mailingtools_Config::singleton();
-    if (!$config->getSetting('anonymous_open_enabled')
-        || !$config->getSetting('anonymous_open_url')) {
+    if (!(bool) $config->getSetting('anonymous_open_enabled')
+        || !(bool) $config->getSetting('anonymous_open_url')) {
       // NOT ENABLED
       return;
     }
@@ -187,8 +190,8 @@ class CRM_Mailingtools_AnonymousOpen {
   /**
    * Resolve a list of queue ids to mailing IDs
    *
-   * @param $queue_ids array list of queue IDs
-   * @return array list of queue_id => mailing id
+   * @param array<int, int|string> $queue_ids list of queue IDs
+   * @return array<int|string, int|string> list of queue_id => mailing id
    *
    * @todo: pre-caching of all queue IDs for the current mailing?
    */
@@ -217,7 +220,7 @@ class CRM_Mailingtools_AnonymousOpen {
   /**
    * Check if the given mailing is LIVE, i.e. has jobs with is_test=0
    *
-   * @param $mid integer mailing ID
+   * @param int $mid mailing ID
    *
    * @return bool is the mailing LIVE?
    */
@@ -233,8 +236,8 @@ class CRM_Mailingtools_AnonymousOpen {
   /**
    * Create a new (fake) queue item for the given contact
    *
-   * @param $mid         int mailing ID
-   * @param $contact_id  int contact ID
+   * @param int $mid         mailing ID
+   * @param int $contact_id  contact ID
    *
    * @return int|null queue item id
    */

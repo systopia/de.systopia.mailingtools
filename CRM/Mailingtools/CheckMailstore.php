@@ -22,11 +22,28 @@ use CRM_Mailingtools_ExtensionUtil as E;
  */
 class CRM_Mailingtools_CheckMailstore {
 
+  /**
+   * @var array<string, mixed> */
   private $mailStore_retention = [];
+
+  /**
+   * @var bool */
   private $retention_configured = FALSE;
+
+  /**
+   * @var array<string, string> */
   private $imap_login = [];
+
+  /**
+   * @var array<int, string> */
   private $mail_folders = ['INBOX.CiviMail.ignored', 'INBOX.CiviMail.processed'];
+
+  /**
+   * @var array<string, mixed> */
   private $errors = [];
+
+  /**
+   * @var array<string, int> */
   private $results = [];
 
   /**
@@ -42,6 +59,8 @@ class CRM_Mailingtools_CheckMailstore {
   /**
    * get mailstore retention
    * can be configured on the settings page
+   *
+   * @return void
    */
   private function read_mailstore_retention() {
     $config = CRM_Mailingtools_Config::singleton();
@@ -59,6 +78,8 @@ class CRM_Mailingtools_CheckMailstore {
    * get bounce mail config from CiviCRM
    *
    * TODO: Maybe add additional config to settings page if this doesn't work properly
+   *
+   * @return void
    */
   private function read_bounce_mail_config() {
     $dao = new CRM_Core_DAO_MailSettings();
@@ -74,7 +95,7 @@ class CRM_Mailingtools_CheckMailstore {
 
   /**
    * Gets port either from configured serverURL, from the DAO object or prepares default values
-   * @param $dao
+   * @param CRM_Core_DAO_MailSettings $dao
    * @return string
    */
   private function create_mailbox_hostname($dao) {
@@ -135,7 +156,7 @@ class CRM_Mailingtools_CheckMailstore {
 
   /**
    * Check if retentino is configured. If not, we don't delete anything and return false here
-   * @param $settings
+   * @param array<string, mixed> $settings
    */
   private function verify_settings($settings): bool {
     return !isset($settings['processed_retention_value']) || (int) $settings['processed_retention_value'] === 0
@@ -144,12 +165,12 @@ class CRM_Mailingtools_CheckMailstore {
 
   /**
    * create the IMAP server port, depending on bounce mailbox config
-   * @param $dao
+   * @param CRM_Core_DAO_MailSettings $dao
    * @return int
    */
   private function get_server_port($dao) {
-    if ($dao->port) {
-      return $dao->port;
+    if ((int) ($dao->port ?? 0) !== 0) {
+      return (int) $dao->port;
     }
     if ($dao->ssl) {
       $port = 993;
@@ -162,7 +183,7 @@ class CRM_Mailingtools_CheckMailstore {
 
   /**
    * generates a suffix depending on bounce mailbox config
-   * @param $dao
+   * @param CRM_Core_DAO_MailSettings $dao
    * @return string
    */
   private function create_imap_suffix($dao) {
@@ -176,7 +197,7 @@ class CRM_Mailingtools_CheckMailstore {
 
   /**
    * generate a retention timestamp
-   * @param $folder
+   * @param string $folder
    * @return string
    */
   private function create_retention_timestamp($folder) {
@@ -186,13 +207,14 @@ class CRM_Mailingtools_CheckMailstore {
 
   /**
    * deletes the emails indexed by the search function on the given imap stream
-   * @param $emails_delete_ignored
-   * @param $imap
-   * @param $folder
+   * @param array<int, int> $emails_delete_ignored
+   * @param \IMAP\Connection $imap
+   * @param string $folder
+   * @return void
    */
   private function delete_imap_emails($emails_delete_ignored, $imap, $folder) {
     foreach ($emails_delete_ignored as $email_index) {
-      imap_delete($imap, $email_index);
+      imap_delete($imap, (string) $email_index);
       $this->results[$folder] += 1;
     }
     imap_expunge($imap);

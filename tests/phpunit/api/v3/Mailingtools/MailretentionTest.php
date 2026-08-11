@@ -16,6 +16,8 @@ class api_v3_Mailingtools_MailretentionTest extends \PHPUnit\Framework\TestCase 
   /**
    * Civi\Test has many helpers, like install(), uninstall(), sql(), and sqlFile().
    * See: https://github.com/civicrm/org.civicrm.testapalooza/blob/master/civi-test.md
+   *
+   * @return mixed
    */
   public function setUpHeadless() {
     return \Civi\Test::headless()
@@ -42,6 +44,8 @@ class api_v3_Mailingtools_MailretentionTest extends \PHPUnit\Framework\TestCase 
    * Simple example test case.
    *
    * Note how the function name begins with the word "test".
+   *
+   * @return void
    */
   public function testApiExample() {
     $result = civicrm_api3('Mailingtools', 'Mailretention', ['magicword' => 'sesame']);

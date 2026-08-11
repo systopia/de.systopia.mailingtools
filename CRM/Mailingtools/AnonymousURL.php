@@ -25,7 +25,7 @@ class CRM_Mailingtools_AnonymousURL {
   /**
    * Process an anonymous url tracking event
    *
-   * @param $trackable_url_id int URL id
+   * @param int $trackable_url_id URL id
    * @return string|null the URL this ID belongs to
    * @throws Exception if something failed.
    */
@@ -34,7 +34,7 @@ class CRM_Mailingtools_AnonymousURL {
 
     // check if we're enabled
     $enabled = $config->getSetting('anonymous_link_enabled');
-    if (!$enabled) {
+    if (!(bool) $enabled) {
       return NULL;
     }
 
@@ -73,11 +73,14 @@ class CRM_Mailingtools_AnonymousURL {
   /**
    * This function will manipulate open tracker URLs in emails, so they point
    *  to the anonymous handler instead of the native one
+   *
+   * @param string $body
+   * @return void
    */
   public static function modifyEmailBody(&$body) {
     $config = CRM_Mailingtools_Config::singleton();
-    if (!$config->getSetting('anonymous_link_enabled')
-        || !$config->getSetting('anonymous_link_url')) {
+    if (!(bool) $config->getSetting('anonymous_link_enabled')
+        || !(bool) $config->getSetting('anonymous_link_url')) {
       // NOT ENABLED
       return;
     }

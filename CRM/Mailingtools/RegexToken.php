@@ -53,7 +53,7 @@ class CRM_Mailingtools_RegexToken {
    *  'op'  => (string) operator type (api3, static, replace)
    *  'val' => (string) call spec, e.g. "entity.action", or "class::function"
    * ]
-   * @return array list of such specs
+   * @return array<int, array<string, mixed>> list of such specs
    */
   public static function getTokenDefinitions() {
     static $token_definitions = NULL;
@@ -71,7 +71,8 @@ class CRM_Mailingtools_RegexToken {
 
   /**
    * Set the current token definition specs
-   * @param $token_definitions array see getTokenDefinitions
+   * @param array<int, array<string, mixed>> $token_definitions see getTokenDefinitions
+   * @return void
    */
   public static function setTokenDefinitions($token_definitions) {
     Civi::settings()->set('mailingtools_regex_tokens', $token_definitions);
@@ -80,8 +81,8 @@ class CRM_Mailingtools_RegexToken {
   /**
    * Do a replace of all tokens in the given string
    *
-   * @param $text    string the source text
-   * @param $context array  context information to be passed on to the value functions
+   * @param string $text    the source text
+   * @param array<string, mixed> $context  context information to be passed on to the value functions
    * @return string the input string with all tokens replaced
    */
   public static function tokenReplace($text, $context = []) {
@@ -111,9 +112,9 @@ class CRM_Mailingtools_RegexToken {
 
   /**
    * Calculate the new value for the given token_definition
-   * @param $matched_string   string the string matched
-   * @param $token_definition array  token definition
-   * @param $context          array  context information passed trough to the functions
+   * @param string $matched_string   the string matched
+   * @param array<string, mixed> $token_definition  token definition
+   * @param array<string, mixed> $context           context information passed trough to the functions
    * @return string the calculated value
    */
   // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh, Generic.Metrics.NestingLevel.TooHigh
@@ -169,7 +170,7 @@ class CRM_Mailingtools_RegexToken {
    * Check if a definition value is missing: not set, an empty string, or
    * the string '0' (same falsy set empty() would use for a string).
    *
-   * @param array $token_definition
+   * @param array<string, mixed> $token_definition
    * @param string $key
    */
   private static function isEmptyDefinitionValue($token_definition, $key): bool {
@@ -181,7 +182,7 @@ class CRM_Mailingtools_RegexToken {
    * Verify the presented token definition, and return an
    *  error string if not valid
    *
-   * @param $token_definition array definition, see getTokenDefinitions
+   * @param array<string, mixed> $token_definition definition, see getTokenDefinitions
    * @return string|false error or false ("all clear")
    */
   // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh, Generic.Metrics.NestingLevel.TooHigh

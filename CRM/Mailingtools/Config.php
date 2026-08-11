@@ -22,14 +22,22 @@ use CRM_Mailingtools_ExtensionUtil as E;
  */
 class CRM_Mailingtools_Config {
 
+  /**
+   * @var CRM_Mailingtools_Config|null */
   private static $singleton = NULL;
-  private static $settings  = NULL;
 
+  /**
+   * @var array<string, mixed>|null */
+  private static $settings = NULL;
 
+  /**
+   * @var array<int|string, mixed>|null */
   protected $jobs = NULL;
 
   /**
    * get the config instance
+   *
+   * @return CRM_Mailingtools_Config
    */
   public static function singleton() {
     if (self::$singleton === NULL) {
@@ -41,8 +49,8 @@ class CRM_Mailingtools_Config {
   /**
    * Get a single setting
    *
-   * @param $name          string setting name
-   * @param $default_value mixed  default value
+   * @param string $name          setting name
+   * @param mixed $default_value
    * @return mixed setting
    */
   public function getSetting($name, $default_value = NULL) {
@@ -53,7 +61,7 @@ class CRM_Mailingtools_Config {
   /**
    * get Mailingtools settings
    *
-   * @return array
+   * @return array<string, mixed>
    */
   public function getSettings() {
     if (self::$settings === NULL) {
@@ -66,7 +74,8 @@ class CRM_Mailingtools_Config {
   /**
    * set Mailingtools settings
    *
-   * @param $settings array
+   * @param array<string, mixed> $settings
+   * @return void
    */
   public function setSettings($settings) {
     self::$settings = $settings;
@@ -75,6 +84,8 @@ class CRM_Mailingtools_Config {
 
   /**
    * Install a scheduled job if there isn't one already
+   *
+   * @return void
    */
   public static function installScheduledJob() {
     $config = self::singleton();
@@ -96,6 +107,8 @@ class CRM_Mailingtools_Config {
 
   /**
    * get all scheduled jobs that trigger the dispatcher
+   *
+   * @return array<int|string, mixed>
    */
   public function getScheduledJobs() {
     if ($this->jobs === NULL) {

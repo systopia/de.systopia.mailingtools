@@ -22,6 +22,8 @@ class CRM_Mailingtools_Mailer {
 
   /**
    * this is the original, wrapped mailer
+   *
+   * @var object|null
    */
   protected $mailer = NULL;
 
@@ -31,7 +33,7 @@ class CRM_Mailingtools_Mailer {
   protected $driver = NULL;
 
   /**
-   * @var array Mail Params, currently not used
+   * @var array<string, mixed> Mail Params, currently not used
    */
   protected $params = [];
 
@@ -40,17 +42,22 @@ class CRM_Mailingtools_Mailer {
    */
   public static function isNeeded(): bool {
     $config = CRM_Mailingtools_Config::singleton();
-    return ($config->getSetting('anonymous_open_enabled') && $config->getSetting('anonymous_open_url'))
-         || ($config->getSetting('anonymous_link_enabled') && $config->getSetting('anonymous_link_url'))
+    return ((bool) $config->getSetting('anonymous_open_enabled') && (bool) $config->getSetting('anonymous_open_url'))
+         || ((bool) $config->getSetting('anonymous_link_enabled') && (bool) $config->getSetting('anonymous_link_url'))
          || CRM_Mailingtools_RegexToken::isEnabled()
-         || $config->getSetting('mailing_debugging_short')
-         || $config->getSetting('mailing_debugging_header')
-         || $config->getSetting('mailing_debugging_recipients')
-         || $config->getSetting('mailing_debugging_body');
+         || (bool) $config->getSetting('mailing_debugging_short')
+         || (bool) $config->getSetting('mailing_debugging_header')
+         || (bool) $config->getSetting('mailing_debugging_recipients')
+         || (bool) $config->getSetting('mailing_debugging_body');
   }
 
   /**
    * construct this mailer wrapping another one
+   *
+   * @param object $mailer
+   * @param mixed $driver
+   * @param array<string, mixed> $params
+   * @return void
    */
   public function __construct($mailer, $driver, $params) {
     $this->mailer = $mailer;
@@ -61,6 +68,11 @@ class CRM_Mailingtools_Mailer {
   /**
    * Send an email via the wrapped mailer,
    *  mending the URLs contained
+   *
+   * @param array<int|string, mixed>|string $recipients
+   * @param array<string, mixed> $headers
+   * @param string $body
+   * @return void
    */
   public function send($recipients, $headers, $body) {
     CRM_Mailingtools_AnonymousOpen::modifyEmailBody($body);

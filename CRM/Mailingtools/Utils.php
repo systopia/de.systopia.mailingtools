@@ -19,20 +19,22 @@ use CRM_Mailingtools_ExtensionUtil as E;
 
 class CRM_Mailingtools_Utils {
 
+  /**
+   * @var bool */
   public static $debug = TRUE;
 
   /**
-   * @param $op
-   * @param $objectName
-   * @param $objectId
-   * @param $objectRef
+   * @param string $op
+   * @param string $objectName
+   * @param int $objectId
+   * @param object $objectRef
    * @return void
    */
   public static function verify_email($op, $objectName, $objectId, &$objectRef) {
 
     // check if this feature is enabled
     $config = CRM_Mailingtools_Config::singleton();
-    if (!$config->getSetting('enable_automatic_email_check')) {
+    if (!(bool) $config->getSetting('enable_automatic_email_check')) {
       return;
     }
     if (!file_exists(__DIR__ . '/../../resources/lib/vendor/voku/email-check/src/voku/helper/EmailCheck.php')) {
@@ -58,8 +60,8 @@ class CRM_Mailingtools_Utils {
   }
 
   /**
-   * @param $email
-   * @param $email_id
+   * @param string $email
+   * @param int $email_id
    */
   public static function check_email_dns_blacklist($email, $email_id): bool {
     $config = CRM_Mailingtools_Config::singleton();
@@ -88,8 +90,9 @@ class CRM_Mailingtools_Utils {
 
   /**
    * Set email on hold in CiviDB
-   * @param $id
-   * @param $email
+   * @param int $id
+   * @param string $email
+   * @param string $reason
    *
    * @throws \CRM_Core_Exception
    */
@@ -107,6 +110,10 @@ class CRM_Mailingtools_Utils {
     return TRUE;
   }
 
+  /**
+   * @param int $email_id
+   * @return void
+   */
   public static function set_tag_for_blacklisted_email($email_id) {
     $result = civicrm_api3('Email', 'get', [
       'sequential' => 1,
@@ -137,8 +144,8 @@ class CRM_Mailingtools_Utils {
   }
 
   /**
-   * @param $message
-   * @param $loglevel
+   * @param string $message
+   * @param string $loglevel
    * @return void
    *
    */
