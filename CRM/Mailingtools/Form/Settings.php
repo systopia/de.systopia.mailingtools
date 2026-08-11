@@ -292,7 +292,10 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
     $token_defs = [];
     $token_indices = range(0, CRM_Mailingtools_RegexToken::MT_REGEX_TOKEN_COUNT - 1);
     foreach ($token_indices as $token_index) {
-      if (!empty($data["regex_token_{$token_index}_def"]) && !empty($data["regex_token_{$token_index}_val"])) {
+      if (($data["regex_token_{$token_index}_def"] ?? '') !== ''
+        && ($data["regex_token_{$token_index}_def"] ?? '') !== '0'
+        && ($data["regex_token_{$token_index}_val"] ?? '') !== ''
+        && ($data["regex_token_{$token_index}_val"] ?? '') !== '0') {
         $token_defs[] = [
           'def' => html_entity_decode($data["regex_token_{$token_index}_def"]),
           'op'  => $data["regex_token_{$token_index}_op"],
@@ -311,7 +314,7 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
    */
   protected function validate_domains($data) {
     $pattern = '/^(?!\-)(?:(?:[a-zA-Z\d][a-zA-Z\d\-]{0,61})?[a-zA-Z\d]\.){1,126}(?!\d+)[a-zA-Z\d]{1,63}$/';
-    if (empty($data['email_domain_blacklist'])) {
+    if (($data['email_domain_blacklist'] ?? '') === '' || ($data['email_domain_blacklist'] ?? '') === '0') {
       // it's ok to not have blacklisted domains, or delete them
       return FALSE;
     }
@@ -334,11 +337,11 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
    * @throws CRM_Core_Exception
    */
   protected function renderContact($data, $key) {
-    if (!empty($data["anonymous_{$key}_contact_id"])) {
+    if ((int) ($data["anonymous_{$key}_contact_id"] ?? 0) !== 0) {
       $contact_id = (int) ($data["anonymous_{$key}_contact_id"] ?? 0);
       if ($contact_id) {
         $result = civicrm_api3('Contact', 'get', ['id' => $contact_id, 'return' => 'display_name,contact_type']);
-        if (!empty($result['id'])) {
+        if ((int) ($result['id'] ?? 0) !== 0) {
           $contact = reset($result['values']);
           $this->assign("anonymous_{$key}_contact_name", "{$contact['display_name']} ({$contact['contact_type']})");
         }

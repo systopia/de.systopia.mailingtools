@@ -25,13 +25,13 @@ class CRM_Mailingtools_Page_ImportPattern extends CRM_Core_Page {
    */
   public function run() {
     $param = CRM_Utils_Request::retrieve('name', 'String');
-    if (empty($param)) {
+    if ($param === NULL || $param === '' || $param === '0') {
       throw new CRM_Extension_Exception('Please Provide a filename in the name parameter of the URL');
     }
     $path = __DIR__ . "../../../resources/*{$param}*.json";
     $files = glob(__DIR__ . "/../../../resources/*{$param}*.json");
 
-    if (empty($files)) {
+    if ($files === FALSE || $files === []) {
       throw new CRM_Extension_Exception("Couldn't find file {$param}. Files must be placed in the resource directory.");
     }
 

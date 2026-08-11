@@ -79,7 +79,7 @@ class CRM_Mailingtools_MailLogger {
    */
   private function addMessage($message, $info) {
     fwrite($this->_logFile, date('Y-m-d H:i:s'));
-    if (!empty($info)) {
+    if ($info !== NULL && $info !== '' && $info !== '0') {
       fwrite($this->_logFile, ' [');
       fwrite($this->_logFile, $info);
       fwrite($this->_logFile, '] ');

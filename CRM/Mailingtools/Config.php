@@ -79,7 +79,7 @@ class CRM_Mailingtools_Config {
   public static function installScheduledJob() {
     $config = self::singleton();
     $jobs = $config->getScheduledJobs();
-    if (empty($jobs)) {
+    if ($jobs === []) {
       // none found? create a new one
       civicrm_api3('Job', 'create', [
         'api_entity'    => 'Mailingtools',

@@ -30,7 +30,8 @@ class CRM_Mailingtools_InjectHeader {
   public static function inject_header(&$params, $context) {
     $config = CRM_Mailingtools_Config::singleton();
     $settings = $config->getSettings();
-    if (!empty($settings['extra_mail_header_key']) && !empty($settings['extra_mail_header_value'])) {
+    if (($settings['extra_mail_header_key'] ?? '') !== '' && ($settings['extra_mail_header_key'] ?? '') !== '0'
+      && ($settings['extra_mail_header_value'] ?? '') !== '' && ($settings['extra_mail_header_value'] ?? '') !== '0') {
       $params['headers'][$settings['extra_mail_header_key']] = $settings['extra_mail_header_value'];
     }
   }

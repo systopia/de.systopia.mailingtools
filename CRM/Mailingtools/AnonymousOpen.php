@@ -48,7 +48,7 @@ class CRM_Mailingtools_AnonymousOpen {
     $event_queue_id = self::getEventQueueID($mid, 'anonymous_open_contact_id');
 
     // ERROR: if this is not set yet, something is wrong.
-    if (empty($event_queue_id)) {
+    if ((int) ($event_queue_id ?? 0) === 0) {
       throw new Exception("No found event in queue for mailing [{$mid}]");
     }
 
@@ -88,7 +88,7 @@ class CRM_Mailingtools_AnonymousOpen {
             2 => [$mid, 'Integer'],
           ]);
 
-      if (empty($event_queue_id)) {
+      if ((int) ($event_queue_id ?? 0) === 0) {
         // maybe no real (is_test = 0) job found...?
         $mailing_is_live = self::isMailingLive($mid);
         if (!$mailing_is_live) {
@@ -106,14 +106,14 @@ class CRM_Mailingtools_AnonymousOpen {
         }
       }
 
-      if (empty($event_queue_id)) {
+      if ((int) ($event_queue_id ?? 0) === 0) {
         // still no queue item? Then we'll create one!
         $event_queue_id = self::injectQueueItem($mid, $preferred_contact_id);
       }
     }
 
     // PLAN B: take the smallest contact ID
-    if (empty($event_queue_id)) {
+    if ((int) ($event_queue_id ?? 0) === 0) {
       $contact_id = CRM_Core_DAO::singleValueQuery('
         SELECT MIN(contact_id)
         FROM civicrm_mailing_event_queue queue
@@ -165,7 +165,7 @@ class CRM_Mailingtools_AnonymousOpen {
     )) {
       $queue_ids = $matches['queue_id'];
 
-      if (!empty($queue_ids)) {
+      if ($queue_ids !== []) {
         // resolve queue_id => mailing_id
         $queue_id_to_mailing_id = self::getQueueID2MailingID($queue_ids);
 
@@ -192,7 +192,7 @@ class CRM_Mailingtools_AnonymousOpen {
    */
   public static function getQueueID2MailingID($queue_ids) {
     $queue_id_to_mailing_id = [];
-    if (empty($queue_ids) || !is_array($queue_ids)) {
+    if ($queue_ids === [] || !is_array($queue_ids)) {
       return $queue_id_to_mailing_id;
     }
 

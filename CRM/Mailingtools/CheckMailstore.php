@@ -117,7 +117,7 @@ class CRM_Mailingtools_CheckMailstore {
       if ($imap) {
         $date = $this->create_retention_timestamp($folder);
         $emails_delete_ignored = imap_search($imap, 'BEFORE "' . $date . '"');
-        if (!empty($emails_delete_ignored)) {
+        if ($emails_delete_ignored !== FALSE && $emails_delete_ignored !== []) {
           $this->delete_imap_emails($emails_delete_ignored, $imap, $folder);
         }
       }
@@ -127,7 +127,7 @@ class CRM_Mailingtools_CheckMailstore {
       }
 
     }
-    if (empty($this->errors)) {
+    if ($this->errors === []) {
       return json_encode($this->results);
     }
     return (json_encode($this->errors) . json_encode($this->results));

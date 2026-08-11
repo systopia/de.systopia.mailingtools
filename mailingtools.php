@@ -90,11 +90,12 @@ function mailingtools_civicrm_tokenValues(&$values, $cids, $job = NULL, $tokens 
   $fix_hash_token = $config->getSetting('fix_hash_token');
   if ($fix_hash_token) {
     // make sure 'hash' is there:
-    if (!empty($tokens['contact'])) {
+    if (($tokens['contact'] ?? []) !== []) {
+      // @phpstan-ignore empty.notAllowed
       if (in_array('hash', $tokens['contact'], TRUE) || !empty($tokens['contact']['hash'])) {
         // hash token is requested
         foreach ($values as $contact_id => &$contact_values) {
-          if (empty($contact_values['hash'])) {
+          if (($contact_values['hash'] ?? '') === '' || ($contact_values['hash'] ?? '') === '0') {
             CRM_Contact_BAO_Contact_Utils::generateChecksum($contact_id);
             $contact_values['hash'] = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact', $contact_id, 'hash');
           }

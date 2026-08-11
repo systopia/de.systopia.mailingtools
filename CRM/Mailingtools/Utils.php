@@ -43,7 +43,7 @@ class CRM_Mailingtools_Utils {
       require_once __DIR__ . '/../../resources/lib/vendor/voku/email-check/src/voku/helper/EmailCheck.php';
       $email = $objectRef->email;
       $email_id = $objectRef->id;
-      if (empty($email) || empty($email_id)) {
+      if ($email === NULL || $email === '' || $email === '0' || (int) ($email_id ?? 0) === 0) {
         return;
       }
       if (\voku\helper\EmailCheck::isValid($email, FALSE, FALSE, FALSE, TRUE)) {
@@ -63,7 +63,7 @@ class CRM_Mailingtools_Utils {
   public static function check_email_dns_blacklist($email, $email_id): bool {
     $config = CRM_Mailingtools_Config::singleton();
     $email_domain_blacklist = $config->getSetting('email_domain_blacklist');
-    if (empty($email_domain_blacklist)) {
+    if ($email_domain_blacklist === NULL || $email_domain_blacklist === '' || $email_domain_blacklist === '0') {
       return FALSE;
     }
     $email_domains = explode(',', $email_domain_blacklist);

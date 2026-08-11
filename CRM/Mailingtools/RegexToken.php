@@ -43,7 +43,7 @@ class CRM_Mailingtools_RegexToken {
    */
   public static function isEnabled() {
     $defs = self::getTokenDefinitions();
-    return !empty($defs);
+    return $defs !== [];
   }
 
   /**
@@ -59,7 +59,7 @@ class CRM_Mailingtools_RegexToken {
     static $token_definitions = NULL;
     if ($token_definitions === NULL) {
       $value = Civi::settings()->get('mailingtools_regex_tokens');
-      if (empty($value) || !is_array($value)) {
+      if ($value === [] || !is_array($value)) {
         $token_definitions = [];
       }
       else {
@@ -170,6 +170,18 @@ class CRM_Mailingtools_RegexToken {
   }
 
   /**
+   * Check if a definition value is missing: not set, an empty string, or
+   * the string '0' (same falsy set empty() would use for a string).
+   *
+   * @param array $token_definition
+   * @param string $key
+   */
+  private static function isEmptyDefinitionValue($token_definition, $key): bool {
+    $value = $token_definition[$key] ?? NULL;
+    return $value === NULL || $value === '' || $value === '0';
+  }
+
+  /**
    * Verify the presented token definition, and return an
    *  error string if not valid
    *
@@ -179,13 +191,13 @@ class CRM_Mailingtools_RegexToken {
   // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh, Generic.Metrics.NestingLevel.TooHigh
   public static function verifyTokenDefinition($token_definition) {
     // test if present
-    if (empty($token_definition['def'])) {
+    if (self::isEmptyDefinitionValue($token_definition, 'def')) {
       return E::ts('Incomplete definition: definition (regular expression) missing');
     }
-    if (empty($token_definition['op'])) {
+    if (self::isEmptyDefinitionValue($token_definition, 'op')) {
       return E::ts('Incomplete definition: value type missing');
     }
-    if (empty($token_definition['val'])) {
+    if (self::isEmptyDefinitionValue($token_definition, 'val')) {
       return E::ts('Incomplete definition: value missing');
     }
 
@@ -204,7 +216,7 @@ class CRM_Mailingtools_RegexToken {
           // verify api entity.action
           try {
             $actions = civicrm_api3($match['entity'], 'getactions');
-            if (empty($actions['values'])) {
+            if ($actions['values'] === []) {
               return E::ts("API3 action '%1' not found in entity '%2'", [1 => $match['entity'], 2 => $match['action']]);
             }
             $action_found = FALSE;

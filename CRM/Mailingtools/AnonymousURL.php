@@ -54,7 +54,7 @@ class CRM_Mailingtools_AnonymousURL {
 
     // NOW: find a matching event queue ID
     $event_queue_id = CRM_Mailingtools_AnonymousOpen::getEventQueueID($link->mailing_id, 'anonymous_link_contact_id');
-    if (empty($event_queue_id)) {
+    if ((int) ($event_queue_id ?? 0) === 0) {
       throw new Exception("No found event in queue for mailing [{$link->mailing_id}]");
     }
 
