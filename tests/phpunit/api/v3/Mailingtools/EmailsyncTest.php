@@ -8,6 +8,8 @@ use Civi\Test\HeadlessInterface;
  * Mailingtools.Emailsync API Test Case
  * This is a generic test class implemented with PHPUnit.
  * @group headless
+ *
+ * @covers \CRM_Mailingtools_EmailVerifier
  */
 class api_v3_Mailingtools_EmailsyncTest extends \PHPUnit\Framework\TestCase implements HeadlessInterface {
 
@@ -112,19 +114,12 @@ class api_v3_Mailingtools_EmailsyncTest extends \PHPUnit\Framework\TestCase impl
       'checking_index' => $this->email_ids['0'],
       'debug' => 'TRUE',
     ]);
-    if ((string) $result['is_error'] === '1') {
-      echo "\nError in Mailingtools->emailsync API call. See logs for more details. "
-        . "Message: {$result['error_message']}\n";
-      return;
-    }
+    self::assertSame(0, $result['is_error']);
     $result = civicrm_api3('Email', 'get', [
       'sequential' => 1,
       'email' => ['LIKE' => 'example_%@systop%.de%'],
     ]);
-    if ($result['count'] !== 10) {
-      throw new \RuntimeException("Couldn't Find the appropriate amount of Emails matching the creation pattern. "
-        . "Found {$result['count']} instead of 10");
-    }
+    self::assertSame(10, $result['count']);
     $on_hold_counter = 0;
     $activated_email_counter = 0;
     foreach ($result['values'] as $value) {
@@ -135,13 +130,8 @@ class api_v3_Mailingtools_EmailsyncTest extends \PHPUnit\Framework\TestCase impl
         $activated_email_counter += 1;
       }
     }
-    if ($on_hold_counter === 4 && $activated_email_counter === 6) {
-      echo "Test successful.\n";
-    }
-    else {
-      throw new \RuntimeException("Test unsuccessful. Found {$on_hold_counter} on_hold Emails matching the pattern "
-        . "and {$activated_email_counter} normal emails matching the pattern.");
-    }
+    self::assertSame(4, $on_hold_counter);
+    self::assertSame(6, $activated_email_counter);
   }
 
 }

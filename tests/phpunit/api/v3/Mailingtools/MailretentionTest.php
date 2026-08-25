@@ -2,13 +2,15 @@
 declare(strict_types = 1);
 
 use Civi\Test\HeadlessInterface;
-use Civi\Test\HookInterface;
+use Civi\Core\HookInterface;
 use Civi\Test\TransactionalInterface;
 
 /**
  * Mailingtools.Mailretention API Test Case
  * This is a generic test class implemented with PHPUnit.
  * @group headless
+ *
+ * @covers \CRM_Mailingtools_CheckMailstore
  */
 // phpcs:ignore Generic.Files.LineLength.TooLong
 class api_v3_Mailingtools_MailretentionTest extends \PHPUnit\Framework\TestCase implements HeadlessInterface, HookInterface, TransactionalInterface {
@@ -48,8 +50,8 @@ class api_v3_Mailingtools_MailretentionTest extends \PHPUnit\Framework\TestCase 
    * @return void
    */
   public function testApiExample() {
-    $result = civicrm_api3('Mailingtools', 'Mailretention', ['magicword' => 'sesame']);
-    self::assertEquals('Twelve', $result['values'][12]['name']);
+    $result = civicrm_api3('Mailingtools', 'Mailretention', []);
+    self::assertSame(0, $result['is_error']);
   }
 
 }
