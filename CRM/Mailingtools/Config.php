@@ -13,6 +13,8 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+declare(strict_types = 1);
+
 use CRM_Mailingtools_ExtensionUtil as E;
 
 /**
@@ -20,13 +22,22 @@ use CRM_Mailingtools_ExtensionUtil as E;
  */
 class CRM_Mailingtools_Config {
 
+  /**
+   * @var CRM_Mailingtools_Config|null */
   private static $singleton = NULL;
-  private static $settings  = NULL;
 
+  /**
+   * @var array<string, mixed>|null */
+  private static $settings = NULL;
 
+  /**
+   * @var array<int|string, mixed>|null */
   protected $jobs = NULL;
+
   /**
    * get the config instance
+   *
+   * @return CRM_Mailingtools_Config
    */
   public static function singleton() {
     if (self::$singleton === NULL) {
@@ -38,23 +49,24 @@ class CRM_Mailingtools_Config {
   /**
    * Get a single setting
    *
-   * @param $name          string setting name
-   * @param $default_value mixed  default value
+   * @param string $name          setting name
+   * @param mixed $default_value
    * @return mixed setting
    */
   public function getSetting($name, $default_value = NULL) {
     $settings = self::getSettings();
-    return CRM_Utils_Array::value($name, $settings, $default_value);
+    return $settings[$name] ?? $default_value;
   }
 
   /**
    * get Mailingtools settings
    *
-   * @return array
+   * @return array<string, mixed>
    */
   public function getSettings() {
     if (self::$settings === NULL) {
-        self::$settings = Civi::settings()->get('Mailingtools_settings');
+      $stored_settings = Civi::settings()->get('Mailingtools_settings');
+      self::$settings = is_array($stored_settings) ? $stored_settings : [];
     }
 
     return self::$settings;
@@ -63,7 +75,8 @@ class CRM_Mailingtools_Config {
   /**
    * set Mailingtools settings
    *
-   * @param $settings array
+   * @param array<string, mixed> $settings
+   * @return void
    */
   public function setSettings($settings) {
     self::$settings = $settings;
@@ -72,34 +85,43 @@ class CRM_Mailingtools_Config {
 
   /**
    * Install a scheduled job if there isn't one already
+   *
+   * @return void
    */
   public static function installScheduledJob() {
     $config = self::singleton();
     $jobs = $config->getScheduledJobs();
-    if (empty($jobs)) {
+    if ($jobs === []) {
       // none found? create a new one
-      civicrm_api3('Job', 'create', array(
+      civicrm_api3('Job', 'create', [
         'api_entity'    => 'Mailingtools',
         'api_action'    => 'mailretention',
         'run_frequency' => 'Always',
         'name'          => E::ts('Check Bounce Mailstore'),
-        'description'   => E::ts('Checks the configured Bounce Mailbox, and if a retention is configured deletes older mail'),
-        'is_active'     => '0'));
+        'description'   => E::ts(
+          'Checks the configured Bounce Mailbox, and if a retention is configured deletes older mail'
+        ),
+        'is_active'     => '0',
+      ]);
     }
   }
 
   /**
    * get all scheduled jobs that trigger the dispatcher
+   *
+   * @return array<int|string, mixed>
    */
   public function getScheduledJobs() {
     if ($this->jobs === NULL) {
       // find all scheduled jobs calling Sqltask.execute
-      $query = civicrm_api3('Job', 'get', array(
+      $query = civicrm_api3('Job', 'get', [
         'api_entity'   => 'Mailingtools',
         'api_action'   => 'mailretention',
-        'option.limit' => 0));
+        'option.limit' => 0,
+      ]);
       $this->jobs = $query['values'];
     }
     return $this->jobs;
   }
+
 }

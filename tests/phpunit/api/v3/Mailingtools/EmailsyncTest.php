@@ -1,43 +1,54 @@
 <?php
+declare(strict_types = 1);
 
 use CRM_Mailingtools_ExtensionUtil as E;
+use Civi\Test;
 use Civi\Test\HeadlessInterface;
-use Civi\Test\HookInterface;
 use Civi\Test\TransactionalInterface;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Mailingtools.Emailsync API Test Case
  * This is a generic test class implemented with PHPUnit.
  * @group headless
+ *
+ * @covers \CRM_Mailingtools_EmailVerifier
  */
-class api_v3_Mailingtools_EmailsyncTest extends \PHPUnit\Framework\TestCase implements HeadlessInterface {
+class api_v3_Mailingtools_EmailsyncTest extends TestCase implements HeadlessInterface, TransactionalInterface {
 
+  /**
+   * @var int|string|null */
   private $contact_id;
+
+  /**
+   * @var array<int, mixed> */
   private $email_ids;
+
   /**
    * Civi\Test has many helpers, like install(), uninstall(), sql(), and sqlFile().
    * See: https://docs.civicrm.org/dev/en/latest/testing/phpunit/#civitest
+   *
+   * @return \Civi\Test\CiviEnvBuilder
    */
   public function setUpHeadless() {
-    // Not needed, or rather no schema needed
-//    return \Civi\Test::headless()
-//      ->installMe(__DIR__)
-//      ->apply();
+    return Test::headless()
+      ->installMe(__DIR__)
+      ->apply();
   }
 
   /**
    * The setup() method is executed before the test is executed (optional).
    */
-  public function setUp() {
+  public function setUp(): void {
     // create Contact
     $result = civicrm_api3('Contact', 'create', [
-      'contact_type' => "Individual",
-      'first_name' => "Mailingtools",
-      "middle_name" => "Unittest",
-      'last_name' => "Example",
+      'contact_type' => 'Individual',
+      'first_name' => 'Mailingtools',
+      'middle_name' => 'Unittest',
+      'last_name' => 'Example',
     ]);
-    if ($result['is_error'] == '1') {
-      throw new Exception("Couldn't create contact.");
+    if ((string) $result['is_error'] === '1') {
+      throw new \RuntimeException("Couldn't create contact.");
     }
     $this->contact_id = $result['id'];
     // create 6 valid emails
@@ -53,13 +64,17 @@ class api_v3_Mailingtools_EmailsyncTest extends \PHPUnit\Framework\TestCase impl
     parent::setUp();
   }
 
+  /**
+   * @param string $email
+   * @return void
+   */
   private function create_email($email) {
     $result = civicrm_api3('Email', 'create', [
       'contact_id' => $this->contact_id,
       'email' => $email,
     ]);
-    if ($result['is_error'] == '1') {
-      throw new Exception("Couldn't create email {$email} for contact {$this->contact_id}");
+    if ((string) $result['is_error'] === '1') {
+      throw new \RuntimeException("Couldn't create email {$email} for contact {$this->contact_id}");
     }
     $this->email_ids[] = $result['id'];
   }
@@ -68,59 +83,60 @@ class api_v3_Mailingtools_EmailsyncTest extends \PHPUnit\Framework\TestCase impl
    * The tearDown() method is executed after the test was executed (optional)
    * This can be used for cleanup.
    */
-  public function tearDown() {
-    foreach ($this->email_ids as $key => $email_id) {
+  public function tearDown(): void {
+    foreach ($this->email_ids as $email_id) {
       $this->delete_entity($email_id, 'Email');
     }
     $this->delete_entity($this->contact_id, 'Contact');
+    parent::tearDown();
   }
 
+  /**
+   * @param mixed $entity_id
+   * @param string $entity
+   * @return void
+   */
   private function delete_entity($entity_id, $entity) {
     $result = civicrm_api3($entity, 'delete', [
       'id' => $entity_id,
     ]);
-    if ($result['is_error'] == '1') {
-      throw new Exception("Couldn't delete Entity {$entity} ({$entity_id}). Abroting Test");
+    if ((string) $result['is_error'] === '1') {
+      $entity_id_string = CRM_Mailingtools_Utils::toString($entity_id);
+      throw new \RuntimeException("Couldn't delete Entity {$entity} ({$entity_id_string}). Abroting Test");
     }
-    parent::tearDown();
   }
 
   /**
    * Simple example test case.
    *
    * Note how the function name begins with the word "test".
+   *
+   * @return void
    */
   public function testEmailVerifier() {
     $result = civicrm_api3('Mailingtools', 'emailsync', [
       'verify_size' => 10,
       'checking_index' => $this->email_ids['0'],
-      'debug' => "TRUE",
+      'debug' => 'TRUE',
     ]);
-    if ($result['is_error'] == '1') {
-      echo "\nError in Mailingtools->emailsync API call. See logs for more details. Message: {$result['error_message']}\n";
-      return;
-    }
+    self::assertIsString($result['values']);
     $result = civicrm_api3('Email', 'get', [
       'sequential' => 1,
-      'email' => ['LIKE' => "example_%@systop%.de%"],
+      'email' => ['LIKE' => 'example_%@systop%.de%'],
     ]);
-    if ($result['count'] != 10) {
-      throw new Exception("Couldn't Find the appropriate amount of Emails matching the creation pattern. Found {$result['count']} instead of 10");
-    }
+    self::assertSame(10, $result['count']);
     $on_hold_counter = 0;
     $activated_email_counter = 0;
     foreach ($result['values'] as $value) {
-      if ($value['on_hold'] == '1') {
+      if ((string) $value['on_hold'] === '1') {
         $on_hold_counter += 1;
-      } else {
+      }
+      else {
         $activated_email_counter += 1;
       }
     }
-    if ($on_hold_counter == 4 && $activated_email_counter == 6) {
-      echo "Test successful.\n";
-    } else {
-      throw new Exception("Test unsuccessful. Found {$on_hold_counter} on_hold Emails matching the pattern and {$activated_email_counter} normal emails matching the pattern.");
-    }
+    self::assertSame(4, $on_hold_counter);
+    self::assertSame(6, $activated_email_counter);
   }
 
 }

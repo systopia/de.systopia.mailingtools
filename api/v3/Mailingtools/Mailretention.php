@@ -13,13 +13,15 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+declare(strict_types = 1);
+
 use CRM_Mailingtools_ExtensionUtil as E;
 
 /**
  * Mailingtools.Mailretention API specification (optional)
  * This is used for documentation and validation.
  *
- * @param array $spec description of fields supported by this API call
+ * @param array<string, mixed> $spec description of fields supported by this API call
  * @return void
  * @see http://wiki.civicrm.org/confluence/display/CRMDOC/API+Architecture+Standards
  */
@@ -30,8 +32,8 @@ function _civicrm_api3_mailingtools_Mailretention_spec(&$spec) {
 /**
  * Mailingtools.Mailretention API
  *
- * @param array $params
- * @return array API result descriptor
+ * @param array<string, mixed> $params
+ * @return array<string, mixed> API result descriptor
  * @see civicrm_api3_create_success
  * @see civicrm_api3_create_error
  * @throws CRM_Core_Exception
@@ -40,5 +42,6 @@ function civicrm_api3_mailingtools_Mailretention($params) {
 
   $mailstore = new CRM_Mailingtools_CheckMailstore();
   $result = $mailstore->check_mailstore();
+  // @phpstan-ignore argument.type
   return civicrm_api3_create_success($result);
 }

@@ -13,6 +13,8 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+declare(strict_types = 1);
+
 use CRM_Mailingtools_ExtensionUtil as E;
 
 /**
@@ -22,6 +24,9 @@ use CRM_Mailingtools_ExtensionUtil as E;
  */
 class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
 
+  /**
+   * @return void
+   */
   public function buildQuickForm() {
 
     $config = CRM_Mailingtools_Config::singleton();
@@ -32,7 +37,7 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
       'text',
       'extra_mail_header_key',
       E::ts('Extra Mail Header Key'),
-      array("class" => "huge"),
+      ['class' => 'huge'],
       FALSE
     );
 
@@ -40,7 +45,7 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
       'text',
       'extra_mail_header_value',
       E::ts('Extra Mail Header Entry'),
-      array("class" => "huge"),
+      ['class' => 'huge'],
       FALSE
     );
 
@@ -48,7 +53,7 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
       'text',
       'processed_retention_value',
       E::ts('CiviMail Processed Retention'),
-      array("class" => "huge"),
+      ['class' => 'huge'],
       FALSE
     );
 
@@ -56,7 +61,7 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
       'text',
       'ignored_retention_value',
       E::ts('CiviMail Ignored Retention'),
-      array("class" => "huge"),
+      ['class' => 'huge'],
       FALSE
     );
 
@@ -70,7 +75,7 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
       'textarea',
       'email_domain_blacklist',
       E::ts('Automatic Email Domain Blacklist'),
-      array("class" => "huge"),
+      ['class' => 'huge'],
       FALSE
     );
 
@@ -101,7 +106,7 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
         'text',
         'anonymous_open_contact_id',
         E::ts('Anonymous Contact ID'),
-        ["style" => "width: 50px;"],
+        ['style' => 'width: 50px;'],
         FALSE
     );
 
@@ -134,7 +139,7 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
         'text',
         'anonymous_link_contact_id',
         E::ts('Anonymous Contact ID'),
-        ["style" => "width: 50px;"],
+        ['style' => 'width: 50px;'],
         FALSE
     );
 
@@ -146,7 +151,7 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
     );
 
     // Regex Tokens
-    $token_indices = range(0,CRM_Mailingtools_RegexToken::MT_REGEX_TOKEN_COUNT - 1);
+    $token_indices = range(0, CRM_Mailingtools_RegexToken::MT_REGEX_TOKEN_COUNT - 1);
     $this->assign('regex_token_indices', $token_indices);
     foreach ($token_indices as $token_index) {
       $this->add(
@@ -160,9 +165,9 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
           "regex_token_{$token_index}_op",
           E::ts('Operator Type'),
           [
-              'api3'    => E::ts("APIv3 Call"),
-              'static'  => E::ts("Static Method Call"),
-              'replace' => E::ts("Regex Replace"),
+            'api3'    => E::ts('APIv3 Call'),
+            'static'  => E::ts('Static Method Call'),
+            'replace' => E::ts('Regex Replace'),
           ]
       );
       $this->add(
@@ -176,9 +181,9 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
     $current_tokens = CRM_Mailingtools_RegexToken::getTokenDefinitions();
     foreach ($current_tokens as $token_index => $token_definition) {
       $this->setDefaults([
-          "regex_token_{$token_index}_def" => $token_definition['def'],
-          "regex_token_{$token_index}_op"  => $token_definition['op'],
-          "regex_token_{$token_index}_val" => $token_definition['val'],
+        "regex_token_{$token_index}_def" => $token_definition['def'],
+        "regex_token_{$token_index}_op"  => $token_definition['op'],
+        "regex_token_{$token_index}_val" => $token_definition['val'],
       ]);
     }
 
@@ -223,13 +228,13 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
     $this->setDefaults($current_values);
 
     // submit
-    $this->addButtons(array(
-      array(
-          'type'      => 'submit',
-          'name'      => E::ts('Save'),
-          'isDefault' => TRUE,
-      ),
-    ));
+    $this->addButtons([
+      [
+        'type'      => 'submit',
+        'name'      => E::ts('Save'),
+        'isDefault' => TRUE,
+      ],
+    ]);
 
     // export form elements
     parent::buildQuickForm();
@@ -237,7 +242,7 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
 
   /**
    * Override validation for custom tokens
-   * @return bool|void
+   * @return bool
    */
   public function validate(): bool {
     parent::validate();
@@ -245,20 +250,22 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
     $regex_tokens = $this->extractRegexTokens($this->_submitValues);
     foreach ($regex_tokens as $index => $token_spec) {
       $error = CRM_Mailingtools_RegexToken::verifyTokenDefinition($token_spec);
-      if ($error) {
+      if ((bool) $error) {
         $this->_errors["regex_token_{$index}_val"] = $error;
       }
     }
     $error = $this->validate_domains($this->_submitValues);
-    if ($error) {
-      $this->_errors["email_domain_blacklist"] = $error;
+    if ((bool) $error) {
+      $this->_errors['email_domain_blacklist'] = $error;
     }
 
-    return count($this->_errors) == 0;
+    return count($this->_errors) === 0;
   }
 
   /**
    * Post process input values and save them to DB
+   *
+   * @return void
    */
   public function postProcess() {
     $config = CRM_Mailingtools_Config::singleton();
@@ -283,18 +290,21 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
 
   /**
    * Extract the (complete) token definitions in the form
-   * @param $data array
-   * @return array list of token definitions
+   * @param array<string, mixed> $data
+   * @return array<int, array{def: string, op: string, val: string}> list of token definitions
    */
   protected function extractRegexTokens($data) {
     $token_defs = [];
-    $token_indices = range(0,CRM_Mailingtools_RegexToken::MT_REGEX_TOKEN_COUNT - 1);
+    $token_indices = range(0, CRM_Mailingtools_RegexToken::MT_REGEX_TOKEN_COUNT - 1);
     foreach ($token_indices as $token_index) {
-      if (!empty($data["regex_token_{$token_index}_def"]) && !empty($data["regex_token_{$token_index}_val"])) {
+      if (($data["regex_token_{$token_index}_def"] ?? '') !== ''
+        && ($data["regex_token_{$token_index}_def"] ?? '') !== '0'
+        && ($data["regex_token_{$token_index}_val"] ?? '') !== ''
+        && ($data["regex_token_{$token_index}_val"] ?? '') !== '0') {
         $token_defs[] = [
-            'def' => html_entity_decode($data["regex_token_{$token_index}_def"]),
-            'op'  => $data["regex_token_{$token_index}_op"],
-            'val' => html_entity_decode($data["regex_token_{$token_index}_val"]),
+          'def' => html_entity_decode(CRM_Mailingtools_Utils::toString($data["regex_token_{$token_index}_def"])),
+          'op'  => CRM_Mailingtools_Utils::toString($data["regex_token_{$token_index}_op"]),
+          'val' => html_entity_decode(CRM_Mailingtools_Utils::toString($data["regex_token_{$token_index}_val"])),
         ];
       }
     }
@@ -302,82 +312,90 @@ class CRM_Mailingtools_Form_Settings extends CRM_Core_Form {
   }
 
   /**
-   * @param $data
-   * @return string|true
+   * @param array<string, mixed> $data
+   * @return string|false
    *
-   * Validate input domains via regex pattern, https://regex101.com/r/IY4AVw/1
+   *   Validate input domains via regex pattern, https://regex101.com/r/IY4AVw/1
    */
   protected function validate_domains($data) {
-    $pattern = "/^(?!\-)(?:(?:[a-zA-Z\d][a-zA-Z\d\-]{0,61})?[a-zA-Z\d]\.){1,126}(?!\d+)[a-zA-Z\d]{1,63}$/";
-    if (empty($data['email_domain_blacklist'])) {
+    $pattern = '/^(?!\-)(?:(?:[a-zA-Z\d][a-zA-Z\d\-]{0,61})?[a-zA-Z\d]\.){1,126}(?!\d+)[a-zA-Z\d]{1,63}$/';
+    if (($data['email_domain_blacklist'] ?? '') === '' || ($data['email_domain_blacklist'] ?? '') === '0') {
       // it's ok to not have blacklisted domains, or delete them
-      return false;
+      return FALSE;
     }
-    $domains = explode(",", $data['email_domain_blacklist']);
+    $domains = explode(',', CRM_Mailingtools_Utils::toString($data['email_domain_blacklist']));
 
     foreach ($domains as $domain) {
-      if (!preg_match($pattern, $domain)) {
-        return "Invalid Domain {$domain}, please enter valid Domain Names comma searated. e.g. example1.com,example2.com";
+      if (!(bool) preg_match($pattern, $domain)) {
+        return "Invalid Domain {$domain}, please enter valid Domain Names comma searated. "
+          . 'e.g. example1.com,example2.com';
       }
     }
-    return false;
+    return FALSE;
   }
 
   /**
    * Render the current anonymous_open_contact_id value
    *
-   * @param $data array  data
-   * @param $key  string key (open|link)
+   * @param array<string, mixed> $data  data
+   * @param string $key  key (open|link)
+   * @return void
    * @throws CRM_Core_Exception
    */
   protected function renderContact($data, $key) {
-    if (!empty($data["anonymous_{$key}_contact_id"])) {
-      $contact_id = (int) CRM_Utils_Array::value("anonymous_{$key}_contact_id", $data, 0);
-      if ($contact_id) {
+    if (($data["anonymous_{$key}_contact_id"] ?? '') !== '' && ($data["anonymous_{$key}_contact_id"] ?? '') !== '0') {
+      $contact_id = CRM_Mailingtools_Utils::toInt($data["anonymous_{$key}_contact_id"] ?? 0);
+      if ($contact_id !== 0) {
         $result = civicrm_api3('Contact', 'get', ['id' => $contact_id, 'return' => 'display_name,contact_type']);
-        if (!empty($result['id'])) {
+        if ((int) ($result['id'] ?? 0) !== 0) {
           $contact = reset($result['values']);
           $this->assign("anonymous_{$key}_contact_name", "{$contact['display_name']} ({$contact['contact_type']})");
-        } else {
-          $this->assign("anonymous_{$key}_contact_name", E::ts("Contact [%1] not found!", [1 => $contact_id]));
         }
-      } else {
-        $this->assign("anonymous_{$key}_contact_name", E::ts("Bad contact ID: '%1'", [1 => CRM_Utils_Array::value("anonymous_{$key}_contact_id", $data, '')]));
+        else {
+          $this->assign("anonymous_{$key}_contact_name", E::ts('Contact [%1] not found!', [1 => $contact_id]));
+        }
       }
-    } else {
-      $this->assign("anonymous_{$key}_contact_name", E::ts("disabled"));
+      else {
+        $this->assign(
+          "anonymous_{$key}_contact_name",
+          E::ts("Bad contact ID: '%1'", [1 => $data["anonymous_{$key}_contact_id"] ?? ''])
+        );
+      }
+    }
+    else {
+      $this->assign("anonymous_{$key}_contact_name", E::ts('disabled'));
     }
   }
 
   /**
    * get the elements of the form
    * used as a filter for the values array from post Process
-   * @return array
+   * @return array<int, string>
    */
   protected function getSettingsInForm() {
-    return array(
-        'extra_mail_header_key',
-        'extra_mail_header_value',
-        'processed_retention_value',
-        'ignored_retention_value',
-        'anonymous_open_enabled',
-        'anonymous_open_url',
-        'anonymous_open_permission',
-        'anonymous_open_contact_id',
-        'anonymous_link_enabled',
-        'anonymous_link_url',
-        'anonymous_link_permission',
-        'anonymous_link_contact_id',
-        'fix_hash_token',
-        'mosaico_save_message',
-        'enable_automatic_email_check',
-        'email_domain_blacklist',
-        'mailing_debugging_short',
-        'mailing_debugging_header',
-        'mailing_debugging_recipients',
-        'mailing_debugging_body',
-        'mailing_debugging_omit_mailings',
-    );
+    return [
+      'extra_mail_header_key',
+      'extra_mail_header_value',
+      'processed_retention_value',
+      'ignored_retention_value',
+      'anonymous_open_enabled',
+      'anonymous_open_url',
+      'anonymous_open_permission',
+      'anonymous_open_contact_id',
+      'anonymous_link_enabled',
+      'anonymous_link_url',
+      'anonymous_link_permission',
+      'anonymous_link_contact_id',
+      'fix_hash_token',
+      'mosaico_save_message',
+      'enable_automatic_email_check',
+      'email_domain_blacklist',
+      'mailing_debugging_short',
+      'mailing_debugging_header',
+      'mailing_debugging_recipients',
+      'mailing_debugging_body',
+      'mailing_debugging_omit_mailings',
+    ];
   }
 
 }

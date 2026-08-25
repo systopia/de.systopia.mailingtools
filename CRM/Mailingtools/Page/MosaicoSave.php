@@ -15,22 +15,28 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+declare(strict_types = 1);
 
 class CRM_Mailingtools_Page_MosaicoSave {
 
+  /**
+   * @param \Civi\Angular\Page\Main $page
+   * @return void
+   */
   public static function buildPagehook(&$page) {
 
     // check if save message is enabled
     $config = CRM_Mailingtools_Config::singleton();
     $enabled = $config->getSetting('mosaico_save_message');
-    if (!$enabled) {
+    if (!(bool) $enabled) {
       return;
     }
 
     $script = file_get_contents(__DIR__ . '/../../../js/save_mosaico_document.js');
 
-    CRM_Core_Region::instance('page-footer')->add(array(
+    CRM_Core_Region::instance('page-footer')->add([
       'script' => $script,
-    ));
+    ]);
   }
+
 }

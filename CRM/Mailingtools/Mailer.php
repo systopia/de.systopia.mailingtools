@@ -13,6 +13,8 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+declare(strict_types = 1);
+
 /**
  * Wrapper for CiviCRM Mailer
  */
@@ -20,6 +22,8 @@ class CRM_Mailingtools_Mailer {
 
   /**
    * this is the original, wrapped mailer
+   *
+   * @var Mail|null
    */
   protected $mailer = NULL;
 
@@ -29,7 +33,7 @@ class CRM_Mailingtools_Mailer {
   protected $driver = NULL;
 
   /**
-   * @var array Mail Params, currently not used
+   * @var array<string, mixed> Mail Params, currently not used
    */
   protected $params = [];
 
@@ -38,18 +42,19 @@ class CRM_Mailingtools_Mailer {
    */
   public static function isNeeded(): bool {
     $config = CRM_Mailingtools_Config::singleton();
-    return  ($config->getSetting('anonymous_open_enabled') && $config->getSetting('anonymous_open_url'))
-         || ($config->getSetting('anonymous_link_enabled') && $config->getSetting('anonymous_link_url'))
+    return ((bool) $config->getSetting('anonymous_open_enabled') && (bool) $config->getSetting('anonymous_open_url'))
+         || ((bool) $config->getSetting('anonymous_link_enabled') && (bool) $config->getSetting('anonymous_link_url'))
          || CRM_Mailingtools_RegexToken::isEnabled()
-         || $config->getSetting('mailing_debugging_short')
-         || $config->getSetting('mailing_debugging_header')
-         || $config->getSetting('mailing_debugging_recipients')
-         || $config->getSetting('mailing_debugging_body')
-      ;
+         || CRM_Mailingtools_MailLogger::isNeeded();
   }
 
   /**
    * construct this mailer wrapping another one
+   *
+   * @param Mail $mailer
+   * @param Mail $driver
+   * @param array<string, mixed> $params
+   * @return void
    */
   public function __construct($mailer, $driver, $params) {
     $this->mailer = $mailer;
@@ -60,27 +65,37 @@ class CRM_Mailingtools_Mailer {
   /**
    * Send an email via the wrapped mailer,
    *  mending the URLs contained
+   *
+   * @param array<int|string, mixed>|string $recipients
+   * @param array<string, mixed> $headers
+   * @param string $body
+   * @return void
    */
-  function send($recipients, $headers, $body) {
+  public function send($recipients, $headers, $body) {
     CRM_Mailingtools_AnonymousOpen::modifyEmailBody($body);
     CRM_Mailingtools_AnonymousURL::modifyEmailBody($body);
 
     // apply regex tokens to body _and_ headers
     if (CRM_Mailingtools_RegexToken::isEnabled()) {
       $context = [
-          'recipients' => $recipients,
-          'headers'    => $headers,
+        'recipients' => $recipients,
+        'headers'    => $headers,
       ];
       $body = CRM_Mailingtools_RegexToken::tokenReplace($body, $context);
       foreach ($headers as $name => $value) {
-        $headers[$name] = CRM_Mailingtools_RegexToken::tokenReplace($value, $context);
+        $headers[$name] = CRM_Mailingtools_RegexToken::tokenReplace(CRM_Mailingtools_Utils::toString($value), $context);
       }
     }
     // Debug output
-    $mail_logger = new CRM_Mailingtools_MailLogger();
-    $mail_logger->logMailInfo($recipients, $headers, $body);
+    if (CRM_Mailingtools_MailLogger::isNeeded()) {
+      $mail_logger = new CRM_Mailingtools_MailLogger();
+      $mail_logger->logMailInfo($recipients, $headers, $body);
+    }
 
-    $this->mailer->send($recipients, $headers, $body);
+    if ($this->mailer !== NULL) {
+      // @phpstan-ignore method.deprecated
+      $this->mailer->send($recipients, $headers, $body);
+    }
   }
 
   /**
@@ -89,4 +104,5 @@ class CRM_Mailingtools_Mailer {
   public function getDriver() {
     return $this->driver;
   }
+
 }

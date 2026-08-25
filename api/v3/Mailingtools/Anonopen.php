@@ -13,8 +13,9 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
-use CRM_Mailingtools_ExtensionUtil as E;
+declare(strict_types = 1);
 
+use CRM_Mailingtools_ExtensionUtil as E;
 
 /**
  * API: Mailingtools.Anonopen
@@ -22,32 +23,39 @@ use CRM_Mailingtools_ExtensionUtil as E;
  * Processes an anonymous open event,
  *  based only on the mailing ID
  *
- * @param array $params containing 'mid'
- * @return array result
+ * @param array<string, mixed> $params containing 'mid'
+ * @return array<string, mixed> result
  * @throws CRM_Core_Exception
  */
 function civicrm_api3_mailingtools_anonopen($params) {
   try {
-    $result = CRM_Mailingtools_AnonymousOpen::processAnonymousOpenEvent($params['mid']);
-    if ($result) {
-      return civicrm_api3_create_success("Anonymous open event recorded.");
-    } else {
-      return civicrm_api3_create_success("Anonymous open tracking disabled.");
+    $result = CRM_Mailingtools_AnonymousOpen::processAnonymousOpenEvent(CRM_Mailingtools_Utils::toInt($params['mid']));
+    if ($result !== NULL) {
+      // @phpstan-ignore argument.type
+      return civicrm_api3_create_success('Anonymous open event recorded.');
     }
-  } catch (Exception $ex) {
-    throw new CRM_Core_Exception($ex->getMessage(), $ex->getCode());
+    else {
+      // @phpstan-ignore argument.type
+      return civicrm_api3_create_success('Anonymous open tracking disabled.');
+    }
+  }
+  catch (Exception $ex) {
+    throw new CRM_Core_Exception($ex->getMessage(), $ex->getCode(), [], $ex);
   }
 }
 
 /**
  * API Specs: Mailingtools.Anonopen
+ *
+ * @param array<string, mixed> $spec
+ * @return void
  */
 function _civicrm_api3_mailingtools_anonopen_spec(&$spec) {
-  $spec['mid'] = array(
-      'name'         => 'mid',
-      'api.required' => 1,
-      'type'         => CRM_Utils_Type::T_INT,
-      'title'        => 'Mailing ID',
-      'description'  => 'Mailing ID for which an open event should be recorded',
-  );
+  $spec['mid'] = [
+    'name'         => 'mid',
+    'api.required' => 1,
+    'type'         => CRM_Utils_Type::T_INT,
+    'title'        => 'Mailing ID',
+    'description'  => 'Mailing ID for which an open event should be recorded',
+  ];
 }

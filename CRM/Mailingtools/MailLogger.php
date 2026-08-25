@@ -13,8 +13,9 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
-use CRM_Mailingtools_ExtensionUtil as E;
+declare(strict_types = 1);
 
+use CRM_Mailingtools_ExtensionUtil as E;
 
 /**
  * Class for Logger
@@ -24,21 +25,33 @@ use CRM_Mailingtools_ExtensionUtil as E;
  */
 class CRM_Mailingtools_MailLogger {
 
-  private $_logFile = null;
+  /**
+   * @var resource|false */
+  private $_logFile = NULL;
 
   /**
    * CRM_Mailingtools_MailLogger constructor.
    *
    *
    */
-  function __construct() {
-    $file = CRM_Core_Config::singleton()->configAndLogDir . 'mailing.log';
+  public function __construct() {
+    $file = CRM_Mailingtools_Utils::toString(CRM_Core_Config::singleton()->configAndLogDir) . 'mailing.log';
     $this->_logFile = fopen($file, 'a');
   }
 
+  /**
+   * @param array<int|string, mixed>|string $recipients
+   * @param array<string, mixed> $header
+   * @param mixed $body
+   * @return void
+   */
   public function logMailInfo($recipients, $header, $body) {
+    if ($this->_logFile === FALSE) {
+      return;
+    }
+    $log_file = $this->_logFile;
     $config = CRM_Mailingtools_Config::singleton();
-    if ($config->getSetting('mailing_debugging_short')) {
+    if ((bool) $config->getSetting('mailing_debugging_omit_mailings')) {
       // check if this is a mailing. Check for X-CiviMail-Bounce
       // header. This should only be set for Mailings afaik
       if (isset($header['X-CiviMail-Bounce'])) {
@@ -46,47 +59,59 @@ class CRM_Mailingtools_MailLogger {
         return;
       }
     }
-    if ($config->getSetting('mailing_debugging_short')) {
+    if ((bool) $config->getSetting('mailing_debugging_short')) {
       $short_info = [];
       $short_info['FROM'] = $header['From'];
       $short_info['TO'] = $header['To'];
       $short_info['SUBJECT'] = $header['Subject'];
-      $this->addMessage(json_encode($short_info), "SHORT");
+      $this->addMessage((string) json_encode($short_info), 'SHORT');
     }
-    if ($config->getSetting('mailing_debugging_header')) {
-      $this->addMessage(json_encode($header), "HEADER");
+    if ((bool) $config->getSetting('mailing_debugging_header')) {
+      $this->addMessage((string) json_encode($header), 'HEADER');
     }
-    if ($config->getSetting('mailing_debugging_recipients')) {
-      $this->addMessage(json_encode($recipients), "RECIPIENTS");
+    if ((bool) $config->getSetting('mailing_debugging_recipients')) {
+      $this->addMessage((string) json_encode($recipients), 'RECIPIENTS');
     }
-    if ($config->getSetting('mailing_debugging_body')) {
-      $this->addMessage(json_encode($body), "BODY");
+    if ((bool) $config->getSetting('mailing_debugging_body')) {
+      $this->addMessage((string) json_encode($body), 'BODY');
     }
     // add empty line for better readablility if debugging is active
-    if ($config->getSetting('mailing_debugging_short')
-      || $config->getSetting('mailing_debugging_header')
-      || $config->getSetting('mailing_debugging_recipients')
-      || $config->getSetting('mailing_debugging_body')) {
-      fputs($this->_logFile, "\n");
+    if (self::isNeeded()) {
+      fwrite($log_file, "\n");
     }
   }
 
+  public static function isNeeded(): bool {
+    $config = CRM_Mailingtools_Config::singleton();
+    return (bool) $config->getSetting('mailing_debugging_short')
+      || (bool) $config->getSetting('mailing_debugging_header')
+      || (bool) $config->getSetting('mailing_debugging_recipients')
+      || (bool) $config->getSetting('mailing_debugging_body');
+  }
 
   /**
    * Method to log the message
    *
-   * @param $message
+   * @param string $message
+   * @param string|null $info
+   * @return void
    */
   private function addMessage($message, $info) {
-    fputs($this->_logFile, date('Y-m-d H:i:s'));
-    if (!empty($info)) {
-      fputs($this->_logFile, ' [');
-      fputs($this->_logFile, $info);
-      fputs($this->_logFile, '] ');
-    } else {
-      fputs($this->_logFile, ' ');
+    if ($this->_logFile === FALSE) {
+      return;
     }
-    fputs($this->_logFile, $message);
-    fputs($this->_logFile, "\n");
+    $log_file = $this->_logFile;
+    fwrite($log_file, date('Y-m-d H:i:s'));
+    if ($info !== NULL && $info !== '' && $info !== '0') {
+      fwrite($log_file, ' [');
+      fwrite($log_file, $info);
+      fwrite($log_file, '] ');
+    }
+    else {
+      fwrite($log_file, ' ');
+    }
+    fwrite($log_file, $message);
+    fwrite($log_file, "\n");
   }
+
 }

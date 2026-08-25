@@ -13,74 +13,87 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+declare(strict_types = 1);
+
 use CRM_Mailingtools_ExtensionUtil as E;
 
 class CRM_Mailingtools_Page_ImportPattern extends CRM_Core_Page {
 
   /**
-   * @return string|void
+   * @return void
    * @throws CRM_Extension_Exception
    */
   public function run() {
-    $param = CRM_Utils_Request::retrieve("name", "String");
-    if (empty($param)) {
-      throw new CRM_Extension_Exception("Please Provide a filename in the name parameter of the URL");
+    $param = CRM_Mailingtools_Utils::toString(CRM_Utils_Request::retrieve('name', 'String'));
+    if ($param === '' || $param === '0') {
+      throw new CRM_Extension_Exception('Please Provide a filename in the name parameter of the URL');
     }
-    $path = __DIR__ . "../../../resources/*{$param}*.json";
+    if (preg_match('/^[A-Za-z0-9_-]+$/', $param) !== 1) {
+      throw new CRM_Extension_Exception('Invalid filename in the name parameter of the URL');
+    }
     $files = glob(__DIR__ . "/../../../resources/*{$param}*.json");
 
-    if (empty($files)) {
+    if ($files === FALSE || $files === []) {
       throw new CRM_Extension_Exception("Couldn't find file {$param}. Files must be placed in the resource directory.");
     }
 
-    $counter = array();
+    $counter = [];
     foreach ($files as $f) {
-      $pattern = json_decode(file_get_contents($f));
-      $filename = preg_split("/.+\//", $f)[1];
-      $counter[$filename] = array(
+      $decoded = json_decode((string) file_get_contents($f), TRUE);
+      $patterns = is_array($decoded) ? $decoded : [];
+      $filename_parts = preg_split('/.+\//', $f);
+      $filename = $filename_parts !== FALSE ? ($filename_parts[1] ?? '') : '';
+      $counter[$filename] = [
         'ignored'   => 0,
         'inserted'  => 0,
-      );
-      $this->parsePattern($pattern, $counter[$filename]);
+      ];
+      $this->parsePattern($patterns, $counter[$filename]);
     }
 
-    $this->assign("name", $param);
-    $this->assign("result_counter", $counter);
+    $this->assign('name', $param);
+    $this->assign('result_counter', $counter);
 
     parent::run();
   }
 
   /**
-   * @param $patterns
-   * @param $counter
+   * @param array<int|string, mixed> $patterns
+   * @param array<string, int> $counter
+   * @return void
    */
   private function parsePattern($patterns, &$counter) {
     foreach ($patterns as $bounce_value => $pattern) {
-      if ($this->isInDB($pattern[1])) {
+      if (!is_array($pattern)) {
+        continue;
+      }
+      $bounce_type_id = CRM_Mailingtools_Utils::toInt($pattern[0] ?? 0);
+      $bounce_pattern = CRM_Mailingtools_Utils::toString($pattern[1] ?? '');
+      if ($this->isInDB($bounce_pattern)) {
         $counter['ignored'] += 1;
         continue;
       }
 
-      CRM_Core_DAO::executeQuery("INSERT INTO `civicrm_mailing_bounce_pattern` (`bounce_type_id`, `pattern`) VALUES(%1, %2);",
-        array(1 => array($pattern[0], "Integer"),
-              2 => array($pattern[1], "String"),
-          )
-        );
+      CRM_Core_DAO::executeQuery(
+        'INSERT INTO `civicrm_mailing_bounce_pattern` (`bounce_type_id`, `pattern`) VALUES(%1, %2);',
+        [
+          1 => [$bounce_type_id, 'Integer'],
+          2 => [$bounce_pattern, 'String'],
+        ]
+      );
       $counter['inserted'] += 1;
     }
   }
 
   /**
-   * @param $pattern
+   * @param string $pattern
    *
    * @return bool
    */
-  private function isInDB($pattern) {
-
-    return CRM_Core_DAO::singleValueQuery(
-      "SELECT COUNT(*) FROM `civicrm_mailing_bounce_pattern` WHERE `pattern`=%1;",
-      array(1 => array($pattern, "String"))
-    );
+  private function isInDB($pattern): bool {
+    return (int) CRM_Core_DAO::singleValueQuery(
+      'SELECT COUNT(*) FROM `civicrm_mailing_bounce_pattern` WHERE `pattern`=%1;',
+      [1 => [$pattern, 'String']]
+    ) > 0;
   }
 
 }

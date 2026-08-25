@@ -13,6 +13,7 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+declare(strict_types = 1);
 
 use CRM_Mailingtools_ExtensionUtil as E;
 
@@ -26,9 +27,12 @@ class CRM_Mailingtools_RegexToken {
    */
   public const MT_REGEX_TOKEN_COUNT  = 5;
   public const REGEX_DELIMITER  = '#';
-  public const OPERATOR_API3    = 'api3';     // API3 call
-  public const OPERATOR_STATIC  = 'static';   // static function call
-  public const OPERATOR_REPLACE = 'replace';  // preg_replace call
+  // API3 call
+  public const OPERATOR_API3 = 'api3';
+  // Static method call
+  public const OPERATOR_STATIC = 'static';
+  // preg_replace call
+  public const OPERATOR_REPLACE = 'replace';
 
   public const VALUE_STATIC_FUNCTION = '/^(?P<class>[a-zA-Z_]+)::(?P<function>[a-zA-Z_]+)$/';
   public const VALUE_API_CALL        = '/^(?P<entity>[a-zA-Z]+)[.](?P<action>[a-zA-Z_]+)$/';
@@ -39,7 +43,7 @@ class CRM_Mailingtools_RegexToken {
    */
   public static function isEnabled() {
     $defs = self::getTokenDefinitions();
-    return !empty($defs);
+    return $defs !== [];
   }
 
   /**
@@ -49,24 +53,21 @@ class CRM_Mailingtools_RegexToken {
    *  'op'  => (string) operator type (api3, static, replace)
    *  'val' => (string) call spec, e.g. "entity.action", or "class::function"
    * ]
-   * @return array list of such specs
+   * @return array<int, array{def: string, op: string, val: string}> list of such specs
    */
   public static function getTokenDefinitions() {
-    static $token_definitions = NULL;
-    if ($token_definitions === NULL) {
-      $value = Civi::settings()->get('mailingtools_regex_tokens');
-      if (empty($value) || !is_array($value)) {
-        $token_definitions = [];
-      } else {
-        $token_definitions = $value;
-      }
+    $value = Civi::settings()->get('mailingtools_regex_tokens');
+    if (!is_array($value) || $value === []) {
+      return [];
     }
-    return $token_definitions;
+    /** @var array<int, array{def: string, op: string, val: string}> $value */
+    return $value;
   }
 
   /**
    * Set the current token definition specs
-   * @param $token_definitions array see getTokenDefinitions
+   * @param array<int, array{def: string, op: string, val: string}> $token_definitions see getTokenDefinitions
+   * @return void
    */
   public static function setTokenDefinitions($token_definitions) {
     Civi::settings()->set('mailingtools_regex_tokens', $token_definitions);
@@ -75,25 +76,29 @@ class CRM_Mailingtools_RegexToken {
   /**
    * Do a replace of all tokens in the given string
    *
-   * @param $text    string the source text
-   * @param $context array  context information to be passed on to the value functions
+   * @param string $text    the source text
+   * @param array<string, mixed> $context  context information to be passed on to the value functions
    * @return string the input string with all tokens replaced
    */
   public static function tokenReplace($text, $context = []) {
     $token_definitions = self::getTokenDefinitions();
     foreach ($token_definitions as $token_definition) {
-      while (preg_match(self::REGEX_DELIMITER . $token_definition['def'] . self::REGEX_DELIMITER, $text, $match)) {
+      $regex = self::REGEX_DELIMITER . $token_definition['def'] . self::REGEX_DELIMITER;
+      $offset = 0;
+      while (preg_match($regex, $text, $match, PREG_OFFSET_CAPTURE, $offset) === 1) {
 
         // token found -> get the replacement value
-        $matched_string = $match[0];
-        $match_data = array_merge($match, $context);
-        $value = self::getTokenValue($matched_string, $token_definition, $match_data);
-
-        // get the offsets and do the replacement
-        if ($value != $matched_string) {
-          preg_match(self::REGEX_DELIMITER . $token_definition['def'] . self::REGEX_DELIMITER, $text, $offsets, PREG_OFFSET_CAPTURE);
-          $text = substr($text, 0, $offsets[0][1]) . $value . substr($text, $offsets[0][1] + strlen($offsets[0][0]));
+        $matched_string = $match[0][0];
+        $match_position = $match[0][1];
+        $match_groups = [];
+        foreach ($match as $group_key => $group) {
+          $match_groups[$group_key] = $group[0];
         }
+        $match_data = array_merge($match_groups, $context);
+        $value = (string) self::getTokenValue($matched_string, $token_definition, $match_data);
+
+        $text = substr($text, 0, $match_position) . $value . substr($text, $match_position + strlen($matched_string));
+        $offset = $match_position + strlen($value);
       }
     }
     return $text;
@@ -101,16 +106,17 @@ class CRM_Mailingtools_RegexToken {
 
   /**
    * Calculate the new value for the given token_definition
-   * @param $matched_string   string the string matched
-   * @param $token_definition array  token definition
-   * @param $context          array  context information passed trough to the functions
+   * @param string $matched_string   the string matched
+   * @param array{def: string, op: string, val: string} $token_definition  token definition
+   * @param array<string, mixed> $context           context information passed trough to the functions
    * @return string the calculated value
    */
+  // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh, Generic.Metrics.NestingLevel.TooHigh
   public static function getTokenValue($matched_string, $token_definition, $context) {
     $params = array_merge(['matched_string' => $matched_string], $token_definition, $context);
     switch ($token_definition['op']) {
       case self::OPERATOR_API3:
-        if (preg_match(self::VALUE_API_CALL, $token_definition['val'], $match)) {
+        if ((bool) preg_match(self::VALUE_API_CALL, $token_definition['val'], $match)) {
           // compile $params
           try {
             $result = civicrm_api3($match['entity'], $match['action'], $params);
@@ -125,26 +131,29 @@ class CRM_Mailingtools_RegexToken {
                 return $result['result'];
               }
             }
-          } catch (Exception $ex) {
-            // nothing to do...
+          }
+          catch (Exception $ex) {
+            // @ignoreException
           }
         }
         return 'ERROR';
 
       case self::OPERATOR_STATIC:
-        if (preg_match(self::VALUE_STATIC_FUNCTION, $token_definition['val'], $match)) {
-          return call_user_func($token_definition['val'], $params);
-        } else {
+        if ((bool) preg_match(self::VALUE_STATIC_FUNCTION, $token_definition['val'], $match)) {
+          // @phpstan-ignore argument.type
+          return CRM_Mailingtools_Utils::toString(call_user_func($token_definition['val'], $params));
+        }
+        else {
           return 'ERROR';
         }
-
 
       case self::OPERATOR_REPLACE:
-        try {
-          return preg_replace(self::REGEX_DELIMITER . $token_definition['def'] . self::REGEX_DELIMITER, $matched_string, $token_definition['val']);
-        } catch (Exception $ex) {
-          return 'ERROR';
-        }
+        $replaced = @preg_replace(
+          self::REGEX_DELIMITER . $token_definition['def'] . self::REGEX_DELIMITER,
+          $matched_string,
+          $token_definition['val']
+        );
+        return $replaced ?? 'ERROR';
 
       default:
         return 'UNDEFINED';
@@ -153,45 +162,60 @@ class CRM_Mailingtools_RegexToken {
   }
 
   /**
+   * Check if a definition value is missing: not set, an empty string, or
+   * the string '0' (same falsy set empty() would use for a string).
+   *
+   * @param array{def: string, op: string, val: string} $token_definition
+   * @param string $key
+   */
+  private static function isEmptyDefinitionValue($token_definition, $key): bool {
+    $value = $token_definition[$key] ?? NULL;
+    return $value === NULL || $value === '' || $value === '0';
+  }
+
+  /**
    * Verify the presented token definition, and return an
    *  error string if not valid
    *
-   * @param $token_definition array definition, see getTokenDefinitions
+   * @param array{def: string, op: string, val: string} $token_definition definition, see getTokenDefinitions
    * @return string|false error or false ("all clear")
    */
+  // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh, Generic.Metrics.NestingLevel.TooHigh
   public static function verifyTokenDefinition($token_definition) {
     // test if present
-    if (empty($token_definition['def'])) {
-      return E::ts("Incomplete definition: definition (regular expression) missing");
+    if (self::isEmptyDefinitionValue($token_definition, 'def')) {
+      return E::ts('Incomplete definition: definition (regular expression) missing');
     }
-    if (empty($token_definition['op'])) {
-      return E::ts("Incomplete definition: value type missing");
+    if (self::isEmptyDefinitionValue($token_definition, 'op')) {
+      return E::ts('Incomplete definition: value type missing');
     }
-    if (empty($token_definition['val'])) {
-      return E::ts("Incomplete definition: value missing");
+    if (self::isEmptyDefinitionValue($token_definition, 'val')) {
+      return E::ts('Incomplete definition: value missing');
     }
 
     // verify definition (regex)
-    try {
-      preg_match(self::REGEX_DELIMITER . $token_definition['def'] . self::REGEX_DELIMITER, 'doesntmatter');
-    } catch (Exception $ex) {
-      return E::ts("Incomplete definition: definition is not a valid regular expression");
+    $regex_check = @preg_match(
+      self::REGEX_DELIMITER . $token_definition['def'] . self::REGEX_DELIMITER,
+      'doesntmatter'
+    );
+    if ($regex_check === FALSE) {
+      return E::ts('Incomplete definition: definition is not a valid regular expression');
     }
 
     // verify operation
     switch ($token_definition['op']) {
       case self::OPERATOR_API3:
-        if (preg_match(self::VALUE_API_CALL, $token_definition['val'], $match)) {
+        if ((bool) preg_match(self::VALUE_API_CALL, $token_definition['val'], $match)) {
           // verify api entity.action
           try {
             $actions = civicrm_api3($match['entity'], 'getactions');
-            if (empty($actions['values'])) {
+            if ($actions['values'] === []) {
               return E::ts("API3 action '%1' not found in entity '%2'", [1 => $match['entity'], 2 => $match['action']]);
             }
             $action_found = FALSE;
             $our_action = strtolower($match['action']);
             foreach ($actions['values'] as $known_action) {
-              if (strtolower($known_action) == $our_action) {
+              if (strtolower($known_action) === $our_action) {
                 $action_found = TRUE;
                 break;
               }
@@ -199,34 +223,38 @@ class CRM_Mailingtools_RegexToken {
             if (!$action_found) {
               return E::ts("API3 action '%1' not found in entity '%2'", [1 => $match['entity'], 2 => $match['action']]);
             }
-          } catch (Exception $ex) {
+          }
+          catch (Exception $ex) {
+            // @ignoreException
             return E::ts("API3 entity '%1' not found", [1 => $match['entity']]);
           }
-        } else {
+        }
+        else {
           return E::ts("API3 action should be defined as 'entity.action'");
         }
         break;
 
-
       case self::OPERATOR_STATIC:
-        if (preg_match(self::VALUE_STATIC_FUNCTION, $token_definition['val'], $match)) {
+        if ((bool) preg_match(self::VALUE_STATIC_FUNCTION, $token_definition['val'], $match)) {
           if (!class_exists($match['class'])) {
             return E::ts("Class '%1' not found", [1 => $match['class']]);
           }
           if (!method_exists($match['class'], $match['function'])) {
             return E::ts("Function '%1' not found", [1 => $token_definition['val']]);
           }
-        } else {
+        }
+        else {
           return E::ts("Function definition should be 'SomeClass::someFunction'");
         }
         break;
 
-
       case self::OPERATOR_REPLACE:
-        try {
-          preg_replace(self::REGEX_DELIMITER . $token_definition['def'] . self::REGEX_DELIMITER, $token_definition['val'], 'doesntmatter');
-        } catch (Exception $ex) {
-          return E::ts("Ill-defined replace expression");
+        if (@preg_replace(
+          self::REGEX_DELIMITER . $token_definition['def'] . self::REGEX_DELIMITER,
+          $token_definition['val'],
+          'doesntmatter'
+        ) === NULL) {
+          return E::ts('Ill-defined replace expression');
         }
         break;
 
@@ -235,4 +263,5 @@ class CRM_Mailingtools_RegexToken {
     }
     return FALSE;
   }
+
 }

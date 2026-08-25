@@ -13,6 +13,8 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+declare(strict_types = 1);
+
 /**
  * Class CRM_Mailingtools_InjectHeader
  *
@@ -22,14 +24,20 @@ class CRM_Mailingtools_InjectHeader {
 
   /**
    *
-   * @param $params
-   * @param $context
+   * @param array<string, mixed> $params
+   * @param mixed $context
+   * @return void
    */
-  static function inject_header(&$params, $context) {
+  public static function inject_header(&$params, $context) {
     $config = CRM_Mailingtools_Config::singleton();
     $settings = $config->getSettings();
-    if (!empty($settings['extra_mail_header_key']) && !empty($settings['extra_mail_header_value'])) {
-      $params['headers'][$settings['extra_mail_header_key']] = $settings['extra_mail_header_value'];
+    if (($settings['extra_mail_header_key'] ?? '') !== '' && ($settings['extra_mail_header_key'] ?? '') !== '0'
+      && ($settings['extra_mail_header_value'] ?? '') !== '' && ($settings['extra_mail_header_value'] ?? '') !== '0') {
+      if (!isset($params['headers']) || !is_array($params['headers'])) {
+        $params['headers'] = [];
+      }
+      $params['headers'][CRM_Mailingtools_Utils::toString($settings['extra_mail_header_key'])]
+        = CRM_Mailingtools_Utils::toString($settings['extra_mail_header_value']);
     }
   }
 

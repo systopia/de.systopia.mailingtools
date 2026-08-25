@@ -13,6 +13,7 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+declare(strict_types = 1);
 
 use CRM_Mailingtools_ExtensionUtil as E;
 
@@ -21,13 +22,29 @@ use CRM_Mailingtools_ExtensionUtil as E;
  */
 class CRM_Mailingtools_CheckMailstore {
 
-  private $mailStore_retention = array();
-  private $retention_configured = FALSE;
-  private $imap_login = array();
-  private $mail_folders = array('INBOX.CiviMail.ignored', 'INBOX.CiviMail.processed');
-  private $errors = array();
-  private $results = array();
+  /**
+   * @var array<string, mixed> */
+  private $mailStore_retention = [];
 
+  /**
+   * @var bool */
+  private $retention_configured = FALSE;
+
+  /**
+   * @var array<string, string> */
+  private $imap_login = [];
+
+  /**
+   * @var array<int, string> */
+  private $mail_folders = ['INBOX.CiviMail.ignored', 'INBOX.CiviMail.processed'];
+
+  /**
+   * @var array<string, mixed> */
+  private $errors = [];
+
+  /**
+   * @var array<string, int> */
+  private $results = [];
 
   /**
    * CRM_Mailingtools_CheckMailstore constructor.
@@ -42,6 +59,8 @@ class CRM_Mailingtools_CheckMailstore {
   /**
    * get mailstore retention
    * can be configured on the settings page
+   *
+   * @return void
    */
   private function read_mailstore_retention() {
     $config = CRM_Mailingtools_Config::singleton();
@@ -59,6 +78,8 @@ class CRM_Mailingtools_CheckMailstore {
    * get bounce mail config from CiviCRM
    *
    * TODO: Maybe add additional config to settings page if this doesn't work properly
+   *
+   * @return void
    */
   private function read_bounce_mail_config() {
     $dao = new CRM_Core_DAO_MailSettings();
@@ -68,25 +89,25 @@ class CRM_Mailingtools_CheckMailstore {
     $dao->fetch();
 
     $this->imap_login['hostname'] = $this->create_mailbox_hostname($dao);
-    $this->imap_login['username'] = $dao->username;
-    $this->imap_login['password'] = $dao->password;
+    $this->imap_login['username'] = $dao->username ?? '';
+    $this->imap_login['password'] = $dao->password ?? '';
   }
 
   /**
    * Gets port either from configured serverURL, from the DAO object or prepares default values
-   * @param $dao
+   * @param CRM_Core_DAO_MailSettings $dao
    * @return string
    */
   private function create_mailbox_hostname($dao) {
 
     $suffix = $this->create_imap_suffix($dao);
 
-    $port_from_serverUrl = explode(":", $dao->server);
+    $port_from_serverUrl = explode(':', $dao->server ?? '');
     if (isset($port_from_serverUrl[1])) {
-      return "{" . $dao->server . $suffix . "}";
+      return '{' . $dao->server . $suffix . '}';
     }
     $port = $this->get_server_port($dao);
-    return "{" . $dao->server . ":" . $port .  $suffix . "}";
+    return '{' . $dao->server . ':' . $port . $suffix . '}';
   }
 
   /**
@@ -94,6 +115,7 @@ class CRM_Mailingtools_CheckMailstore {
    * configured folders (default is CiviMail.(ignored|processed))
    *
    * @return string|void
+   * @throws \CRM_Core_Exception
    */
   public function check_mailstore() {
 
@@ -103,53 +125,65 @@ class CRM_Mailingtools_CheckMailstore {
     // - delete mails (FixMe: First only debug Mails --> output)
     if (!$this->retention_configured) {
       // nothing to do here.
+      // phpcs:ignore Drupal.Commenting.FunctionComment.InvalidReturnNotVoid
       return;
+    }
+
+    if (!function_exists('imap_open')) {
+      throw new CRM_Core_Exception(E::ts('The PHP IMAP extension is required for bounce mailbox retention.'));
     }
 
     foreach ($this->mail_folders as $folder) {
       $this->results[$folder] = 0;
-      $imap = imap_open($this->imap_login['hostname'] . $folder, $this->imap_login['username'], $this->imap_login['password']);
-      if ($imap) {
+      $imap = imap_open(
+        $this->imap_login['hostname'] . $folder,
+        $this->imap_login['username'],
+        $this->imap_login['password']
+      );
+      if ((bool) $imap) {
         $date = $this->create_retention_timestamp($folder);
         $emails_delete_ignored = imap_search($imap, 'BEFORE "' . $date . '"');
-        if (!empty($emails_delete_ignored)) {
+        if ($emails_delete_ignored !== FALSE && $emails_delete_ignored !== []) {
           $this->delete_imap_emails($emails_delete_ignored, $imap, $folder);
         }
-      } else {
-        error_log("Error Connecting to " . $this->imap_login['hostname'] . $folder);
+      }
+      else {
+        error_log('Error Connecting to ' . $this->imap_login['hostname'] . $folder);
         $this->errors[$folder] = imap_last_error();
       }
 
     }
-    if (empty($this->errors)) {
-        return json_encode($this->results);
+    if ($this->errors === []) {
+      $encoded_results = json_encode($this->results);
+      return $encoded_results !== FALSE ? $encoded_results : '';
     }
     return (json_encode($this->errors) . json_encode($this->results));
   }
 
   /**
    * Check if retentino is configured. If not, we don't delete anything and return false here
-   * @param $settings
+   * @param array<string, mixed> $settings
    */
-  private function verify_settings($settings): bool
-  {
-    return !isset($settings['processed_retention_value']) || $settings['processed_retention_value'] == 0
-      || !isset($settings['ignored_retention_value']) || $settings['ignored_retention_value'] == 0;
+  private function verify_settings($settings): bool {
+    return !isset($settings['processed_retention_value'])
+      || CRM_Mailingtools_Utils::toInt($settings['processed_retention_value']) === 0
+      || !isset($settings['ignored_retention_value'])
+      || CRM_Mailingtools_Utils::toInt($settings['ignored_retention_value']) === 0;
   }
 
   /**
    * create the IMAP server port, depending on bounce mailbox config
-   * @param $dao
+   * @param CRM_Core_DAO_MailSettings $dao
    * @return int
    */
-  private function get_server_port($dao)
-  {
-    if ($dao->port) {
-      return $dao->port;
+  private function get_server_port($dao) {
+    if ((int) ($dao->port ?? 0) !== 0) {
+      return (int) $dao->port;
     }
-    if ($dao->ssl) {
+    if ((bool) $dao->is_ssl) {
       $port = 993;
-    } else {
+    }
+    else {
       $port = 143;
     }
     return $port;
@@ -157,43 +191,42 @@ class CRM_Mailingtools_CheckMailstore {
 
   /**
    * generates a suffix depending on bounce mailbox config
-   * @param $dao
+   * @param CRM_Core_DAO_MailSettings $dao
    * @return string
    */
-  private function create_imap_suffix($dao)
-  {
-    if ($dao->ssl) {
-      return "/imap/ssl";
-    } else {
-      return "/imap/novalidate-cert";
+  private function create_imap_suffix($dao) {
+    if ((bool) $dao->is_ssl) {
+      return '/imap/ssl';
+    }
+    else {
+      return '/imap/novalidate-cert';
     }
   }
 
   /**
    * generate a retention timestamp
-   * @param $folder
-   * @return false|string
+   * @param string $folder
+   * @return string
    */
-  private function create_retention_timestamp($folder)
-  {
-    $time = strtotime("now - {$this->mailStore_retention[$folder]} days");
-    return date("j-F-Y", $time);
+  private function create_retention_timestamp($folder) {
+    $retention_days = CRM_Mailingtools_Utils::toString($this->mailStore_retention[$folder] ?? '');
+    $time = strtotime("now - {$retention_days} days");
+    return date('j-M-Y', $time !== FALSE ? $time : NULL);
   }
 
   /**
    * deletes the emails indexed by the search function on the given imap stream
-   * @param $emails_delete_ignored
-   * @param $imap
-   * @param $folder
+   * @param array<int, int> $emails_delete_ignored
+   * @param \IMAP\Connection $imap
+   * @param string $folder
+   * @return void
    */
-  private function delete_imap_emails($emails_delete_ignored, $imap, $folder)
-  {
+  private function delete_imap_emails($emails_delete_ignored, $imap, $folder) {
     foreach ($emails_delete_ignored as $email_index) {
-      imap_delete($imap, $email_index);
+      imap_delete($imap, (string) $email_index);
       $this->results[$folder] += 1;
     }
     imap_expunge($imap);
   }
-
 
 }
