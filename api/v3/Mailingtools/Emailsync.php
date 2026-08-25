@@ -45,10 +45,6 @@ function _civicrm_api3_mailingtools_Emailsync_spec(&$spec) {
  * @throws CRM_Core_Exception
  */
 function civicrm_api3_mailingtools_Emailsync($params) {
-  if (version_compare(PHP_VERSION, '7.0.0') === 0) {
-    throw new CRM_Core_Exception('PHP Version is not compatible with this API command. At least PHP7.0 is needed');
-  }
-
   $verify_size = CRM_Mailingtools_Utils::toInt($params['verify_size']);
   $checking_index = isset($params['checking_index']) ? CRM_Mailingtools_Utils::toInt($params['checking_index']) : NULL;
   $runner = new CRM_Mailingtools_EmailVerifier($verify_size, $checking_index);

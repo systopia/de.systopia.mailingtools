@@ -175,7 +175,7 @@ class CRM_Mailingtools_CheckMailstore {
     if ((int) ($dao->port ?? 0) !== 0) {
       return (int) $dao->port;
     }
-    if ($dao->ssl) {
+    if ((bool) $dao->is_ssl) {
       $port = 993;
     }
     else {
@@ -190,7 +190,7 @@ class CRM_Mailingtools_CheckMailstore {
    * @return string
    */
   private function create_imap_suffix($dao) {
-    if ($dao->ssl) {
+    if ((bool) $dao->is_ssl) {
       return '/imap/ssl';
     }
     else {
