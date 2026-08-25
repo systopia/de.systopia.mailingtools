@@ -1,6 +1,7 @@
 <?php
 declare(strict_types = 1);
 
+use Civi\Test;
 use Civi\Test\HeadlessInterface;
 use Civi\Test\TransactionalInterface;
 use PHPUnit\Framework\TestCase;
@@ -20,7 +21,7 @@ class CRM_Mailingtools_UtilsTest extends TestCase implements HeadlessInterface, 
    * @return \Civi\Test\CiviEnvBuilder
    */
   public function setUpHeadless() {
-    return \Civi\Test::headless()
+    return Test::headless()
       ->installMe(__DIR__)
       ->apply();
   }

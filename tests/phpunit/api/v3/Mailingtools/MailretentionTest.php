@@ -1,10 +1,12 @@
 <?php
 declare(strict_types = 1);
 
+use Civi\Test;
 use Civi\Test\HeadlessInterface;
 use Civi\Core\HookInterface;
 use Civi\Test\Invasive;
 use Civi\Test\TransactionalInterface;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Mailingtools.Mailretention API Test Case
@@ -14,7 +16,7 @@ use Civi\Test\TransactionalInterface;
  * @covers \CRM_Mailingtools_CheckMailstore
  */
 // phpcs:ignore Generic.Files.LineLength.TooLong
-class api_v3_Mailingtools_MailretentionTest extends \PHPUnit\Framework\TestCase implements HeadlessInterface, HookInterface, TransactionalInterface {
+class api_v3_Mailingtools_MailretentionTest extends TestCase implements HeadlessInterface, HookInterface, TransactionalInterface {
 
   /**
    * Civi\Test has many helpers, like install(), uninstall(), sql(), and sqlFile().
@@ -23,7 +25,7 @@ class api_v3_Mailingtools_MailretentionTest extends \PHPUnit\Framework\TestCase 
    * @return mixed
    */
   public function setUpHeadless() {
-    return \Civi\Test::headless()
+    return Test::headless()
       ->installMe(__DIR__)
       ->apply();
   }
