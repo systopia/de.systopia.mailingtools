@@ -1,6 +1,6 @@
 # Mailing Tools
 
-![Screenshot](img/screenshot.png)
+![Screenshot](docs/img/screenshot.png)
 
 Provides Tools to support Massmailings in CiviCRM. Options are:
 
@@ -13,9 +13,11 @@ The extension is licensed under [AGPL-3.0](LICENSE.txt).
 
 ## Requirements
 
-* PHP v5.5+ (better 5.6+)
-    * PHP 7.0 for Email MX-Verification
-    * composer voku/email-check
+* PHP 8.1+
+* CiviCRM 5.76+
+* For Email MX-Verification:
+    * php-intl (idn_to_ascii)
+    * composer voku/email-check, see Installation
 
 ## Installation (Web UI)
 
@@ -28,7 +30,7 @@ install it with the command-line tool [cv](https://github.com/civicrm/cv).
 
 ```bash
 cd <extension-dir>
-cv dl de.systopia.mailingtools@https://github.com/FIXME/de.systopia.mailingtools/archive/master.zip
+cv dl de.systopia.mailingtools@https://github.com/systopia/de.systopia.mailingtools/archive/master.zip
 ```
 
 ## Installation (CLI, Git)
@@ -37,7 +39,7 @@ Sysadmins and developers may clone the [Git](https://en.wikipedia.org/wiki/Git) 
 install it with the command-line tool [cv](https://github.com/civicrm/cv).
 
 ```bash
-git clone https://github.com/FIXME/de.systopia.mailingtools.git
+git clone https://github.com/systopia/de.systopia.mailingtools.git
 cv en mailingtools
 cd resources/lib 
 composer install
