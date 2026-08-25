@@ -80,15 +80,22 @@ class CRM_Mailingtools_Utils {
     }
     catch (Exception $e) {
       // @ignoreException
-      self::log('Failure to verify Email "{$email}"');
+      self::log('Failure to verify Email: ' . $e->getMessage());
     }
   }
 
   /**
-   * @param string $email
-   * @param int $email_id
+   * @param mixed $email
+   * @param mixed $email_id
    */
   public static function check_email_dns_blacklist($email, $email_id): bool {
+    if (!is_string($email) || $email === '') {
+      return FALSE;
+    }
+    $email_id = self::toInt($email_id);
+    if ($email_id === 0) {
+      return FALSE;
+    }
     $config = CRM_Mailingtools_Config::singleton();
     $email_domain_blacklist = $config->getSetting('email_domain_blacklist');
     if ($email_domain_blacklist === NULL || $email_domain_blacklist === '' || $email_domain_blacklist === '0') {
@@ -112,7 +119,7 @@ class CRM_Mailingtools_Utils {
     }
     catch (Exception $e) {
       // @ignoreException
-      self::log('Failure to blacklist Email "{$email}. Message: " . $e');
+      self::log("Failure to blacklist Email \"{$email}\": " . $e->getMessage());
     }
     return FALSE;
   }
