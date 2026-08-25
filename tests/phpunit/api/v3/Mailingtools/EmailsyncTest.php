@@ -3,6 +3,8 @@ declare(strict_types = 1);
 
 use CRM_Mailingtools_ExtensionUtil as E;
 use Civi\Test\HeadlessInterface;
+use Civi\Test\TransactionalInterface;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Mailingtools.Emailsync API Test Case
@@ -11,7 +13,7 @@ use Civi\Test\HeadlessInterface;
  *
  * @covers \CRM_Mailingtools_EmailVerifier
  */
-class api_v3_Mailingtools_EmailsyncTest extends \PHPUnit\Framework\TestCase implements HeadlessInterface {
+class api_v3_Mailingtools_EmailsyncTest extends TestCase implements HeadlessInterface, TransactionalInterface {
 
   /**
    * @var int|string|null */
@@ -25,10 +27,12 @@ class api_v3_Mailingtools_EmailsyncTest extends \PHPUnit\Framework\TestCase impl
    * Civi\Test has many helpers, like install(), uninstall(), sql(), and sqlFile().
    * See: https://docs.civicrm.org/dev/en/latest/testing/phpunit/#civitest
    *
-   * @return void
+   * @return \Civi\Test\CiviEnvBuilder
    */
   public function setUpHeadless() {
-    // Not needed, or rather no schema needed.
+    return \Civi\Test::headless()
+      ->installMe(__DIR__)
+      ->apply();
   }
 
   /**
@@ -79,10 +83,11 @@ class api_v3_Mailingtools_EmailsyncTest extends \PHPUnit\Framework\TestCase impl
    * This can be used for cleanup.
    */
   public function tearDown(): void {
-    foreach ($this->email_ids as $key => $email_id) {
+    foreach ($this->email_ids as $email_id) {
       $this->delete_entity($email_id, 'Email');
     }
     $this->delete_entity($this->contact_id, 'Contact');
+    parent::tearDown();
   }
 
   /**
@@ -98,7 +103,6 @@ class api_v3_Mailingtools_EmailsyncTest extends \PHPUnit\Framework\TestCase impl
       $entity_id_string = CRM_Mailingtools_Utils::toString($entity_id);
       throw new \RuntimeException("Couldn't delete Entity {$entity} ({$entity_id_string}). Abroting Test");
     }
-    parent::tearDown();
   }
 
   /**
@@ -114,7 +118,7 @@ class api_v3_Mailingtools_EmailsyncTest extends \PHPUnit\Framework\TestCase impl
       'checking_index' => $this->email_ids['0'],
       'debug' => 'TRUE',
     ]);
-    self::assertSame(0, $result['is_error']);
+    self::assertIsString($result['values']);
     $result = civicrm_api3('Email', 'get', [
       'sequential' => 1,
       'email' => ['LIKE' => 'example_%@systop%.de%'],
