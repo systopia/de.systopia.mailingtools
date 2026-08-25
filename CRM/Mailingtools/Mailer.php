@@ -45,10 +45,7 @@ class CRM_Mailingtools_Mailer {
     return ((bool) $config->getSetting('anonymous_open_enabled') && (bool) $config->getSetting('anonymous_open_url'))
          || ((bool) $config->getSetting('anonymous_link_enabled') && (bool) $config->getSetting('anonymous_link_url'))
          || CRM_Mailingtools_RegexToken::isEnabled()
-         || (bool) $config->getSetting('mailing_debugging_short')
-         || (bool) $config->getSetting('mailing_debugging_header')
-         || (bool) $config->getSetting('mailing_debugging_recipients')
-         || (bool) $config->getSetting('mailing_debugging_body');
+         || CRM_Mailingtools_MailLogger::isNeeded();
   }
 
   /**
@@ -90,8 +87,10 @@ class CRM_Mailingtools_Mailer {
       }
     }
     // Debug output
-    $mail_logger = new CRM_Mailingtools_MailLogger();
-    $mail_logger->logMailInfo($recipients, $headers, $body);
+    if (CRM_Mailingtools_MailLogger::isNeeded()) {
+      $mail_logger = new CRM_Mailingtools_MailLogger();
+      $mail_logger->logMailInfo($recipients, $headers, $body);
+    }
 
     if ($this->mailer !== NULL) {
       // @phpstan-ignore method.deprecated

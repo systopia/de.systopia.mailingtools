@@ -51,7 +51,7 @@ class CRM_Mailingtools_MailLogger {
     }
     $log_file = $this->_logFile;
     $config = CRM_Mailingtools_Config::singleton();
-    if ((bool) $config->getSetting('mailing_debugging_short')) {
+    if ((bool) $config->getSetting('mailing_debugging_omit_mailings')) {
       // check if this is a mailing. Check for X-CiviMail-Bounce
       // header. This should only be set for Mailings afaik
       if (isset($header['X-CiviMail-Bounce'])) {
@@ -76,12 +76,17 @@ class CRM_Mailingtools_MailLogger {
       $this->addMessage((string) json_encode($body), 'BODY');
     }
     // add empty line for better readablility if debugging is active
-    if ((bool) $config->getSetting('mailing_debugging_short')
-      || (bool) $config->getSetting('mailing_debugging_header')
-      || (bool) $config->getSetting('mailing_debugging_recipients')
-      || (bool) $config->getSetting('mailing_debugging_body')) {
+    if (self::isNeeded()) {
       fwrite($log_file, "\n");
     }
+  }
+
+  public static function isNeeded(): bool {
+    $config = CRM_Mailingtools_Config::singleton();
+    return (bool) $config->getSetting('mailing_debugging_short')
+      || (bool) $config->getSetting('mailing_debugging_header')
+      || (bool) $config->getSetting('mailing_debugging_recipients')
+      || (bool) $config->getSetting('mailing_debugging_body');
   }
 
   /**
