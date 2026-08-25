@@ -115,6 +115,7 @@ class CRM_Mailingtools_CheckMailstore {
    * configured folders (default is CiviMail.(ignored|processed))
    *
    * @return string|void
+   * @throws \CRM_Core_Exception
    */
   public function check_mailstore() {
 
@@ -126,6 +127,10 @@ class CRM_Mailingtools_CheckMailstore {
       // nothing to do here.
       // phpcs:ignore Drupal.Commenting.FunctionComment.InvalidReturnNotVoid
       return;
+    }
+
+    if (!function_exists('imap_open')) {
+      throw new CRM_Core_Exception(E::ts('The PHP IMAP extension is required for bounce mailbox retention.'));
     }
 
     foreach ($this->mail_folders as $folder) {
@@ -206,7 +211,7 @@ class CRM_Mailingtools_CheckMailstore {
   private function create_retention_timestamp($folder) {
     $retention_days = CRM_Mailingtools_Utils::toString($this->mailStore_retention[$folder] ?? '');
     $time = strtotime("now - {$retention_days} days");
-    return date('j-F-Y', $time !== FALSE ? $time : NULL);
+    return date('j-M-Y', $time !== FALSE ? $time : NULL);
   }
 
   /**

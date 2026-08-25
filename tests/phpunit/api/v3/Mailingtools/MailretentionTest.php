@@ -3,6 +3,7 @@ declare(strict_types = 1);
 
 use Civi\Test\HeadlessInterface;
 use Civi\Core\HookInterface;
+use Civi\Test\Invasive;
 use Civi\Test\TransactionalInterface;
 
 /**
@@ -51,7 +52,37 @@ class api_v3_Mailingtools_MailretentionTest extends \PHPUnit\Framework\TestCase 
    */
   public function testApiExample() {
     $result = civicrm_api3('Mailingtools', 'Mailretention', []);
-    self::assertSame(0, $result['is_error']);
+    self::assertNull($result['values']);
+  }
+
+  /**
+   * @return void
+   */
+  public function testImapSuffixAndPortFollowSslFlag() {
+    $mailstore = new CRM_Mailingtools_CheckMailstore();
+    $dao = new CRM_Core_DAO_MailSettings();
+
+    $dao->is_ssl = TRUE;
+    self::assertSame('/imap/ssl', Invasive::call([$mailstore, 'create_imap_suffix'], [$dao]));
+    self::assertSame(993, Invasive::call([$mailstore, 'get_server_port'], [$dao]));
+
+    $dao->is_ssl = FALSE;
+    self::assertSame('/imap/novalidate-cert', Invasive::call([$mailstore, 'create_imap_suffix'], [$dao]));
+    self::assertSame(143, Invasive::call([$mailstore, 'get_server_port'], [$dao]));
+  }
+
+  /**
+   * @return void
+   */
+  public function testRetentionTimestampUsesImapDateFormat() {
+    $mailstore = new CRM_Mailingtools_CheckMailstore();
+    Invasive::set([$mailstore, 'mailStore_retention'], ['INBOX.CiviMail.ignored' => 30]);
+
+    $timestamp = Invasive::call([$mailstore, 'create_retention_timestamp'], ['INBOX.CiviMail.ignored']);
+
+    self::assertIsString($timestamp);
+    self::assertMatchesRegularExpression('/^\d{1,2}-[A-Z][a-z]{2}-\d{4}$/', $timestamp);
+    self::assertSame(date('j-M-Y', strtotime('now - 30 days')), $timestamp);
   }
 
 }
