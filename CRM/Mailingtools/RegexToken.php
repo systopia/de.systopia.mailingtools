@@ -56,17 +56,12 @@ class CRM_Mailingtools_RegexToken {
    * @return array<int, array{def: string, op: string, val: string}> list of such specs
    */
   public static function getTokenDefinitions() {
-    static $token_definitions = NULL;
-    if ($token_definitions === NULL) {
-      $value = Civi::settings()->get('mailingtools_regex_tokens');
-      if ($value === [] || !is_array($value)) {
-        $token_definitions = [];
-      }
-      else {
-        $token_definitions = $value;
-      }
+    $value = Civi::settings()->get('mailingtools_regex_tokens');
+    if (!is_array($value) || $value === []) {
+      return [];
     }
-    return $token_definitions;
+    /** @var array<int, array{def: string, op: string, val: string}> $value */
+    return $value;
   }
 
   /**
@@ -88,23 +83,22 @@ class CRM_Mailingtools_RegexToken {
   public static function tokenReplace($text, $context = []) {
     $token_definitions = self::getTokenDefinitions();
     foreach ($token_definitions as $token_definition) {
-      while (preg_match(self::REGEX_DELIMITER . $token_definition['def'] . self::REGEX_DELIMITER, $text, $match)) {
+      $regex = self::REGEX_DELIMITER . $token_definition['def'] . self::REGEX_DELIMITER;
+      $offset = 0;
+      while (preg_match($regex, $text, $match, PREG_OFFSET_CAPTURE, $offset) === 1) {
 
         // token found -> get the replacement value
-        $matched_string = $match[0];
-        $match_data = array_merge($match, $context);
-        $value = self::getTokenValue($matched_string, $token_definition, $match_data);
-
-        // get the offsets and do the replacement
-        if ((string) $value !== $matched_string) {
-          preg_match(
-            self::REGEX_DELIMITER . $token_definition['def'] . self::REGEX_DELIMITER,
-            $text,
-            $offsets,
-            PREG_OFFSET_CAPTURE
-          );
-          $text = substr($text, 0, $offsets[0][1]) . $value . substr($text, $offsets[0][1] + strlen($offsets[0][0]));
+        $matched_string = $match[0][0];
+        $match_position = $match[0][1];
+        $match_groups = [];
+        foreach ($match as $group_key => $group) {
+          $match_groups[$group_key] = $group[0];
         }
+        $match_data = array_merge($match_groups, $context);
+        $value = (string) self::getTokenValue($matched_string, $token_definition, $match_data);
+
+        $text = substr($text, 0, $match_position) . $value . substr($text, $match_position + strlen($matched_string));
+        $offset = $match_position + strlen($value);
       }
     }
     return $text;
