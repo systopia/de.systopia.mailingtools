@@ -85,6 +85,7 @@ jobs:
           EXT_DIR=$PWD
           EXT_COMPOSER_NAME=$(composer show --self --name-only)
           composer composer-phpunit -- update --no-progress --optimize-autoloader
+          composer update --no-progress --working-dir=resources/lib
           cd ..
           git clone https://github.com/civicrm/civicrm-standalone.git
           cd civicrm-standalone
