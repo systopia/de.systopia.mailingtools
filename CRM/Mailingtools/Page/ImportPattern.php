@@ -28,7 +28,9 @@ class CRM_Mailingtools_Page_ImportPattern extends CRM_Core_Page {
     if ($param === '' || $param === '0') {
       throw new CRM_Extension_Exception('Please Provide a filename in the name parameter of the URL');
     }
-    $path = __DIR__ . "../../../resources/*{$param}*.json";
+    if (preg_match('/^[A-Za-z0-9_-]+$/', $param) !== 1) {
+      throw new CRM_Extension_Exception('Invalid filename in the name parameter of the URL');
+    }
     $files = glob(__DIR__ . "/../../../resources/*{$param}*.json");
 
     if ($files === FALSE || $files === []) {
