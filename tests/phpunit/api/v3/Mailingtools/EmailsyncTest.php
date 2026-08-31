@@ -119,7 +119,7 @@ class api_v3_Mailingtools_EmailsyncTest extends TestCase implements HeadlessInte
       'checking_index' => $this->email_ids['0'],
       'debug' => 'TRUE',
     ]);
-    self::assertIsString($result['values']);
+    self::assertSame(1, $result['is_error']);
     $result = civicrm_api3('Email', 'get', [
       'sequential' => 1,
       'email' => ['LIKE' => 'example_%@systop%.de%'],
