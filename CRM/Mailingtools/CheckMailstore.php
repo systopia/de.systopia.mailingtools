@@ -211,7 +211,7 @@ class CRM_Mailingtools_CheckMailstore {
   private function create_retention_timestamp($folder) {
     $retention_days = CRM_Mailingtools_Utils::toString($this->mailStore_retention[$folder] ?? '');
     $time = strtotime("now - {$retention_days} days");
-    return date('j-M-Y', $time !== FALSE ? $time : NULL);
+    return date('j-F-Y', $time !== FALSE ? $time : NULL);
   }
 
   /**
